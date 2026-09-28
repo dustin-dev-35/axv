@@ -1,0 +1,19 @@
+harness:  none. This arm does not use karpathy/autoresearch or dustin-dev-35/autoresearch.
+          The object under test is a variance estimator on paired binary outcomes, not a training
+          run, so there is no train.py to patch. The estimator is the paper's Eq. 5
+          (session-centred Bartlett-HAC) plus the paper's i.i.d. Normal baseline, reimplemented
+          self-contained on numpy/scipy in estimator.py in this directory, and estimator.py IS the
+          record. sha256 e709b6fa0bbe388f89640efb5819c01c2b385232dcafcfc9ed476aaef6bd652e
+          (also recorded as config_fingerprint and as script_sha256.estimator.py in run.json).
+change:   none to dustin-dev-35/autoresearch and none to the upstream read-only reference. No
+          experiment/<arxiv-id>-<series> branch was cut because there is no diff to review.
+seeds:    1337 / 1338 / 1339 (this run carries seed 1338), namespace disjoint from the paper's 202609080862/63 and from the
+          sibling runs' 20260928/29/30.
+template: none. gpu: none (cpu-only statistics re-analysis). cuda: none. cost: $0.00 of the $3.25
+          AXV compute budget. No Runpod pod was created, so there is no pod to terminate.
+memo:     corpus/2609.30721.axv-8-generators.md
+cohort:   cpu-numpy-axv-generator-a01-20260928. NOT comparable to any gpu-pro6000-mig24gb arm.
+          This cohort cannot serve as a training arm's baseline and no training arm can serve as
+          its baseline. The four generators compared in memo Table 1 are four different cohorts
+          and their Type-I numbers are reported as a spread, never differenced against each
+          other.

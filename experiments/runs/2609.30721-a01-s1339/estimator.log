@@ -1,0 +1,57 @@
+================================================================================================
+arXiv:2609.30721v1  --  arm A01: i.i.d. vs session-centred Bartlett-HAC
+seed=1339  N_MC=2000  L=64  T_raw=2048  subjects=40  sessions/subject=2  acc=0.8  pair_rho=0.5
+rho is OURS. The paper does not publish it. Structural replication only.
+
+--- A. Type-I error, design effect and G_info by overlap, 2000 MC sets per cell ---
+  rho   ovl  nwin      N   K    IID%  mcse    HAC%  mcse     DE   r1(D)    acc
+------------------------------------------------------------------------------------------------
+ 0.00  0.00    32   2560   7    5.20  0.50    8.55  0.63  1.012  -0.032 0.8000
+ 0.00  0.50    63   5040   7    9.90  0.67    7.10  0.57  1.465   0.211 0.8001
+ 0.00  0.75   125  10000   7   21.85  0.92    7.25  0.58  2.413   0.405 0.8000
+      -> rows 3.906x   G_info(DE) 1.6382   G_info(HAC var) 1.5221   HAC/iid width 1.234x
+
+ 0.30  0.00    32   2560   7    4.85  0.48    7.65  0.59  0.975  -0.030 0.8004
+ 0.30  0.50    63   5040   7   10.45  0.68    7.05  0.57  1.451   0.214 0.8002
+ 0.30  0.75   125  10000   7   22.20  0.93    7.45  0.59  2.561   0.411 0.8000
+      -> rows 3.906x   G_info(DE) 1.4873   G_info(HAC var) 1.5065   HAC/iid width 1.227x
+
+ 0.60  0.00    32   2560   7    5.45  0.51    8.55  0.63  1.043  -0.027 0.8002
+ 0.60  0.50    63   5040   7    9.70  0.66    6.40  0.55  1.407   0.218 0.7999
+ 0.60  0.75   125  10000   7   23.70  0.95    7.75  0.60  2.687   0.428 0.8001
+      -> rows 3.906x   G_info(DE) 1.5160   G_info(HAC var) 1.4898   HAC/iid width 1.221x
+
+ 0.80  0.00    32   2560   7    4.80  0.48    7.40  0.59  0.987  -0.018 0.8002
+ 0.80  0.50    63   5040   7   11.55  0.71    7.60  0.59  1.578   0.232 0.7998
+ 0.80  0.75   125  10000   7   23.70  0.95    8.45  0.62  2.785   0.461 0.8000
+      -> rows 3.906x   G_info(DE) 1.3840   G_info(HAC var) 1.4546   HAC/iid width 1.206x
+
+ 0.95  0.00    32   2560   7    7.15  0.58    8.50  0.62  1.170   0.040 0.8003
+ 0.95  0.50    63   5040   7   13.55  0.77    7.10  0.57  1.866   0.325 0.7997
+ 0.95  0.75   125  10000   7   28.60  1.01    8.35  0.62  3.404   0.583 0.7998
+      -> rows 3.906x   G_info(DE) 1.3430   G_info(HAC var) 1.3111   HAC/iid width 1.145x
+
+--- B. pre-registered verdicts ---
+  T1_mechanical_only_iid_calibrated             : False
+  T1_mechanical_only_G_info_near_one            : False
+  T2_extended_iid_anticonservative_at_75        : True
+  T2_extended_hac_below_iid_at_75               : True
+  T3_G_info_span_gt_0.5                         : False
+  T4_hac_still_anticonservative_at_top_of_grid  : True
+
+--- C. summary: the number AXV needs is sqrt(DE), the iid SE inflation factor ---
+  rho   IID75%   HAC75%   DE(75)    DE(0)   G_info   rows  SEinfl75   SEinfl0
+ 0.00    21.85     7.25    2.413    1.012   1.6382   3.91     1.553     1.006
+ 0.30    22.20     7.45    2.561    0.975   1.4873   3.91     1.600     0.988
+ 0.60    23.70     7.75    2.687    1.043   1.5160   3.91     1.639     1.021
+ 0.80    23.70     8.45    2.785    0.987   1.3840   3.91     1.669     0.993
+ 0.95    28.60     8.35    3.404    1.170   1.3430   3.91     1.845     1.082
+
+  Paper Fig 3(a) at 75%: iid 16.9%, HAC 7.2% historical / 7.9% re-seeded.
+  Paper Table IV: rows 3.93-3.97x, G_info 1.75-1.94x, HAC/iid width 1.22-1.66x.
+  NOT numerically comparable: rho, subject count, session count, session
+  duration, pair correlation and the condition behind Fig 3(a) are all
+  unpublished. The claim under test is structural, not numerical.
+
+  Paper SEV note: G_info is a VARIANCE ratio. In standard-error terms the
+  same information gain is sqrt(G_info), i.e. 1.32x at G_info=1.75, not 1.75x.
