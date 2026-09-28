@@ -29,3 +29,7 @@ Thumbs.db
 
 # OS-level swap
 *.swp
+
+__pycache__/
+*.pyc
+

@@ -1,0 +1,10 @@
+﻿harness:  not-applicable
+reason:   No change was made to dustin-dev-35/autoresearch. This run is a statistics
+          re-analysis, not a training run, and its harness is a self-contained CPU-only
+          NumPy/SciPy re-implementation of the paper's Eq. 1, Eq. 2, Eq. 5 and Eq. 6.
+          train.py in this directory is committed here as the record of what was executed.
+template: none. gpu: none. cuda: none. python 3.12.10 / numpy 2.5.2 / scipy 1.18.0.
+note:     Commit 61f497c carried this run and was never pushed; the run was lost when the
+          run-scoped clone was deleted. It is re-committed here from the agent workspace
+          with contents unchanged except for a correction record appended to
+          experiments/leaderboard.jsonl, which is append-only by contract.

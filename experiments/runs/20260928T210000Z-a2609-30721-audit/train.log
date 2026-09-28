@@ -1,0 +1,42 @@
+AXV CPU re-analysis of arXiv 2609.30721v1
+run_id=20260928T210000Z-a2609-30721-audit  seeds=[0, 1, 2]  alpha=0.05  gpu=none  usd_spent=0.00
+paper targets: iid_type1@75=0.169  hac_type1@75=0.072  nominal=0.05
+
+ARM A  within-session dependence only (session_sd=0), 75% overlap, 2000 reps x 3 seeds
+ param  infl    type1_iid  type1_hac  type1_sc0  iid_sprd  hac_sprd
+ 0.00   1.00      0.0545     0.0603     0.0547     0.0160     0.0180
+ 0.34   2.03      0.0728     0.0650     0.0730     0.0080     0.0050
+ 0.50   3.00      0.0770     0.0625     0.0770     0.0090     0.0040
+ 0.70   5.67      0.1295     0.0837     0.1298     0.0080     0.0070
+ 0.80   9.00      0.1793     0.1162     0.1805     0.0220     0.0075
+ 0.85  12.33      0.2133     0.1443     0.2182     0.0175     0.0135
+ 0.90  19.00      0.2860     0.1997     0.2928     0.0185     0.0160
+
+ARM B  overlap axis, dependence coupled to overlap (session_sd=0), 2000 reps x 3 seeds
+ ovlp  n_rows  K_main  type1_iid  type1_hac  type1_sc0  iid_sprd  hac_sprd
+ 0.00    1188     2       0.0505     0.0613     0.0507    0.0105   0.0155
+ 0.50    2332     3       0.0832     0.0730     0.0848    0.0135   0.0195
+ 0.75    4620     6       0.1295     0.0837     0.1298    0.0080   0.0070
+
+ARM C  between-session heterogeneity only, no serial dependence, 2000 reps x 3 seeds
+ ovlp  session_sd  n_rows  type1_iid  type1_hac  type1_sc0
+ 0.00     0.10        1188      0.0518     0.0610     0.0520
+ 0.00     0.25        1188      0.0795     0.0918     0.0805
+ 0.00     0.40        1188      0.1195     0.1393     0.1240
+ 0.75     0.10        4620      0.0727     0.0808     0.0728
+ 0.75     0.25        4620      0.1712     0.1855     0.1735
+ 0.75     0.40        4620      0.2977     0.3210     0.3033
+
+ARM D  variance-equivalent information growth 0% -> 75%, 500 reps x 3 seeds
+ nominal_row_growth=3.889  K_main 0pct=2  K_main 75pct=6  fixed_K=6
+ seed  g_paper  g_fixed   var0_paper  var75_paper  var0_fixed  var75_fixed
+ 0   2.7581  2.3564    1.160e-04    4.206e-05    9.910e-05   4.206e-05
+ 1   2.7705  2.3557    1.167e-04    4.213e-05    9.925e-05   4.213e-05
+ 2   2.7899  2.3795    1.174e-04    4.208e-05    1.001e-04   4.208e-05
+
+ARM E  correlation shape at matched long-run variance, 75% overlap, 2000 reps x 3 seeds
+ shape  param  infl    type1_iid  type1_hac  type1_sc0  iid_sprd  hac_sprd
+ ar1     0.70   0.70      0.1295     0.0837     0.1298     0.0080     0.0070
+ block   5.67   5.67      0.2013     0.1288     0.2042     0.0160     0.0095
+
+elapsed_seconds=105.02

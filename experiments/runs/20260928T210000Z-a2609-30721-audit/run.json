@@ -1,0 +1,51 @@
+{
+  "run_id": "20260928T210000Z-a2609-30721-audit",
+  "agent": "Lens",
+  "issue": "AXV-8",
+  "arxiv": "2609.30721v1",
+  "kind": "cpu-only-reanalysis",
+  "decision": "verify",
+  "started_utc": "2026-09-28T21:00:00Z",
+  "status": "complete",
+  "cohort": "cpu-only-numpy-1",
+  "cohort_note": "NOT comparable to any gpu-pro6000mig24gb arm. This run is a statistics re-analysis and consumed no GPU. It cannot serve as the baseline for a training arm and no training arm can serve as its baseline.",
+  "compute": {
+    "device": "cpu",
+    "gpu": "none",
+    "usd_spent": 0.0,
+    "pod_created": false,
+    "pod_id": null,
+    "elapsed_seconds": 105.02,
+    "python": "3.12.10",
+    "numpy": "2.5.2",
+    "scipy": "1.18.0",
+    "template": null,
+    "cuda": null
+  },
+  "harness_commit": "not-applicable",
+  "harness_note": "No change to dustin-dev-35/autoresearch. train.py in this directory is a self-contained statistics harness written for this re-analysis and is committed here as the record.",
+  "diff_patch": "diff.patch",
+  "arms": {
+    "a_within_session_dependence": {"rho_grid": [0.0, 0.34, 0.5, 0.7, 0.8, 0.85, 0.9], "reps": 2000, "seeds": 3, "session_sd": 0.0, "overlap": 0.75},
+    "b_overlap_axis": {"overlaps": [0.0, 0.5, 0.75], "reps": 2000, "seeds": 3, "session_sd": 0.0, "dependence_coupled_to_overlap": true},
+    "c_between_session_aggregation": {"session_sd": [0.1, 0.25, 0.4], "overlaps": [0.0, 0.75], "reps": 2000, "seeds": 3, "serial_dependence": 0.0},
+    "d_information_growth": {"reps": 500, "seeds": 3, "bandwidth_variants": ["paper_k_main", "fixed_k"]},
+    "e_correlation_shape": {"shapes": ["ar1", "block_triangular"], "matched_long_run_variance": 5.667, "reps": 2000, "seeds": 3},
+    "f_separate": "arm_c uses M_REPS_F; all arms are recorded separately in metrics.json"
+  },
+  "total_conditions": 44,
+  "total_replicates": 143000,
+  "seeds": [0, 1, 2],
+  "minimum_seed_rule": "section 4 step 5 requires 3 seeds minimum; 3 used, spread reported per arm",
+  "one_variable_per_run": true,
+  "leaderboard_check": {
+    "checked_before_running": true,
+    "path": "experiments/leaderboard.jsonl in dustin-dev-35/axv",
+    "records_found": 0,
+    "action": "no-comparable-baseline-on-file",
+    "note": "Leaderboard was empty at read time, so no baseline was re-run. Because this is a cpu-only statistics run it is in its own comparability cohort regardless."
+  },
+  "warnings": [],
+  "verdict": "partially-confirmed",
+  "summary": "Direction of the paper's central claim reproduced. The IID Type-I error of 16.9 percent is reachable but only at one unpublished dependence parameter; at that same parameter the paper's HAC figure of 7.2 percent does not reproduce (measured 11.6 percent). The information-growth range 1.75 to 1.94 did not reproduce (measured 2.36 to 2.79). A stronger, AXV-specific finding: the paper's session-centred estimator assumes away between-session mean heterogeneity, and when that assumption is violated the estimator is worse than plain IID."
+}

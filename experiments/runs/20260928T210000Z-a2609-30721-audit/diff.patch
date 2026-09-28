@@ -1,0 +1,26 @@
+﻿--- a/experiments/runs/20260928T210000Z-a2609-30721-audit/train.py
++++ b/experiments/runs/20260928T210000Z-a2609-30721-audit/train.py
+@@ new file @@
++ Self-contained CPU statistics harness for the arXiv 2609.30721v1 re-analysis.
++ No change was made to dustin-dev-35/autoresearch. train.py is the harness of
++ record for this run and lives in the run directory, not in the harness fork,
++ because it re-implements the paper's Eq. 5 estimator rather than training a model.
++
++ Implemented from the paper:
++   Eq. 1  paired correctness contrast  D_ijt = C^A_ijt - C^B_ijt
++   Eq. 2  observed-record target       Delta_obs = (1/N) sum D_ijt
++   Eq. 5  session-centred Bartlett-HAC, c = N/(N-R), lag products never cross sessions
++   Eq. 6  K0 = ceil(L/S)-1, K_NW = floor(4*(Tbar/100)^(2/9)), K_main = max(K_NW, 2*K0)
++   Sec III-C  z_0.975 = 1.960, no finite-t degrees of freedom for fixed-record HAC
++
++ Added by AXV, not in the paper:
++   arm C  between-session heterogeneity sweep. The paper's estimand conditions on
++          the observed sessions, so this term is absent from its null DGP. Testing
++          it is the only way to learn what the estimator does when that assumption
++          fails, which is AXV's situation.
++   arm D  fixed-bandwidth variant of G_info. The paper's G_info divides a variance
++          estimated at K_main(0%) by one estimated at K_main(75%), and K_main is
++          overlap-dependent, so the ratio is not a same-estimator ratio.
++   arm E  correlation shape at matched long-run variance. A block/triangular
++          profile is what a window-average of a stationary process actually
++          produces; the paper does not state which profile it simulated.

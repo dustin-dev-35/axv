@@ -1,0 +1,13 @@
+﻿harness:  the authors' released artifact, used unmodified.
+          github.com/xinze8806-ship-it/sliding-window-confidence-audit v1.0.0
+          run_inference_revision.py  sha256 3135d24ac0fb60048fbc5edbb8d933a21bd2bd24e6b221db3214c4284e61fe0a
+          simulation.py               sha256 pinned in run.json
+          calibration_engine.py       sha256 pinned in run.json
+          real_data_v2_inference.py   sha256 pinned in run.json
+          The four files are vendored verbatim at inference_frozen_code/ in this directory.
+          The only change is the master value that selects the seed namespace; the three AXV
+          master seeds are 202609280001/2/3, disjoint from the paper's 202609080862.
+change:   none to dustin-dev-35/autoresearch and none to the upstream artifact. The upstream
+          fork is read-only reference for this run; AXV ran the authors' code, not the
+          autoresearch harness, so no experiment branch was cut.
+template: none. gpu: none. cuda: none. cost: \.00. No pod created, so none to terminate.

@@ -1,0 +1,33 @@
+{
+  "run_id": "axv-2609.30721-calibration-01",
+  "arxiv_id": "2609.30721",
+  "arxiv_version": "v1",
+  "claim_under_test": null,
+  "config_fingerprint": "d4454bd2210651bb05fbec42d60e1267132bf5d7557154523091008504e32a0c",
+  "data_fingerprint": "published tables in the arXiv HTML full text, transcribed into the script with table references in comments",
+  "comparability_key": "cpu-numpy-frozen-upstream-code-20260928",
+  "harness_commit": "unpushed; upstream artifact pinned by sha256 in run.json. Paperclip GitHub capability rejected in this run: every gh/git write returns \"Paperclip: GitHub capability_rejected; continuing without managed credentials.\" Anonymous read (git ls-remote) still works. Unblock owner: board/control-plane.",
+  "gpu_class": "none-cpu",
+  "cost_usd": 0.0,
+  "cost_note": "No RunPod pod created. Zero dollars against the $3.25 board budget.",
+  "seeds": [
+    202609280001,
+    202609280002,
+    202609280003
+  ],
+  "seed_note": "three master seeds, disjoint from the paper's 202609080862 and 202609080863",
+  "script_sha256": {
+    "axv_recompute_information_growth.py": "71009230c1c7d31621c340e71f4ae4b8466f152f6fd789b00092919e4af807e2",
+    "axv_verify_2609_30721.py": "2d6367fb582755f2e4f47ffcc51e5310dfea014ff3f4484ae4d5b733cb9d8d1f",
+    "emit_leaderboard.py": "62b6ee3baea1bbff597859dd88a77bbf3ffca1b2ee47d2ff86fc7e29ed1fb1bb",
+    "run_inference_revision.py": "3135d24ac0fb60048fbc5edbb8d933a21bd2bd24e6b221db3214c4284e61fe0a"
+  },
+  "decision": "keep",
+  "git_path": "experiments/runs/axv-2609.30721-calibration-01",
+  "pushed": false,
+  "push_blocked_reason": "Paperclip GitHub capability rejected in this run: every gh/git write returns \"Paperclip: GitHub capability_rejected; continuing without managed credentials.\" Anonymous read (git ls-remote) still works. Unblock owner: board/control-plane.",
+  "created_at_utc": "2026-09-28T20:20:58.235381+00:00",
+  "n_checks": null,
+  "n_failed": null,
+  "all_match": null
+}
