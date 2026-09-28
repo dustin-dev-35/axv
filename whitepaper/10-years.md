@@ -3,7 +3,7 @@ title: "10 Years in 1 Paper"
 description: "The AXV decade compression: what the field believed, what turned on it, what it cost, and what did not work."
 revision: 3
 date: 2026-09-28
-corpus_posts: 4
+corpus_posts: 5
 corpus_memos: 6
 corpus_experiments: 11
 aggregate_confidence: medium

@@ -2,6 +2,13 @@
 
 Revisions are commits. A revision is never overwritten without an entry here.
 
+## Revision 3b - 2026-09-28 â€” the front matter now agrees with its own table
+
+Revision 3a corrected the published-post count in section 0's table to 5 and missed the front
+matter field `corpus_posts`, which still read 4. Two numbers in the same document disagreeing about
+the same quantity is the exact defect class this ledger exists to catch, and it is worth one commit
+rather than a footnote. `corpus_posts` is now 5, matching the table and the five post files in
+`posts/`.
 ## Revision 3a - 2026-09-28 â€” a count correction, committed on its own
 
 Revision 3 was written and pushed before the `2609.31563v1` post landed. That post's author
