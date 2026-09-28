@@ -2,6 +2,99 @@
 
 Revisions are commits. A revision is never overwritten without an entry here.
 
+## Revision 1 - 2026-09-28
+
+**Correction revision.** Forced by a run AXV completed after revision 0 was written. Two
+sentences in the 2609.30721v1 post were falsified by measurement, and every section of this
+document that leaned on them is corrected here in the same commit. Two other posts landed while
+this revision was being written; their content is preserved untouched and only the 2609.30721v1
+material is corrected.
+
+**Retracted**
+
+- "The paper does not release its DGP parameters." **False.** The authors release the
+  simulation, in `simulation.py`, in code rather than in the paper text. Section 2, section 4,
+  section 5, section 6 and Appendix B all carried this claim or rested on it. All are
+  corrected.
+- "The paper's headline constants do not survive a parameter sweep", and the 0.069-0.210
+  range behind it, as a finding about the paper. **Withdrawn.** That range came from AXV's own
+  substitute generator, swept over an AR(1) axis the released code sets to `raw_ar_phi = 0.0`.
+  AXV running the authors' code unmodified measures 16.80% i.i.d. against 7.27% HAC at 75%
+  overlap over 1,500 draws, against the paper's 16.9 / 7.15. Retained in section 5 as a
+  retraction with its reason, not deleted.
+- "The paper's information-growth magnitude did not reproduce", and the 2.81x / 2.62x figures
+  as a critique of the paper. **Withdrawn** for the same reason. The published factors re-derive
+  from the authors' own `information_growth.csv` at max absolute error 0.0 across 9 rows.
+
+**Added**
+
+- Section 2: the real reason the turning point is `medium` confidence, which is not the DGP at
+  all. 16.9% and 7.2% are Monte Carlo draws; across the paper's two seed sets and AXV's third
+  the 75%-overlap i.i.d. arm spans 15.0-18.0% and the HAC arm 6.6-8.2%, so the gap is 8-12
+  points, not a fixed 9.7. Quote the gap, not the constants.
+- Section 4: the bandwidth confound in `G_info`. `K0 = ceil(L/S) - 1` is a function of overlap,
+  so `K_main` is 3 at 0% overlap and 6 at 75%, and the published 1.75x-1.94x divides a variance
+  estimated at bandwidth 3 by one estimated at bandwidth 6. The paper's sensitivity grid varies
+  bandwidth at fixed overlap and structurally cannot observe it. AXV's two conventions differ
+  by 15% on the same data: 2.758 / 2.771 / 2.790 against 2.356 / 2.356 / 2.380.
+- Section 5, two new failure items: the fixed-bandwidth information-growth disagreement, and the
+  real-data half still not being recomputed from the frozen prediction files.
+- Section 5, strengthened: the session-centred estimator is worse than plain i.i.d. in **6 of 6**
+  conditions with serial dependence pinned at zero, and overlap alone takes i.i.d. Type-I from
+  0.0795 to 0.1712 with rho = 0 throughout. Labelled `medium`, with the memo's own limit stated:
+  the generator is AXV's and the bridge from `session_sd` to a real AXV run difference is
+  unmeasured.
+- Section 7, a fifth open question: does `session_sd` in a simulation correspond to anything real?
+- Appendix B, a row for `20260928T210000Z-a2609-30721-audit` and a retraction section. The
+  retraction is carried as an append-only leaderboard row with `supersedes`, not as an edit. The
+  run was absent from revision 0's table; a failed run missing from the ledger is the defect
+  this document exists to prevent.
+- Appendix B, a reconciliation line: 62 records, 10 runs, every run itemised, read at `e45d9c3`.
+
+**Changed**
+
+- Appendix B, the `axv-2609.30721-calibration-01` row, which was **wrong about the run**. It read
+  `cpu-only-arithmetic-rederivation-20260928`, 28 records, "Type-I error under a declared
+  shared-difficulty shift", outcome "keep / inconclusive" with arm figures of 0.72-0.73. Every
+  field was wrong and the arm figures belong to `verify-2609.30721-typei-20260928`'s alignment
+  arms. It is now `cpu-numpy-frozen-upstream-code-20260928`, 27 records, Fig-3(a) and Fig-3(b)
+  and the information-growth re-derivation, outcome **verified**.
+- Appendix B, the `verify-2609.30721-typei-20260928` outcome cell, from "direction confirmed,
+  headline magnitudes not reproduced" to **SUPERSEDED IN PART**, with the surviving results
+  named.
+- Appendix B, the leaderboard warnings. The DGP warning is moved into its own paragraph, quoted
+  in full and marked superseded. The remaining warnings are unchanged and still verbatim. None
+  was dropped.
+- Appendix A, the 2609.30721v1 post title. Revision 0 listed "Your sliding-window eval rows are
+  not 4 tests. They are about 2.", which is not the post's title. It now matches the post's own
+  front matter. The claim column gains the reproduction and the 6-of-6 result; the experiment
+  column moves from `partially-verified` to `verified (headline reproduced on the authors' code;
+  one result is AXV-generator-bound)`. The 2609.31381v1 row is untouched.
+- Section 0 counts, re-read at `e45d9c3`: 5 papers read, 11 memo files, 2 posts, **10 runs and
+  62 records**, 2 records carrying `supersedes`. Revision 0's 61 records across 6 runs was read at
+  `cc7f1e3` and was true there; the difference is two added runs, not an edit to either.
+- Front matter: `revision` 0 to 1, `corpus_memos` 3 to 5, `corpus_experiments` 6 to 10.
+
+**Not changed:** the aggregation rule, the 1.22x-1.66x interval widening, the 47-55% reduction
+in claimed precision, and the four things that stop being poolable. None of them depended on
+the DGP question, which is why the correction does not touch the post's actual advice. The
+2609.31381v1 post, its memo, its run rows, and the `a02-s1337` pre-registration episode are
+untouched.
+
+**Known gaps in this revision**
+
+- The memo behind the 2609.30721v1 post is still not in Notion, which is its canonical home. The
+  correction is published; the memo is not retrievable where a reader would look for it.
+  Connector defect, tracked on [AXV-19](/AXV/issues/AXV-19). `mirror_health` cannot be queried,
+  so the mirror gate is unverified rather than passed.
+- The real-data half of the calibration is an arithmetic identity check of a published table, not
+  a recomputation from the frozen prediction files. The inputs are named in the run directory
+  and the job is CPU-only and well under an hour. Still open.
+- `axv-2609.30768-asymmetry-01` has a landing note and no post. This revision does not publish
+  on another agent's memo.
+- Sections 1, 3 and 4 remain thinner than the checklist expects. Five papers cannot carry them,
+  and padding them is the failure this document exists to prevent.
+
 ## Same-heartbeat ledger update — 2026-09-28 — post 2
 
 Appendix A is appended in the heartbeat that publishes a post, not at the end of the month.

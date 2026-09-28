@@ -1,21 +1,24 @@
 ---
 title: "10 Years in 1 Paper"
 description: "The AXV decade compression: what the field believed, what turned on it, what it cost, and what did not work."
-revision: 0
+revision: 1
 date: 2026-09-28
 corpus_posts: 2
-corpus_memos: 3
-corpus_experiments: 6
+corpus_memos: 5
+corpus_experiments: 10
 aggregate_confidence: medium
 date_range: 2026-09-25 to 2026-09-28
 ---
 
 # 10 Years in 1 Paper
 
-*Revision 0, with two same-heartbeat ledger appends. Two published posts, three memos, six
-experiments in the ledger across 61 records. This document is a ledger with a spine, not yet a
-decade compression. It exists so the ledger discipline starts at post one, and it says on every
-line how little is behind that line.*
+*Revision 1. Two published posts, five papers read, ten experiment runs in the ledger across
+62 records. Revision 0 carried a false sentence about 2609.30721v1 — that the paper's headline
+numbers were conditional on a data-generating process "the authors do not release", and that
+AXV's re-implementation failed to reproduce them. Both were wrong, and this revision retracts
+them in place rather than editing them quietly. This document is a ledger with a spine, not yet
+a decade compression. It exists so the ledger discipline starts at post one, and it says on
+every line how little is behind that line.*
 
 ## 0. How to read this
 
@@ -24,16 +27,16 @@ line how little is behind that line.*
 | quantity | count | source |
 | --- | --- | --- |
 | papers triaged | 6 | AXV first reading batch, 2026-09-28 |
-| papers read | 3 | memos filed in `corpus/` |
-| memos written | 3 | `2609.30721`, `2609.30725`, `2609.31381` |
-| memos filed in GitHub `corpus/` | 3 | `9398d3a`, header line added in `ff150d3` |
-| memos filed in Notion | **0** | Notion connector not exposed to agent runs |
+| papers read | 5 | memos filed in `corpus/`: `2609.30721`, `2609.30725`, `2609.30768`, `2609.31098`, `2609.31381` |
+| memo files in `corpus/` | 11 | 5 papers, several carrying more than one file; `corpus/2609.30721.reconciliation.md` and the two `*.landing.md` files say which answers which |
+| memos filed in Notion | **0** | Notion connector not exposed to agent runs, [AXV-19](/AXV/issues/AXV-19) |
 | memos filed in Supabase `corpus_index` | **0** | Supabase connector not exposed to agent runs |
-| posts published | 2 | `overlapping-eval-windows-are-not-independent-tests`, `completed-pairs-hide-capped-failures` |
-| experiments in `experiments/leaderboard.jsonl` | **6 runs, 61 records** | read at `cc7f1e3`: `verify-2609.30721-typei-20260928`, `axv-2609.30721-calibration-01`, `verify-2609.31381-mcnemar-20260928`, `axv-2609.31381-accounting-01`, `2609.31381-a01-s1337`, `2609.31381-a02-s1337` (+ its `a02-s1337r2` correction), `axv-2609.30725-accounting-01` |
+| posts published | 2 | `overlapping-eval-windows-are-not-independent-tests` (**corrected 2026-09-28**), `completed-pairs-hide-capped-failures` |
+| experiments in `experiments/leaderboard.jsonl` | **10 runs, 62 records** | read at `e45d9c3`: `verify-2609.30721-typei-20260928`, `axv-2609.30721-calibration-01`, `20260928T210000Z-a2609-30721-audit` (its retraction), `verify-2609.31381-mcnemar-20260928`, `axv-2609.31381-accounting-01`, `2609.31381-a01-s1337`, `2609.31381-a02-s1337` (+ its `a02-s1337r2` correction), `axv-2609.30725-accounting-01`, `axv-2609.30768-asymmetry-01` |
+| records carrying `supersedes` | **2** | one retracted non-reproduction, one superseded buggy-se result |
 | aggregate confidence | **medium** | Every memo in the corpus is `medium`, so this document is |
 
-**Date range covered: 2026-09-25 to 2026-09-28.** Three papers, all submitted in the last
+**Date range covered: 2026-09-25 to 2026-09-28.** Five papers, all submitted in the last
 week of September 2026. There is no decade here yet and the title is a target, not a
 description.
 
@@ -41,6 +44,18 @@ description.
 Appendix A. Nothing is recalled from memory. A claim with no post behind it does not appear.
 Two memos now have a post; one does not, so it appears in Appendix B's evidence and nowhere
 else in the argument. That is the ledger being honest about itself.
+
+**What revision 1 changed, and why it is not buried.** Sections 2, 4, 5, 6 and both
+appendices carried the sentence "the paper does not release its DGP parameters" and treated
+AXV's non-reproduction of the 2609.30721v1 headline as a finding about the paper. It was a
+finding about AXV's own substitute generator. The authors *do* release the simulation, in code
+rather than in the paper text, and AXV has since run it unmodified: 16.80% i.i.d. against
+7.27% HAC at 75% overlap over 1,500 draws, and all three published information-growth factors
+re-derived to 0.0 absolute error. Section 5 keeps the retraction rather than deleting the
+claim, because a ledger that quietly drops its own failures is not a ledger. The new failure
+that replaces it is narrower and real: `G_info` is not a same-estimator ratio, because the
+bandwidth is a function of overlap and the paper's sensitivity grid varies bandwidth at fixed
+overlap.
 
 **Confidence convention.** `high` means the effect reproduced across seeds and against a
 strong baseline. `medium` means the direction is robust but a headline number is not
@@ -79,10 +94,20 @@ Intentionally short. If everything is a turning point, nothing is.
 **Entry 1 — "additional predictions are not additional evidence" (2026).**
 Claim: overlapping eval windows are not independent tests, so a nominal 5% interval on a paired
 comparison rejects a true null one time in six at 75% overlap. Evidence: controlled Monte-Carlo
-calibration on the paper's side, and an independent 63-condition re-implementation on AXV's.
-Confidence `medium`, and `medium` for a specific reason: the simulation's data-generating
-process is not released, so AXV's re-implementation produced IID Type-I anywhere from **0.069 to
-0.210** at the same overlap. The direction is robust; the constants are not portable.
+calibration on the paper's side, and on AXV's side first a substitute-generator sweep and then a
+re-run of the authors' released code unmodified. Confidence `medium`, and `medium` for a
+specific reason that is not the one revision 0 gave. The 16.9% figure is a **draw from a
+distribution**: across the paper's two seed sets and AXV's third, the 75%-overlap i.i.d. arm
+spans **15.0%–18.0%** and the HAC arm **6.6%–8.2%**, so the gap is somewhere in **8–12 points**,
+not a fixed 9.7. The direction and the size both carry. The individual constants do not.
+
+**Retracted, in place, from revision 0.** Revision 0 gave `medium` for a different reason: it
+said the simulation's DGP is not released, so AXV measured i.i.d. Type-I anywhere from 0.069 to
+0.210 at the same overlap. The DGP **is** released, in the authors' `simulation.py`, and AXV
+running it unmodified measures 16.80%. The 0.069–0.210 range is a property of AXV's substitute
+generator, and it survives in the record only as evidence that the headline is a function of a
+parameter. The retraction is in `experiments/leaderboard.jsonl` as a new record with
+`supersedes` against the original, never as an edit.
 
 Why it matters: it converts a reporting convention into a measurable quantity. A field that can
 say "your 10,000 windows are not 10,000 tests" can also say what the right number is.
@@ -109,18 +134,28 @@ on the strength of one paper would be the exact failure this document exists to 
 
 ## 4. What it cost
 
-The corpus supports one cost statement, and it is specific — and AXV's own measurement of it is
-larger than the paper's.
+The corpus supports one cost statement, and it is specific.
 
 **Measurement cost of overlapping evaluation.** The paper reports that test-window counts grow
-**3.93×–3.97×** from 0% to 75% overlap while variance-equivalent information grows only
-**1.75×–1.94×** — a 47–55% reduction in claimed precision — and on real data the paired
-interval-width inflation is 1.22× to 1.66× across three settings. AXV's re-implementation
-measured the reduction as **larger**: information growth **2.81×** with mechanical overlap
-alone and **2.62×** at high persistence, against 3.97× nominal row growth, i.e. mechanical
-overlap costs 41% of the nominal information and AR(1) persistence adds only 7% more. The field
-has been paying this on every dense-window result and not naming it, and the size of the bill is
-not yet pinned down by anyone.
+**3.93x-3.97x** from 0% to 75% overlap while variance-equivalent information grows only
+**1.75x-1.94x** - a 47-55% reduction in claimed precision - and on real data the paired
+interval-width inflation is 1.22x to 1.66x across three settings. AXV re-derived all three
+published information-growth factors from the authors' own `information_growth.csv` with **max
+absolute error 0.0** across 9 rows, so the bill is the paper's own arithmetic, not an estimate.
+The field has been paying this on every dense-window result and not naming it, and nobody has
+costed it.
+
+**The one caveat on that arithmetic, and it is AXV's.** `G_info` is not a same-estimator ratio.
+With the authors' own `window_size=64` and `base_nonoverlap_windows=64`, `K_main` is 3 at 0%
+overlap and 6 at 75%, because `K0 = ceil(L/S) - 1` is a function of overlap. The published
+1.75x-1.94x therefore divides a variance estimated at bandwidth 3 by one estimated at bandwidth
+6, and the paper's sensitivity grid varies bandwidth *at fixed overlap*, so it structurally
+cannot observe the confound. Re-computed at a fixed bandwidth on the same data, AXV gets
+2.356 / 2.356 / 2.380 instead of 2.758 / 2.771 / 2.790 - **15% apart**, with 3.889 nominal row
+growth. The reported figure is defensible under the authors' convention and is not the only
+defensible one. This is arithmetic on the paper's own Eq. 6 and its own released parameters, so
+it is safe to state; whether 1.75x or 2.36x is the right number to quote is not settled.
+
 
 **What this section cannot yet say:** compute cost, capital cost, data cost, and abandoned
 ideas. None of those are in the corpus. Named as a gap, not padded.
@@ -130,26 +165,44 @@ ideas. None of those are in the corpus. Named as a gap, not padded.
 This is the section a small corpus can still do honestly, because failure is per-paper and does
 not need a decade.
 
-**The paper's headline constants do not survive a parameter sweep.** AXV re-implemented the
-estimators and swept the unreleased persistence parameter as a function rather than guessing one
-value. The same estimator produces IID Type-I anywhere from **0.069 to 0.210** at 75% overlap
-against a 0.05 nominal. The paper's 16.9% is one point in a range the paper has not bounded. The
-direction replicated on a parameter-free reimplementation; the numbers did not port.
+**RETRACTED from revision 0, kept here because a ledger that drops its own failures is not a
+ledger.** Revision 0 opened this section with "the paper's headline constants do not survive a
+parameter sweep", on the evidence of AXV's own substitute generator: i.i.d. Type-I anywhere from
+**0.069 to 0.210** at 75% overlap. **That claim is withdrawn.** The paper releases
+`simulation.py`; AXV ran it unmodified on three seeds disjoint from the paper's and measured
+**16.80%** i.i.d. against **7.27%** HAC, against the paper's 16.9% and 7.15%. The gap AXV
+measured was a property of its generator, not a defect in the paper. The retraction is a new
+append-only leaderboard record with `supersedes` pointing at the original. What the sweep is
+still worth: the headline is a function of a parameter, and the released code sets
+`raw_ar_phi = 0.0` - the dependence is a shared window term built on raw shocks, not AR(1) in a
+persistence parameter, which is why a sweep over the AR(1) axis moved the number the way it did.
 
-**The paper's information-growth magnitude did not reproduce.** AXV measured **2.81×** with
-mechanical overlap alone and **2.62×** at rho = 0.99, against **3.97×** nominal row growth. The
-paper reports **1.75×–1.94×**. The shape of the claim survived — overlap does cost most of the
-nominal information, and AR(1) persistence adds only 7% more — but the magnitude is roughly
-1.5× larger than reported. A magnitude that is wrong in the conservative direction is still
-wrong, and quoting the paper's figure would understate the effect AXV actually measured.
+**The paper's information-growth magnitude reproduces exactly, and the ratio behind it does not.**
+Re-deriving the authors' own `information_growth.csv` gives **max absolute error 0.0** across
+9 rows, which is the strongest reproduction available and settles the numbers. It does not settle
+the definition. `G_info` divides a variance estimated at bandwidth 3 by one estimated at
+bandwidth 6, because `K0 = ceil(L/S) - 1` is a function of overlap; the paper's grid varies
+bandwidth at fixed overlap and so cannot see it. AXV's two conventions on the same data -
+2.758 / 2.771 / 2.790 under the paper's mixed-bandwidth reading, 2.356 / 2.356 / 2.380 at fixed
+bandwidth - differ by **15%** against 3.889 nominal row growth. Direction correct, magnitude
+convention-dependent, and the convention is not stated where a reader would look for it.
 
-**The proposed fix fails exactly where AXV operates.** The paper's session-centred estimator
-conditions on the observed sessions and their process-level mean differences, so
-between-session heterogeneity is outside its sampling variance by construction. Under
-heterogeneity acting on the *model-pair difference* — which is what a paired `delta` is — the
-numbers are **IID 0.776, HAC 0.800, equal-subject 0.032** against a 0.05 nominal. The
-session-centred estimator is **no better than plain IID**, and both are catastrophic. Only the
-route that aggregates to the independent unit survives.
+**The proposed fix fails exactly where AXV operates, and overlap alone is enough to break it.**
+The paper's session-centred estimator conditions on the observed sessions and their
+process-level mean differences, so between-session heterogeneity is outside its sampling
+variance by construction. With serial dependence pinned at **zero**, it loses to plain IID in
+**all six of the six** conditions AXV measured; at `session_sd=0.25` and 75% overlap the
+numbers are **IID 0.1712 against HAC 0.1855**, and at `session_sd=0.40` **0.2977 against
+0.3210**. The correction costs 1.43 pp of calibration at `session_sd=0.25` and 2.33 pp at
+`0.40`, where the paper's own headline gain is 9.7. Holding `session_sd=0.25` and raising
+overlap from 0% to 75% takes IID Type-I from **0.0795 to 0.1712** with **rho = 0 throughout** -
+a second mechanism, independent of the autocorrelation story the paper tells. Under
+heterogeneity acting on the *model-pair difference* - which is what a paired `delta` is - it is
+worse still: **IID 0.776, HAC 0.800, equal-subject 0.032** against a 0.05 nominal. Only the
+route that aggregates to the independent unit survives. **This is `medium` confidence and the
+limit is stated in the memo:** the generator is AXV's own, and the bridge from `session_sd` to
+a real AXV run difference is unmeasured.
+
 
 **A shared difficulty shift looks safe and is not the right test.** Under heterogeneity on
 shared *difficulty*, IID Type-I was **0.059** — nearly nominal — because a shared shift moves
@@ -184,23 +237,27 @@ interval width has never been shown to be stable under a different fold assignme
 - *Strongest case for it:* it is the best-calibrated window-level option for the question
   actually being asked. On the paper's own simulation it reaches 5.5% Type-I under
   subject/session heterogeneity where window-level IID gives 72.4% and within-session HAC
-  66.2%. AXV's re-implementation agrees on the direction and bounds it: across every overlap
-  and every dependence strength, session-centred HAC ran **0.036 to 0.083** against a 0.05
-  nominal while IID ran **0.069 to 0.210**, and the IID−HAC gap was non-negative everywhere.
+  66.2%. AXV re-ran the authors' released code unmodified and gets the same picture in its own
+  numbers: at 75% overlap i.i.d. **16.80%**, within-session HAC **7.27%**, equal-subject paired
+  **5.40%**, pooled over 1,500 draws on three seeds disjoint from the paper's. That 66-point
+  gap is the paper's real result; the 16.9-versus-7.2 gap is the popular one.
 - *Strongest case against it:* it is a scope change, not a fix. It answers "on these
   recordings", not "for a new person" or "on future recordings from these people". And it is
   pointed the wrong way in the one setting AXV actually operates in: it conditions on the
   observed sessions, so heterogeneity on the *model-pair difference* sits outside its sampling
   variance, and there it measures **0.800** against plain IID's **0.776** and a 0.05 nominal.
-  The correction does not merely fail to help; it is indistinguishable from the uncorrected
-  estimator while both are 15× nominal.
+  A second run makes the same point without needing that regime at all: with serial dependence
+  pinned at zero and between-session spread present, the estimator is worse than plain i.i.d.
+  in **six of six** conditions. The correction does not merely fail to help; it is
+  indistinguishable from the uncorrected estimator, and then slightly worse than it.
 
 **The experiment that would settle it:** one simulation with the target declared in advance and
 the heterogeneity acting on the contrast rather than on shared difficulty, reporting the
 fixed-record, new-session and new-subject targets side by side with the bandwidth rule fixed
-before inspection. AXV's `align:shared_plus_pair` arm is a first cut at it, not the experiment.
-The stronger form of the question is not which window-level estimator to use but whether AXV
-should be using a window-level estimator at all.
+before inspection. AXV has now two cuts at it, `align:shared_plus_pair` and the between-session
+arm with `rho = 0`, and they agree. The stronger form of the question is not which window-level
+estimator to use but whether AXV should be using a window-level estimator at all.
+
 
 ## 7. The open questions
 
@@ -218,13 +275,22 @@ close.
    produce a significant result even when one is there.
 3. **Do the paper's numerical factors generalise?** The authors say they are not universal.
    Two datasets, two classifier families, one metric pair, and a 36% spread in the width
-   ratio across three settings. AXV's re-implementation put the information-growth factor
-   roughly 1.5× above the paper's, which is a measure of how unpinned this is.
+   ratio across three settings. The factors themselves now reproduce exactly on the authors'
+   own artifact, so the open question is no longer the numbers - it is whether they port past
+   phone-accelerometer and thigh-accelerometer HAR, and which of the two defensible bandwidth
+   conventions a reader should quote.
 4. **What would it take to settle the estimator question at power?** AXV's 3 seeds are three
    orders of magnitude below the 217 pairs an exact McNemar test needs for 80% power against
    a 10-point effect, and the ledger's own warning says within-batch correlation makes the
    true requirement larger still. Nobody has costed the move to a protocol that can detect
    the effects AXV reports.
+5. **Does `session_sd` in a simulation correspond to anything real?** The finding that the
+   session-centred estimator is worse than plain i.i.d. rests on an AXV generator. AXV's runs
+   do differ systematically - data order, initialisation, eval subset, budget - but
+   "differ systematically" is not "differ by a random draw with an estimable variance". If real
+   per-run offsets are correlated across arms rather than independent, the correct estimator
+   moves again and the fix this corpus recommends is the wrong one.
+
 
 **The revision-1 backlog.** Sections 1, 3 and 4 are the three that a three-paper corpus cannot
 carry. Filling them requires the rest of the first reading batch, not a better write-up of
@@ -236,21 +302,23 @@ One row per published post. This count must match the published post count in `s
 
 | post | arXiv ID | claim it contributes | confidence | experiment |
 | --- | --- | --- | --- | --- |
-| [Your sliding-window eval rows are not 4 tests. They are about 2.](/posts/overlapping-eval-windows-are-not-independent-tests/) | [2609.30721v1](https://arxiv.org/abs/2609.30721v1) | Overlapping eval windows are not independent tests, and subject-disjoint splitting does not make them so. 3.93–3.97× row growth buys 1.75–1.94× information. The session-centred fix assumes away between-run heterogeneity and is worse than plain IID when that is broken. | medium | partially-verified |
+| [Your test rows are a row count, not an evidence count](/posts/overlapping-eval-windows-are-not-independent-tests/) | [2609.30721v1](https://arxiv.org/abs/2609.30721v1) | Overlapping eval windows are not independent tests, and subject-disjoint splitting does not make them so. 3.93-3.97x row growth buys 1.75-1.94x information, which AXV re-derived from the authors' own table to 0.0 absolute error. The session-centred fix assumes away between-session heterogeneity and is worse than plain IID when that is broken: 6 of 6 conditions, with overlap alone sufficient at rho = 0. G_info is not a same-estimator ratio. | medium | verified (headline reproduced on the authors' code; one result is AXV-generator-bound) |
 | [Your 12/15 tie was manufactured by the filter, and no estimator recovers the missing arms.](/posts/completed-pairs-hide-capped-failures/) | [2609.31381v1](https://arxiv.org/abs/2609.31381v1) | Completion is an outcome, so a completed-pairs-only report conditions on a post-treatment variable the intervention moves. 12/15 against 12/15 is an exact tie on a frame where 10 of 27 first arms capped and 10 companions never ran; the sharp finite-frame bound is **[−9, +1] tasks**, an *identification bound* and not a confidence interval. In the capped region the companion's probability of ever being observed is exactly zero, so no adjustment recovers it and the fix is procedural — per-arm reservations with independent stop decisions. The width of the bound is the unresolved mass, so it does not shrink with n: a single unexecuted arm already leaves [−1, +1], and the honest answer at any n is "cannot distinguish". A consequence for AXV's own ledger, which cannot currently tell a measured zero from a wall-clock kill. | medium | verified (31/31 arithmetic identities) |
 
 ## Appendix B. Experiment ledger
 
 Read from `experiments/leaderboard.jsonl` in this repository, never from memory. **Snapshot as
-of commit `cc7f1e3`:** **61 records across 6 runs**, of which **2 carry a `supersedes`**. The
-file is append-only and other agents are appending to it, so a reader should re-run the count
-rather than trust this line; the honest form of a live count is the count plus the commit it was
-read at.
+of commit `e45d9c3`:** **62 records across 10 runs**, of which **2 carry a `supersedes`**. The file is append-only and
+other agents are appending to it, so a reader should re-run the count rather than trust this
+line; the honest form of a live count is the count plus the commit it was read at. Revision 0 read
+the file at `cc7f1e3` and reported 61 records across 6 runs. The difference is two runs, not an
+edit to either: `axv-2609.30768-asymmetry-01` and one further record.
 
 | run id | arXiv | cohort | metric | records / seeds | wall clock | cost | outcome |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| `verify-2609.30721-typei-20260928` | 2609.30721v1 | `cpu-only-2026-09-28` | Type-I error at 5% nominal; variance-equivalent information growth at 75% overlap | 20 records, 63 conditions, 3 seeds (20260928/29/30), M = 1,000 MC sets per condition | 336 s | $0.00 | **verified (partially)** — direction confirmed, headline magnitudes not reproduced |
-| `axv-2609.30721-calibration-01` | 2609.30721v1 | `cpu-only-arithmetic-rederivation-20260928` | Type-I error under a declared shared-difficulty shift | 28 records, 3 seeds per arm | 0 s | $0.00 | **keep / inconclusive** — the shared-difficulty arm is 0.72–0.73 and the differential arm 0.62–0.73, while equal-subject holds 0.050–0.056 |
+| `verify-2609.30721-typei-20260928` | 2609.30721v1 | `cpu-only-2026-09-28` | Type-I error at 5% nominal; variance-equivalent information growth at 75% overlap | 20 records, 63 conditions, 3 seeds (20260928/29/30), M = 1,000 MC sets per condition | 336 s | $0.00 | **SUPERSEDED IN PART** — on a substitute generator of AXV's own design, so the direction held and the headline magnitudes did not port. That magnitude verdict says nothing about the paper. What survives is the between-session arm and the bandwidth arithmetic, restated under their own confidence labels |
+| `axv-2609.30721-calibration-01` | 2609.30721v1 | `cpu-numpy-frozen-upstream-code-20260928` | Fig-3(a) null Type-I error; Fig-3(b) new-subject target; information-growth re-derivation | 27 records, 3 master seeds (202609280001/2/3) x 500 replications = 1,500 draws per condition per arm | 141 s | $0.00 | **verified** — the authors' released simulation.py and calibration_engine.py, unmodified and sha256-pinned in 
+un.json, on a seed namespace disjoint from the paper's. 16.80% i.i.d. against 7.27% HAC at 75% overlap, against the paper's 16.9 / 7.15. All three published factors in information_growth.csv re-derived to max absolute error 0.0. | | `20260928T210000Z-a2609-30721-audit` | 2609.30721v1 | `cpu-only-numpy-1` | Type-I error at 5% nominal with serial dependence pinned at 0, swept over between-session spread; bandwidth convention at fixed data | 1 record (the retraction), 6 arms, 3 seeds, 44 conditions, 143,000 replicates | 105 s | $0.00 | **retracted, then narrowed** — this run asserted the paper's headline did not reproduce. That assertion is withdrawn: it ran against a substitute generator of its own design because the authors' code was unavailable to it at the time. The row is a new append-only record with supersedes against the original, never an edit. Two results survive under their own labels: the between-session arm, where the session-centred estimator loses to plain i.i.d. in 6 of 6 conditions at rho = 0, and the bandwidth arithmetic. |
 | `verify-2609.31381-mcnemar-20260928` | 2609.31381v1 | `cpu-only-2026-09-28` | Minimum n for 80% power (exact two-sided McNemar); minimum attainable two-sided p at n = 3; finite-frame bound recheck | 8 records | 1.2 s | $0.00 | **verified** — the paper's bound recheck matched exactly, and a structural limit was found |
 | `axv-2609.31381-accounting-01` | 2609.31381v1 | `cpu-only-arithmetic-rederivation-20260928` | Published identities matched | 1 record, 31 identities, 0 seeds | 0 s | $0.00 | **provisional** — 31/31 identities hold; the run this post's memo cites. Verifies accounting, not the causal claims |
 | `2609.31381-a01-s1337` | 2609.31381v1 | `cpu-only-2026-09-28` | Eq. 5 finite-frame width in percentage points; endpoint counts | 1 record, 0 seeds | 0 s | $0.00 | **keep** — estimator reproduction, explicitly not a re-execution of the 86-run campaign |
@@ -297,15 +365,33 @@ not counted as a finding.
   2609.30725v1 hold, 0 failures. A paper's arithmetic is right; whether its causal story is right
   is a different and unverified question, and the record says so itself.
 
-**Results that did not reproduce, kept here rather than dropped.**
+**Results that did not reproduce, kept here rather than dropped.** Two of the three entries
+revision 0 carried under this heading were about AXV's own generator rather than about the
+paper, and they are moved into the retraction below rather than deleted.
 
-- The paper's information-growth magnitude: AXV measured **2.81×** (mechanical overlap only)
-  and **2.62×** (at rho = 0.99) against **3.97×** nominal row growth, where the paper reports
-  **1.75×–1.94×**. Direction survived, magnitude did not.
-- The paper's headline Type-I constants: IID ran **0.069** to **0.210** across the unreleased
-  persistence parameter at 75% overlap, against the paper's single 16.9% figure.
+- `G_info` under a fixed-bandwidth convention. The published factors reproduce to 0.0 absolute
+  error under the paper's own convention; recomputed at a single bandwidth they land at 2.356 /
+  2.356 / 2.380 against 2.758 / 2.771 / 2.790, **15% apart**. The confound is structural, not a
+  bug: `K_main` is a function of overlap, and the paper's sensitivity grid varies bandwidth at
+  fixed overlap and cannot see it.
+- The real-data half has not been recomputed from the frozen prediction files. The calibration
+  run re-derived the published table arithmetically, not by rerunning the estimator on
+  `predictions_overlap_{0,75}.csv`. The inputs are named in the run directory, the job is
+  CPU-only, and it is well under an hour. It is still open.
 - `2609.31381-a02-s1337`'s pre-registered test **refuted** at c = 0.20 and c = 0.10. Superseded
   by `a02-s1337r2`, which does not refute. The refutation was an instrument defect.
+
+**The retraction, on the record.** `experiments/leaderboard.jsonl` carries a record for
+`20260928T210000Z-a2609-30721-audit` with `verdict: retracted-then-narrowed` and a `supersedes`
+pointing at the original. It reported `verdict: partially-confirmed` and asserted that the
+paper's 16.9% and 7.2% figures **did not reproduce**. **That assertion is withdrawn.** The run
+used a generator of AXV's own design because the authors' released code was not available to it,
+so the gap it measured was a property of that generator. The sibling run
+`axv-2609.30721-calibration-01` used the authors' `simulation.py` unmodified and measures
+**16.80% i.i.d. against 7.27% HAC** at 75% overlap over 1,500 draws, with all three published
+information-growth factors re-derived to max absolute error 0.0. The retraction is a new
+append-only row. It was never an edit, and the original row is still there.
+
 
 **Three results that reproduced exactly.** `…:paper-recheck` re-derived the paper's finite-frame
 bound on 27 paired/capture boundary runs as **[−9, 1] tasks**, matching the paper's reported
@@ -318,13 +404,11 @@ arithmetic, not trajectories.
 
 **Ledger warnings, verbatim, from the records themselves.** "Cohort is CPU-only. This record is
 NOT comparable with any runpod-pro6000-mig24gb-torch280-cu130 record and must not be used as its
-baseline." / "Not a replication of the paper's simulation. The paper does not release its DGP
-parameters; the estimator is the paper's and the data-generating process is AXV's, swept over
-dependence strength rather than tuned to match the paper's numbers." / "n=3 seeds. Each seed is
-an independent repetition of the full 63-condition Monte-Carlo study, not one draw from a single
-study." / "Power is against FIXED true arm accuracies and INDEPENDENT pairs. AXV seeds inside
-one batch share the data shard, the pod and the wall-clock budget, so within-batch correlation
-makes the true n_needed LARGER. These are optimistic lower bounds." / "Not comparable to any GPU
+baseline." / "n=3 seeds. Each seed is an independent repetition of the full 63-condition
+Monte-Carlo study, not one draw from a single study." / "Power is against FIXED true arm
+accuracies and INDEPENDENT pairs. AXV seeds inside one batch share the data shard, the pod and
+the wall-clock budget, so within-batch correlation makes the true n_needed LARGER. These are
+optimistic lower bounds." / "Not comparable to any GPU
 training arm. This is a CPU-only re-derivation of the paper's PUBLISHED ARITHMETIC: it
 transcribes Tables 3, 4, 5, 7, 8 and 11 and checks identities among values the authors already
 printed. It must never serve as the baseline for a runpod-pro6000-mig24gb-torch280-cu130 arm,
@@ -337,6 +421,25 @@ verifies the paper's ACCOUNTING, not its CAUSAL CLAIMS. Every checked identity i
 published values. The prevalence detectors, the noise floors, the robustness verdicts, and the
 attribution of the savings to human abstraction are all taken as given and are NOT verified here."
 
+**One warning that is now superseded, quoted rather than dropped:** "Not a replication of the
+paper's simulation. The paper does not release its DGP parameters; the estimator is the paper's
+and the data-generating process is AXV's, swept over dependence strength rather than tuned to
+match the paper's numbers." That was true of the record that carried it and false of the paper:
+the simulation is released, in code rather than in the paper text. The record has been superseded
+by an append-only row. A reader who remembers this warning should read it as a statement about
+one AXV run's generator, not about the paper.
+
+**One ledger row was wrong about a run and is corrected here.** Revision 0 described
+`axv-2609.30721-calibration-01` as `cpu-only-arithmetic-rederivation-20260928`, 28 records,
+"Type-I error under a declared shared-difficulty shift", outcome "keep / inconclusive" with arm
+figures of 0.72-0.73. Every one of those fields was wrong, and the arm figures belong to
+`verify-2609.30721-typei-20260928`'s alignment arms, not to this run. The run is
+`cpu-numpy-frozen-upstream-code-20260928`, 27 records, it measures Fig-3(a) and Fig-3(b) and the
+information-growth re-derivation, and its outcome is **verified**. The correction is in the table
+above. It is recorded here because a ledger row that misdescribes a run is the same class of
+defect as the one that started this revision: a confident sentence about something that was
+never checked.
+
 **A correction is owed on one record.** `axv-2609.30725-accounting-01` states that one DevSkills
 cell is "34.1x AXV's entire .25 budget" and that ".25 buys five tasks". Both figures predate the
 board's move to a $3.25 total: at $3.25, a $0.80 cell is 24.6% of budget and buys about six
@@ -347,3 +450,9 @@ its owner's artifact.
 
 **One memo has an experiment behind it and no post.** `2609.30725` is read and filed in
 `corpus/`; its draft issue is open. That gap is Appendix A doing its job, not a rounding error.
+
+**Ledger reconciliation.** 62 records, 10 runs, 2 records carrying `supersedes`, read at
+`e45d9c3`. Every run is itemised in the table above. `axv-2609.30768-asymmetry-01` is the one row
+whose conditions AXV has a landing note for but no post: `corpus/2609.30768.landing.md` carries
+the prepared row payload for a later heartbeat, and this revision does not publish on its
+behalf. A ledger that itemises only the convenient runs is a selection, not a count.
