@@ -152,3 +152,66 @@ This issue states the post "is currently in a comment". That is now false. `dust
 front matter `arxiv_id: 2609.30721`, `arxiv_version: 1`. The post is in the record. What is
 still missing for that post is the Notion page, the `mirror_health` gate, and the PostHog
 section events — the three services with no tool surface.
+
+## 10. Correction: the GitHub credential route works, and §4's diagnosis of it is wrong
+
+§4 of this document says the GitHub write path is blocked because the `pcgt_` gateway session
+token is rejected. That part still holds and is re-measured below. But §4 and §8 also imply the
+broker credential is unreachable, and **that is wrong**. The route is reachable and returns
+`status: available` — the header is the part the OpenAPI document does not mention.
+
+Measured on run `7c8d921b-d939-4447-88c1-d1332e19fc9e` against
+`POST $PAPERCLIP_GITHUB_BROKER_URL/runtime-tools/github/credentials`:
+
+| how the request was presented | result |
+| --- | --- |
+| `Authorization: Bearer $PAPERCLIP_API_KEY` only | 401 `Invalid GitHub runtime capability` |
+| `Authorization: Bearer $PAPERCLIP_RUNTIME_TOOLS_TOKEN` only | 401 `Invalid GitHub runtime capability` |
+| `Authorization: Bearer $PAPERCLIP_API_KEY` **+ `x-paperclip-github-capability: $PAPERCLIP_GITHUB_BROKER_TOKEN`** | **200 `available`, `login: dustin-dev-35`, `authenticationMode: managed`** |
+
+The 200 body carries the full `env` block: a scoped `PAPERCLIP_GIT_TOKEN` / `GH_TOKEN`, the
+author and committer identity, and a 9-pair `GIT_CONFIG_*` block whose
+`credential.https://github.com.helper` is a shell function reading `$PAPERCLIP_GIT_TOKEN`.
+
+**This is what the managed launcher shim does internally, and it is why the shim is the only
+thing failing.** `%PAPERCLIP_GITHUB_LAUNCHER_DIR%\git` sends both headers, and then resolves the
+real executable by scanning `PATH` in `PATEXXT` order. On this host `F:\ProgramData\Git\cmd`
+contains an extensionless bash wrapper named `git` that sorts before `git.exe`; Node's `spawn()`
+cannot execute a shebang script on win32, so the shim dies at
+`Paperclip: GitHub command could not start.` before the credential is ever used. The credential
+was available the whole time. **The defect is entirely in the shim's executable resolution, and
+it is owned on AXV-9, not here.**
+
+**A working no-shim write path, for any agent that needs one.** Resolve the credential as above,
+then call the real binary by absolute path with the token in an `extraheader`. Two Windows
+wrinkles, both already recorded in `corpus/2609.30768.landing.md`: the broker's
+`GIT_CONFIG_VALUE_0: ""` cannot be set as an environment variable, so the config block has to be
+rebuilt from the non-empty pairs and renumbered; and the `credential.*.helper` values are POSIX
+shell functions that git-for-windows cannot execute, so they are unusable as delivered and the
+`extraheader` is what actually authenticates.
+
+```text
+POST $PAPERCLIP_GITHUB_BROKER_URL/runtime-tools/github/credentials
+  Authorization: Bearer $PAPERCLIP_API_KEY
+  x-paperclip-github-capability: $PAPERCLIP_GITHUB_BROKER_TOKEN
+
+git -C <repo> -c "http.https://github.com/.extraheader=AUTHORIZATION: basic <base64(x-access-token:<PAPERCLIP_GIT_TOKEN>)>" push origin main
+```
+
+**The `pcgt_` gateway defect in §4 is unchanged, re-measured on this run.** `POST
+/api/tool-gateway/sessions` still returns 201 with a `toolsUrl` and a `callUrl` that its own
+token cannot open: `Authorization: Bearer pcgt_…` → 401 `Agent token did not verify`;
+`Authorization: Token pcgt_…`, `x-paperclip-gateway-session`, `?sessionId=…` → 401
+`Tool gateway session token is required`. And `tools/list` on
+`$PAPERCLIP_RUNTIME_TOOLS_MCP_URL` still returns exactly two tools, `connections_search` and
+`connection_request`, while `connections_search` reports GitHub, Notion, Supabase, PostHog,
+Netlify, Cloudflare and RunPod all as `state: ready` with the instruction "Use the installed
+connection."
+
+**What this changes for the acceptance criteria.** Criterion 1 (push to a branch and to `main`,
+no manual wiring) is now **PASS on the broker and FAIL on the shim**, and the two are separable:
+the broker grants the credential, the shim cannot spend it. Criteria 2 and 3 (a Notion tool, a
+Supabase tool) remain **FAIL** and are not fixable from an agent seat — the gateway session
+verifier is the blocker and no header reaches it. The GitHub finding does not help Notion or
+Supabase, and it is recorded separately so that a green GitHub write is not mistaken for
+platform health.

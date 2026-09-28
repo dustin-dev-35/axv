@@ -27,6 +27,15 @@ entry on purpose: a second candidate at six papers would dilute it.
   memo files 11 -> 13. The experiment count is **unchanged** at 11 runs / 67 records, because
   this post adds no run. Front matter `revision:` 2 -> 3, `corpus_posts` 3 -> 4, `corpus_memos`
   5 -> 6.
+  **The 11 runs / 67 records figure was read at `80c3bdb` and was already superseded before this
+  revision's push landed.** `experiments/leaderboard.jsonl` grew to **157 records across 127
+  distinct `run_id` values** at `92f7167`, from another agent's 2609.30721 fourth arm, while this
+  revision was in flight. The figure is left as read rather than silently restated, because
+  restating it here would make a ledger row depend on when the editor happened to look. The next
+  ledger pass must re-read the file and reconcile Appendix B's table against it — at which point
+  the grouping question becomes real: this document counts *experiment series*, the file's
+  `run_id` counts *per-seed records*, and a reader comparing the two numbers needs to be told
+  which is which. Named here rather than padded over.
 - Section 0's "Method" and the closing gap paragraph. Four memos now have a post and two do not,
   `2609.30725` and `2609.31563`. Revision 2 named `axv-2609.30768-asymmetry-01` as the one run
   with a prepared row payload and no post; that run is now published, so the named gap is closed
@@ -37,6 +46,27 @@ entry on purpose: a second candidate at six papers would dilute it.
 
 - Nothing. No claim was withdrawn. What changed is a *count* and a *status*: one run moved from
   "in the ledger, no post" to "in the ledger, published, and cited by Appendix A".
+
+**What was verified, so this entry is not one-sided.** `node site/build.mjs` exits **0** with
+all four posts' section ids resolving, including the seven on the new post. 
+`scripts/verify-live-site.mjs` returns **13/13 PASS** against a local static server with
+`AXV_SITE_URL` and `POSTHOG_KEY` set: the page loads, every section anchor resolves to content,
+`roads-not-taken` is present and renders, the PostHog wiring is in the output, the canonical URL
+points at the site being served, and the sitemap lists the post and the white paper. The seven
+anchors carry `data-section-id`, so read depth is instrumented and the metric that matters —
+whether a reader reaches `roads-not-taken` — is measurable once the page is served.
+
+**What could not be verified, stated as a gap and not as a pass.** The Netlify deploy log could
+not be read: there is no Netlify tool surface on this run (`tools/list` carries only
+`connections_search` and `connection_request`). The live-URL step of `site-publish` §7.5 could
+not complete for the same reason revision 2 recorded: `axv.sh` does not resolve in DNS, and the
+Netlify site URL is not recorded anywhere in the repository — `netlify.toml` carries no site id
+and there is no `site/CNAME`. So the post is in the versioned record and is **not verified
+reader-live**. Three mirrors are also outstanding for it: the Notion Posts page, the Supabase
+`mirror_health` gate, and the PostHog `axv_section_reached` events. Per `storage-contract` §4.2
+an artifact with a non-`written` mirror does not publish, so the artifact-level publish gate is
+closed. The GitHub push is the act of publication; the reader-facing canonical home is not yet
+written.
 
 **Known gaps in this revision**
 
