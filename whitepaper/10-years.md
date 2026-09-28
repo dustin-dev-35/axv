@@ -60,7 +60,7 @@ every line how little is behind that line.*
 | memos filed in Supabase `corpus_index` | **0** | Supabase connector not exposed to agent runs |
 | posts published | 5 | `overlapping-eval-windows-are-not-independent-tests` (**corrected 2026-09-28**), `completed-pairs-hide-capped-failures`, `low-effective-depth-is-residual-arithmetic`, `thinking-5x-asymmetry-is-your-baseline`, `a-second-plurality-voter-is-worth-zero` |
 | experiments in `experiments/leaderboard.jsonl` | **13 runs, 157 records** | read at `0a0d9a6`: the 11 series itemised in Appendix B, plus `2609.30721-a01-s1337`, `2609.30721-a01-s1338` and `2609.30721-a01-s1339` (30 records each — the three seeds of the 2609.30721v1 within-session persistence sweep). This document counts **series**; the file's `run_id` counts **per-seed and per-cell records**, so 157 records is not 157 runs and the two numbers are not comparable |
-| records carrying `supersedes` | **38** | 35 of them are the per-cell retractions inside the three 2609.30721v1 persistence-sweep seeds; the two pre-existing ones are a retracted non-reproduction and a superseded buggy-se result |
+| records carrying `supersedes` | **2** | A record counts only if `supersedes` is a non-null value. **38** was the count of records where the *key* is present, and 36 of those 38 are `"supersedes": null` - nothing superseded. The two real ones are the `20260928T210000Z-a2609-30721-audit` retraction and `2609.31381-a02-s1337r2` over `2609.31381-a02-s1337` |
 | aggregate confidence | **medium** | Five memos are `medium` and the 2609.31098 memo is split `medium`/`low`, so this document is |
 
 **A limit on these counts, stated rather than glossed.** The checklist asks for these numbers to
@@ -129,12 +129,25 @@ Intentionally short. If everything is a turning point, nothing is.
 **Entry 1 — "additional predictions are not additional evidence" (2026).**
 Claim: overlapping eval windows are not independent tests, so a nominal 5% interval on a paired
 comparison rejects a true null one time in six at 75% overlap. Evidence: controlled Monte-Carlo
-calibration on the paper's side, and on AXV's side first a substitute-generator sweep and then a
-re-run of the authors' released code unmodified. Confidence `medium`, and `medium` for a
-specific reason that is not the one revision 0 gave. The 16.9% figure is a **draw from a
-distribution**: across the paper's two seed sets and AXV's third, the 75%-overlap i.i.d. arm
-spans **15.0%–18.0%** and the HAC arm **6.6%–8.2%**, so the gap is somewhere in **8–12 points**,
-not a fixed 9.7. The direction and the size both carry. The individual constants do not.
+calibration on the paper's side, and on AXV's side four independent generators. Confidence
+`medium`, and `medium` for a reason that is neither the one revision 0 gave nor the one revision 1
+gave. **The diagnosis is robust and the remedy's size is not.** Across the four generators the
+i.i.d. figure lands in a **16.8–21.9%** band against a nominal 5% — 3.4x to 4.4x
+anti-conservative, in the same direction and roughly the same magnitude under every generator,
+including one with zero serial dependence. The session-centred Bartlett-HAC figure lands in a
+**7.25–11.6%** band, a **4.4-point spread** that is about 7.5 Monte-Carlo standard errors and
+so is not noise, and that is 1.6x the entire width of the paper's headline interval-width effect.
+Quote the direction, not the remedy's constant.
+
+**The defensible version is narrower than the quotable one, and the narrowing cuts both ways.**
+The four generators are not matched on dependence or on window geometry, and the same dataset
+shows it: generator C at rho = 0, same generator and same 75% overlap, gives i.i.d. **5.8–8.0%**
+and HAC **3.2–3.9%**, a correct i.i.d. interval and an over-covering HAC, because that generator
+has 397 windows per session against another arm's 125. So the claim a reader can carry is:
+**at the paper's own operating point, matched across four independent generators, the i.i.d.
+figure is robust and the HAC figure is not; outside that operating point neither number holds,
+in either direction.** The i.i.d. anti-conservatism appears when a session has enough windows for
+overlap to bite. Naming the hole is not hedging — the same dataset that opens it closes it.
 
 **Retracted, in place, from revision 0.** Revision 0 gave `medium` for a different reason: it
 said the simulation's DGP is not released, so AXV measured i.i.d. Type-I anywhere from 0.069 to
@@ -145,7 +158,11 @@ parameter. The retraction is in `experiments/leaderboard.jsonl` as a new record 
 `supersedes` against the original, never as an edit.
 
 Why it matters: it converts a reporting convention into a measurable quantity. A field that can
-say "your 10,000 windows are not 10,000 tests" can also say what the right number is.
+say "your 10,000 windows are not 10,000 tests" can also say what the right number is. The fourth
+arm is what stops that becoming new folklore: it is the difference between "your rows are not
+tests" as a rule and "a 5% interval rejects 17% of the time" as a constant, and only the first
+survives verification.
+
 
 **Why this section has one entry and not more:** a small corpus can identify a candidate
 turning point, not establish one. A turning point is something the rest of the decade hangs
@@ -180,16 +197,29 @@ absolute error 0.0** across 9 rows, so the bill is the paper's own arithmetic, n
 The field has been paying this on every dense-window result and not naming it, and nobody has
 costed it.
 
-**The one caveat on that arithmetic, and it is AXV's.** `G_info` is not a same-estimator ratio.
+**The units problem is bigger than the bandwidth problem, and it is the one a reader
+will actually trip on.** `G_info` is a ratio of two **variances**. Quoted as an
+interval-narrowing factor it reads about **30% high**, because the gain in standard-error and
+interval-width terms is its square root: at `G_info` 1.75 the SE gain is **1.32x, not 1.75x**, and
+at 1.94 it is **1.39x**. Across the four independent verifications, nominal row growth of
+3.95x-3.97x buys **1.61x-2.83x in variance terms, which is 1.27x-1.68x in standard-error terms** -
+never 2x, and never the ~4x the raw row count suggests. A reader budgeting a run count off
+"1.75x-1.94x" as a precision multiplier is over-buying rows by roughly a third. This is
+arithmetic, not empirical: it holds in every generator without exception, and it is the single
+most robust claim this corpus has about the paper. Per generator, in variance terms: 2.36-2.79,
+1.61-1.68, 2.61-2.83, and the authors' released code 1.75-1.94 with max absolute error 0.0.
+
+**The second caveat, and it is a definition rather than a units error.** `G_info` is not a
+same-estimator ratio.
 With the authors' own `window_size=64` and `base_nonoverlap_windows=64`, `K_main` is 3 at 0%
 overlap and 6 at 75%, because `K0 = ceil(L/S) - 1` is a function of overlap. The published
 1.75x-1.94x therefore divides a variance estimated at bandwidth 3 by one estimated at bandwidth
 6, and the paper's sensitivity grid varies bandwidth *at fixed overlap*, so it structurally
 cannot observe the confound. Re-computed at a fixed bandwidth on the same data, AXV gets
 2.356 / 2.356 / 2.380 instead of 2.758 / 2.771 / 2.790 - **15% apart**, with 3.889 nominal row
-growth. The reported figure is defensible under the authors' convention and is not the only
-defensible one. This is arithmetic on the paper's own Eq. 6 and its own released parameters, so
-it is safe to state; whether 1.75x or 2.36x is the right number to quote is not settled.
+growth. Both figures are defensible under their own convention and a reader cannot tell which
+one they are looking at from the paper, because the convention is not stated where a reader
+would look for it.
 
 
 **What this section cannot yet say:** compute cost, capital cost, data cost, and abandoned
@@ -221,6 +251,29 @@ bandwidth at fixed overlap and so cannot see it. AXV's two conventions on the sa
 2.758 / 2.771 / 2.790 under the paper's mixed-bandwidth reading, 2.356 / 2.356 / 2.380 at fixed
 bandwidth - differ by **15%** against 3.889 nominal row growth. Direction correct, magnitude
 convention-dependent, and the convention is not stated where a reader would look for it.
+
+**The corrected figure is a property of one calibration, not of the estimator.** Across four
+independent generators the paper's session-centred Bartlett-HAC Type-I error at 75% overlap lands
+anywhere from **7.25% to 11.6%** - a **4.4-point spread**, about **7.5 Monte-Carlo standard
+errors**, and 1.6x the entire width of the paper's headline interval-width effect. The i.i.d.
+figure over the same four generators is far steadier, **16.8-21.9%**. So the paper's diagnosis
+survives re-specification and its remedy's *size* does not, and a practitioner who adopts the
+estimator does not know in advance which end of that band they inherit. The paper's own 7.2% is
+the best case in the band and is additionally **selection-inflated**: the bandwidth was selected
+on the seeds used to report the calibration, which moves it to **7.9%** on independent seeds, by
+the paper's own account in §IV-C.
+
+**That spread may be a geometry artefact, and the same dataset says so.** The four generators
+are not matched on dependence or on windows per session, and generator C at `rho = 0` - same
+generator, same 75% overlap, same seeds - gives i.i.d. **5.8-8.0%** and HAC **3.2-3.9%**: a
+correct i.i.d. interval and an over-covering HAC, because that generator has 397 windows per
+session against another arm's 125. So the failure is two-sided, and the honest ledger entry is
+that the band is a band over *implementations a paper author would plausibly write* at the
+paper's operating point, not a clean sensitivity analysis of the estimator. Holding one
+generator and its geometry fixed and sweeping `rho` from 0.0 to 0.95 moves HAC only across
+**7.10-8.80%** - a 1.7-point move against the 4.4-point cross-generator move - which points at
+null identity rather than persistence strength, and is an argument about AXV's generator rather
+than a controlled test.
 
 **The proposed fix fails exactly where AXV operates, and overlap alone is enough to break it.**
 The paper's session-centred estimator conditions on the observed sessions and their
@@ -283,14 +336,16 @@ interval width has never been shown to be stable under a different fold assignme
   variance, and there it measures **0.800** against plain IID's **0.776** and a 0.05 nominal.
   A second run makes the same point without needing that regime at all: with serial dependence
   pinned at zero and between-session spread present, the estimator is worse than plain i.i.d.
-  in **six of six** conditions. The correction does not merely fail to help; it is
-  indistinguishable from the uncorrected estimator, and then slightly worse than it.
+  in **six of six** conditions. A third arm says the *size* of what is left is not knowable in
+  advance: across four independent generators the corrected figure spans **7.25-11.6%** while
+  i.i.d. spans **16.8-21.9%**. The correction does not merely fail to help in AXV's regime; in
+  the regime it was designed for, its own value is not portable.
 
 **The experiment that would settle it:** one simulation with the target declared in advance and
 the heterogeneity acting on the contrast rather than on shared difficulty, reporting the
 fixed-record, new-session and new-subject targets side by side with the bandwidth rule fixed
-before inspection. AXV has now two cuts at it, `align:shared_plus_pair` and the between-session
-arm with `rho = 0`, and they agree. The stronger form of the question is not which window-level
+before inspection. AXV has now three cuts at it, `align:shared_plus_pair`, the between-session arm with `rho = 0`,
+and the four-generator re-specification, and they agree. The stronger form of the question is not which window-level
 estimator to use but whether AXV should be using a window-level estimator at all.
 
 
@@ -308,12 +363,15 @@ close.
    own batches run 3 seeds, and the exact paired test cannot reach the 0.05 level at n = 3
    at all — the minimum attainable two-sided p is 0.25. AXV's current protocol cannot
    produce a significant result even when one is there.
-3. **Do the paper's numerical factors generalise?** The authors say they are not universal.
-   Two datasets, two classifier families, one metric pair, and a 36% spread in the width
-   ratio across three settings. The factors themselves now reproduce exactly on the authors'
-   own artifact, so the open question is no longer the numbers - it is whether they port past
-   phone-accelerometer and thigh-accelerometer HAR, and which of the two defensible bandwidth
-   conventions a reader should quote.
+3. **Do the paper's numerical factors generalise, and which band is the finding?** The
+   diagnosis generalises: four independent generators put i.i.d. Type-I in a 16.8-21.9% band at
+   75% overlap, including one with zero serial dependence. The remedy's size does not, and the
+   numbers themselves are the paper's own arithmetic, re-derived at max absolute error 0.0. So
+   the open question is no longer the constants - it is whether the **7.25-11.6%** band is a
+   property of the estimator, a property of windows per session, or a property of null identity.
+   The clean experiment is specified and unrun: one generator, one fixed rho, one fixed
+   per-session window count, varying only the dependence *shape* at matched marginal second
+   moments. Nobody has run it, and it is CPU-only.
 4. **What would it take to settle the estimator question at power?** AXV's 3 seeds are three
    orders of magnitude below the 217 pairs an exact McNemar test needs for 80% power against
    a 10-point effect, and the ledger's own warning says within-batch correlation makes the
@@ -325,6 +383,15 @@ close.
    "differ systematically" is not "differ by a random draw with an estimable variance". If real
    per-run offsets are correlated across arms rather than independent, the correct estimator
    moves again and the fix this corpus recommends is the wrong one.
+6. **How much of the 4.4-point HAC spread is geometry rather than null identity?** This is
+   the same hole as question 3 seen from the other side, and it is the largest one in this
+   corpus because it bounds two of the corpus's three findings about this paper. The same
+   dataset both opens and closes it: generator C at `rho = 0` gives a *correct* i.i.d.
+   interval and an *over-covering* HAC, so the i.i.d. anti-conservatism is conditional on a
+   session having enough windows for overlap to bite. Every AXV number in this section is
+   synthetic, every arm uses a two-arm generator with `PAIR_RHO = 0.5`, no arm has a real-data
+   counterpart, and the bandwidth is never re-estimated anywhere. Whether any of this transfers
+   to a model-pair contrast on real classifiers is unmeasured.
 
 
 **The revision-1 backlog.** Sections 1, 3 and 4 are the three that a five-paper corpus cannot
@@ -401,7 +468,7 @@ One row per published post. This count must match the published post count in `s
 
 | post | arXiv ID | claim it contributes | confidence | experiment |
 | --- | --- | --- | --- | --- |
-| [Your test rows are a row count, not an evidence count](/posts/overlapping-eval-windows-are-not-independent-tests/) | [2609.30721v1](https://arxiv.org/abs/2609.30721v1) | Overlapping eval windows are not independent tests, and subject-disjoint splitting does not make them so. 3.93-3.97x row growth buys 1.75-1.94x information, which AXV re-derived from the authors' own table to 0.0 absolute error. The session-centred fix assumes away between-session heterogeneity and is worse than plain IID when that is broken: 6 of 6 conditions, with overlap alone sufficient at rho = 0. G_info is not a same-estimator ratio. | medium | verified (headline reproduced on the authors' code; one result is AXV-generator-bound) |
+| [Your test rows are a row count, not an evidence count](/posts/overlapping-eval-windows-are-not-independent-tests/) | [2609.30721v1](https://arxiv.org/abs/2609.30721v1) | Overlapping eval windows are not independent tests, and subject-disjoint splitting does not make them so. 3.93-3.97x row growth buys 1.75-1.94x in **variance** terms, which is **1.27-1.68x in standard-error terms** - quoting the variance ratio as a precision multiplier over-buys rows by about a third, and the paper does not perform the conversion. The session-centred fix assumes away between-session heterogeneity and is worse than plain IID when that is broken: 6 of 6 conditions, with overlap alone sufficient at rho = 0. Across four independent generators the diagnosis is robust (i.i.d. **16.8-21.9%**) and the remedy size is not (HAC **7.25-11.6%**, a 4.4-point spread that is ~7.5 MCSE), so **adopt the rule and do not quote the number**. | medium | verified (diagnosis across four generators; remedy magnitude is AXV-generator-bound, and the spread is confounded with windows-per-session) |
 | [Your 12/15 tie was manufactured by the filter, and no estimator recovers the missing arms.](/posts/completed-pairs-hide-capped-failures/) | [2609.31381v1](https://arxiv.org/abs/2609.31381v1) | Completion is an outcome, so a completed-pairs-only report conditions on a post-treatment variable the intervention moves. 12/15 against 12/15 is an exact tie on a frame where 10 of 27 first arms capped and 10 companions never ran; the sharp finite-frame bound is **[−9, +1] tasks**, an *identification bound* and not a confidence interval. In the capped region the companion's probability of ever being observed is exactly zero, so no adjustment recovers it and the fix is procedural — per-arm reservations with independent stop decisions. The width of the bound is the unresolved mass, so it does not shrink with n: a single unexecuted arm already leaves [−1, +1], and the honest answer at any n is "cannot distinguish". A consequence for AXV's own ledger, which cannot currently tell a measured zero from a wall-clock kill. | medium | verified (31/31 arithmetic identities) |
 | [The low effective depth was residual arithmetic, not unused depth.](/posts/low-effective-depth-is-residual-arithmetic/) | [2609.31098v1](https://arxiv.org/abs/2609.31098v1) | A diagnostic can be pinned arithmetically before it is measured: with mutually orthogonal per-layer updates the residual stream's effective depth has the closed form `F_L = 2L/(L+1) < 2`, so `D_eff/L = O(1/L)` is a property of residual accumulation and a 40-layer and a 64-layer model *should* report the same number. The contribution is the closed form — a change of units, not a capability — and the diagnostic's own sign is a fact about the reference: the quotable "15 of 16 sub-reference" inverts for **all sixteen** models against a reference that also matches update correlations, while the abstract rests on the weaker one. The paper denies its actionable use in two appendices: useless as a pruning-tolerance predictor at every subset, 172× worse than Block Influence at k=8, capability scaling "mainly a negative scope result". And the stability argument's two premises are passage resampling and *random-weight* seed, so the trained-checkpoint seed variance the argument needs was never measured. Confidence is split on purpose: the geometry is `medium`, any decision use is `low`, and the split is the paper's own scope statement rather than a hedge. | medium (geometric regime) / low (any decision use) | pending |
 | [Thinking's 5x bias asymmetry is a property of your baseline, not of thinking.](/posts/thinking-5x-asymmetry-is-your-baseline/) | [2609.30768v1](https://arxiv.org/abs/2609.30768v1) | A count ratio is a product of a transition rate and a starting-population ratio, and only the first term is about the intervention. The paper's "roughly 5x in all nine cells" is the pooled value of a per-cell ratio spanning **2.41x to 48.30x**, and 80% of its log-variance comes from `F = (1 - D_cf_nothink)/D_cf_nothink` - a property of the **non-thinking** arm on three tabular datasets, not of thinking (spearman `F` vs ratio 0.867). The genuine nine-of-nine result is the complementary half: per pair, thinking **returns an already-flipping pair to agreement 6x to 45x more often than it flips an agreeing pair** (`G < 1` in all nine cells). What blocks that from reading as a fairness win is that the baseline barely disagrees at all, `D_cf` 0.002-0.032. The harm is real - 3,508 new counterfactual disagreements - and it is a statement about a near-degenerate baseline, not a constant of deliberation. The paper says this itself in sec 4.4 and Appendix H, where an independence model with *no* within-pair correlation already predicts `|c| > |b|` in every cell and the observed ratios land 5-100x below it. The strongest thing in the paper is the metric split: `D_cf` rises in **9 of 9** while `D_group` moves at most 0.017 absolute and **flips sign across datasets**, which is a checkable reason two camps disagree about the same models. | medium | verified (9/9 identities, by arithmetic re-derivation from published tables; no model re-executed) |
@@ -410,8 +477,13 @@ One row per published post. This count must match the published post count in `s
 ## Appendix B. Experiment ledger
 
 Read from `experiments/leaderboard.jsonl` in this repository, never from memory. **Snapshot as
-of commit `0a0d9a6`:** **157 records across 13 experiment series**, of which **38 carry a
-`supersedes`**. The file is append-only and other agents are appending to it, so a reader should
+of commit `0a0d9a6`:** **157 records across 13 experiment series**, of which **2 actually
+supersede** another record. Revision 4 wrote this as "38 carry a `supersedes`", which counted
+records where the *key* is present rather than records that supersede something: **36 of those 38
+are `"supersedes": null`**. The two real retractions are `20260928T210000Z-a2609-30721-audit`
+over itself and `2609.31381-a02-s1337r2` over `2609.31381-a02-s1337`. A ledger that inflates its own
+correction count is the failure this appendix exists to catch, so the error is named here rather
+than quietly overwritten. The file is append-only and other agents are appending to it, so a reader should
 re-run the count rather than trust this line; the honest form of a live count is the count plus
 the commit it was read at. Revision 0 read the file at `cc7f1e3` and reported 61 records across 6
 series. Revision 1 read it at `e45d9c3` and reported 62 records across 10 series. Revision 3 read

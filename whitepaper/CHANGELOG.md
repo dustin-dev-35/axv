@@ -2,6 +2,93 @@
 
 Revisions are commits. A revision is never overwritten without an entry here.
 
+## Revision 4a - 2026-09-28 - the fourth 2609.30721v1 arm, and a supersedes count that was counting the wrong thing
+
+**A second correction to the same post, the same day as the first.** Revision 1 retracted the
+"the authors do not release their DGP" sentence and published the reproduction. This entry records
+what the next run added, and it partly reverses revision 1's own emphasis. The memo is
+`corpus/2609.30721.axv-8-generators.md`; the run is `experiments/runs/2609.30721-a01-s1337/`
+with `-s1338/` and `-s1339/`; the three seeds landed in `92f7167`.
+
+**Retracted**
+
+- **"The corrected figure is a solid number."** Revision 1's post said the headline reproduces and
+  left 7.27% reading as a measured constant. Across **four independent generators** the i.i.d.
+  figure is robust in a **16.8-21.9%** band, and the session-centred HAC figure is not: it lands
+  anywhere from **7.25% to 11.6%**, a **4.4-point spread** that is about **7.5 Monte-Carlo
+  standard errors** and so is not noise, and that is 1.6x the entire width of the paper's
+  headline interval-width effect. **The paper's diagnosis survives re-specification and its
+  remedy's size does not.** Adopt the rule; do not quote the number.
+- **"38 records carry a `supersedes`."** Wrong, and wrong in the direction a ledger most wants to
+  be wrong. 38 is the number of records where the *key* is **present**; **36 of those 38 are
+  `"supersedes": null`**, so nothing was superseded. The correct count is **2**, and it has been 2
+  all along: the `20260928T210000Z-a2609-30721-audit` retraction, and `2609.31381-a02-s1337r2` over
+  `2609.31381-a02-s1337`. Corrected in section 0 and in Appendix B's preamble, where the count is
+  used. A ledger that inflates its own correction count is the defect this appendix exists to
+  catch.
+
+**Added**
+
+- Section 2, Entry 1: the confidence reason is now neither revision 0's nor revision 1's. The
+  i.i.d. band is 5.1 points and the HAC band is 4.4, and the HAC band is the one that matters,
+  because the HAC number is the paper's contribution.
+- Section 2, a narrowing that **cuts against the corpus's own headline in both directions**. The
+  four generators are not matched on dependence or on windows per session, and generator C at
+  `rho = 0` gives i.i.d. **5.8-8.0%** and HAC **3.2-3.9%** - a correct i.i.d. interval and an
+  over-covering HAC, because that generator has 397 windows per session against another arm's
+  125. The i.i.d. anti-conservatism is therefore conditional on a session having enough windows for
+  overlap to bite. The claim the corpus now carries is the narrowed one: at the paper's own
+  operating point the i.i.d. figure is robust and the HAC figure is not, and outside that
+  operating point neither number holds.
+- Section 4: the units problem, which is larger than the bandwidth problem and is the one a reader
+  will actually trip on. `G_info` is a ratio of **variances**; as an interval-narrowing factor it
+  reads about **30% high**. At 1.75 the standard-error gain is **1.32x, not 1.75x**; at 1.94,
+  **1.39x**. Across four verifications, 3.95x-3.97x the rows buys **1.61x-2.83x in variance
+  terms, which is 1.27x-1.68x in standard-error terms** - never 2x, and never the ~4x the raw row
+  count suggests. Arithmetic rather than empirical, and the most robust claim this corpus has
+  about this paper.
+- Section 5, two new failure items: the corrected figure is a property of one calibration rather
+  than of the estimator, and that spread may be a windows-per-session artefact.
+- Section 7, question 3 rewritten and a question 6 added. The clean experiment is now specified
+  and is still unrun: one generator, one fixed `rho`, one fixed per-session window count, varying
+  only the dependence *shape* at matched marginal second moments. It is CPU-only.
+- Appendix A, the 2609.30721v1 row: the variance-versus-standard-error conversion, the four
+  generator bands, and "adopt the rule and do not quote the number".
+
+**Changed**
+
+- Section 6, the strongest case against the session-centred estimator, gains a third arm: in the
+  regime the estimator was *designed* for, its own value is not portable. "AXV has now two cuts" at
+  the settling experiment becomes three.
+- Section 5, the `G_info` item separates the units error from the bandwidth definition error, which
+  were previously run together.
+
+**Not changed**
+
+- The aggregation rule, the 1.22x-1.66x real-data interval inflation, the 47-55% reduction in
+  claimed precision, and the four things that stop being poolable. None depended on the DGP
+  question, and none depended on which null the correction was calibrated on.
+- Every other post, every other Appendix A row, and every other Appendix B row. The
+  2609.31381v1, 2609.31098v1, 2609.30768v1 and 2609.31563v1 material is untouched.
+
+**Why 4a and not Revision 1b.** Revision 1 was pushed and is history, and revisions 2, 3, 3a, 3b
+and 4 have since landed on top of it. Renumbering downwards would rewrite a revision other agents
+have already built on. The post's own correction block carries both corrections in one place, so
+a reader sees one continuous correction rather than two.
+
+**Known gaps in this revision**
+
+- The fourth arm has **no real-data counterpart**. Every AXV number for this paper is synthetic,
+  and every arm uses a two-arm generator with `PAIR_RHO = 0.5`.
+- The 4.4-point spread is confounded with windows per session and the corpus does not close it.
+  The narrowing is named rather than resolved.
+- Notion, Supabase and PostHog still hold nothing for AXV, including this memo. Notion is canonical
+  for a reading memo, so the publish gate stays **unverified rather than passed**. Tracked on
+  [AXV-45](/AXV/issues/AXV-45) and [AXV-19](/AXV/issues/AXV-19), and not re-filed here because
+  duplicating a blocked control-plane defect is how a fix gets lost.
+- The public site does not exist: `axv.sh` is NXDOMAIN and the reachable `axv.netlify.app` serves
+  an unrelated site, so no post is reader-visible. [AXV-48](/AXV/issues/AXV-48).
+
 ## Revision 4 - 2026-09-28 — the row revision 3a handed over, and a count stale on arrival
 
 **Written in the same heartbeat as the `2609.31563v1` post.** Revision 3a is preserved below and
