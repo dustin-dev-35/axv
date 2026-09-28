@@ -1,0 +1,288 @@
+{
+  "run_id": "axv-2609.31381-accounting-01",
+  "arxiv_id": "2609.31381",
+  "arxiv_version": "v1",
+  "method": "arithmetic re-derivation of published tables; no re-execution, no randomness",
+  "scope_not_covered": [
+    "the 641 model requests and the 8,202,832 reported tokens",
+    "correctness of the extracted answers under any scorer",
+    "any counterfactual: the unexecuted arms, the larger-quota pathspec run, the post-PR-15 error flag",
+    "billing: the price schedule and invoice are not distributed, so no dollar figure is derivable"
+  ],
+  "n_checks": 31,
+  "n_failed": 0,
+  "all_match": true,
+  "checks": [
+    {
+      "name": "finite_frame_lower_bound",
+      "recomputed": -9,
+      "paper_or_expected": -9,
+      "tolerance": 0,
+      "match": true,
+      "note": ""
+    },
+    {
+      "name": "finite_frame_upper_bound",
+      "recomputed": 1,
+      "paper_or_expected": 1,
+      "tolerance": 0,
+      "match": true,
+      "note": ""
+    },
+    {
+      "name": "full_success_count_range",
+      "recomputed": [
+        14,
+        21
+      ],
+      "paper_or_expected": [
+        14,
+        21
+      ],
+      "tolerance": 0,
+      "match": true,
+      "note": ""
+    },
+    {
+      "name": "projected_success_count_range",
+      "recomputed": [
+        12,
+        15
+      ],
+      "paper_or_expected": [
+        12,
+        15
+      ],
+      "tolerance": 0,
+      "match": true,
+      "note": ""
+    },
+    {
+      "name": "max_projected_lead_tasks",
+      "recomputed": 1,
+      "paper_or_expected": 1,
+      "tolerance": 0,
+      "match": true,
+      "note": "even fully favourable resolution of the 3 unexecuted projected arms and unfavourable resolution of the 7 unexecuted full arms"
+    },
+    {
+      "name": "unresolved_arms",
+      "recomputed": 10,
+      "paper_or_expected": 10,
+      "tolerance": 0,
+      "match": true,
+      "note": "interval width equals the count of unexecuted arms exactly"
+    },
+    {
+      "name": "selector_token_pct_outside_fitting",
+      "recomputed": 8.64,
+      "paper_or_expected": 8.6,
+      "tolerance": 0.06,
+      "match": true,
+      "note": ""
+    },
+    {
+      "name": "selector_token_pct_all_comparable",
+      "recomputed": 0.89,
+      "paper_or_expected": 0.89,
+      "tolerance": 0.01,
+      "match": true,
+      "note": ""
+    },
+    {
+      "name": "selector_extra_failures_outside_fitting",
+      "recomputed": 1,
+      "paper_or_expected": 1,
+      "tolerance": 0,
+      "match": true,
+      "note": ""
+    },
+    {
+      "name": "selector_failure_tie_all_comparable",
+      "recomputed": 0,
+      "paper_or_expected": 0,
+      "tolerance": 0,
+      "match": true,
+      "note": ""
+    },
+    {
+      "name": "runs_partition_4_plus_13_equals_17",
+      "recomputed": 17,
+      "paper_or_expected": 17,
+      "tolerance": 0,
+      "match": true,
+      "note": ""
+    },
+    {
+      "name": "token_totals_partition",
+      "recomputed": 1823900,
+      "paper_or_expected": 1823900,
+      "tolerance": 0,
+      "match": true,
+      "note": ""
+    },
+    {
+      "name": "token_totals_partition_selector",
+      "recomputed": 1840140,
+      "paper_or_expected": 1840140,
+      "tolerance": 0,
+      "match": true,
+      "note": ""
+    },
+    {
+      "name": "stratum_sum_ratio",
+      "recomputed": 0.7496,
+      "paper_or_expected": 0.75,
+      "tolerance": 0.0006,
+      "match": true,
+      "note": ""
+    },
+    {
+      "name": "stratum_aggregate_saving_pct",
+      "recomputed": 25.0,
+      "paper_or_expected": 25.0,
+      "tolerance": 0.06,
+      "match": true,
+      "note": ""
+    },
+    {
+      "name": "uncached_input_delta",
+      "recomputed": 89684,
+      "paper_or_expected": 89684,
+      "tolerance": 0,
+      "match": true,
+      "note": ""
+    },
+    {
+      "name": "cached_input_delta",
+      "recomputed": -407680,
+      "paper_or_expected": -407680,
+      "tolerance": 0,
+      "match": true,
+      "note": ""
+    },
+    {
+      "name": "output_delta",
+      "recomputed": 734,
+      "paper_or_expected": 734,
+      "tolerance": 0,
+      "match": true,
+      "note": ""
+    },
+    {
+      "name": "category_sums_to_total_full",
+      "recomputed": 1267036,
+      "paper_or_expected": 1267036,
+      "tolerance": 0,
+      "match": true,
+      "note": "cached input is a subset of total input, not an extra charge"
+    },
+    {
+      "name": "category_sums_to_total_projected",
+      "recomputed": 949774,
+      "paper_or_expected": 949774,
+      "tolerance": 0,
+      "match": true,
+      "note": ""
+    },
+    {
+      "name": "request_ratio_pct",
+      "recomputed": 57.1,
+      "paper_or_expected": 57.0,
+      "tolerance": 0.15,
+      "match": true,
+      "note": "55/35 - 1 = 57.14%, printed as 57%; tolerance is rounding only"
+    },
+    {
+      "name": "median_inflated_while_sum_saves",
+      "recomputed": true,
+      "paper_or_expected": true,
+      "tolerance": 0,
+      "match": true,
+      "note": "sum ratio 0.750 is below 1 while the paper's median ratio is 1.292 and 7 of 11 pairs increase"
+    },
+    {
+      "name": "leave_one_out_sum_ratio",
+      "recomputed": 1.077,
+      "paper_or_expected": 1.077,
+      "tolerance": 0.001,
+      "match": true,
+      "note": "the 25.0% aggregate saving is carried by one task; without it the ratio is above 1"
+    },
+    {
+      "name": "total_token_identity",
+      "recomputed": 8202832,
+      "paper_or_expected": 8202832,
+      "tolerance": 0,
+      "match": true,
+      "note": ""
+    },
+    {
+      "name": "cached_share_pct",
+      "recomputed": 74.9,
+      "paper_or_expected": 74.9,
+      "tolerance": 0.05,
+      "match": true,
+      "note": ""
+    },
+    {
+      "name": "run_accounting",
+      "recomputed": {
+        "total": 86,
+        "before_eligibility": 44,
+        "capture_stop": 5,
+        "boundary": 27
+      },
+      "paper_or_expected": {
+        "total": 86,
+        "before_eligibility": 44,
+        "capture_stop": 5,
+        "boundary": 27
+      },
+      "tolerance": 0,
+      "match": true,
+      "note": ""
+    },
+    {
+      "name": "boundary_partition_15_plus_12",
+      "recomputed": 27,
+      "paper_or_expected": 27,
+      "tolerance": 0,
+      "match": true,
+      "note": ""
+    },
+    {
+      "name": "first_arm_caps_suppress_companion",
+      "recomputed": "10 of 10",
+      "paper_or_expected": "10 of 10",
+      "tolerance": 0,
+      "match": true,
+      "note": "Figure 2 / Section 3.3: every first-arm cap left its companion unexecuted"
+    },
+    {
+      "name": "pathspec_projected_over_full_suffix_tokens",
+      "recomputed": 2.82,
+      "paper_or_expected": 2.82,
+      "tolerance": 0.005,
+      "match": true,
+      "note": ""
+    },
+    {
+      "name": "pathspec_projected_uses_full_cap",
+      "recomputed": 12,
+      "paper_or_expected": 12,
+      "tolerance": 0,
+      "match": true,
+      "note": ""
+    },
+    {
+      "name": "pathspec_full_answers_in",
+      "recomputed": 3,
+      "paper_or_expected": 3,
+      "tolerance": 0,
+      "match": true,
+      "note": ""
+    }
+  ],
+  "created_at_utc": "2026-09-28T20:20:58.127385+00:00"
+}

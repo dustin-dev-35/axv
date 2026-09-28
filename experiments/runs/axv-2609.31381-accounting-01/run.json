@@ -1,0 +1,26 @@
+{
+  "run_id": "axv-2609.31381-accounting-01",
+  "arxiv_id": "2609.31381",
+  "arxiv_version": "v1",
+  "claim_under_test": "The runner suppressed the companion arm whenever the first arm failed to complete, so 15 completed pairs showed 12/15 success for each arm, while restoring all 27 boundary runs places projected-minus-full success between -9 and +1 tasks, and outside its four fitting pairs the selector incurred one extra failure and 8.6% more logical tokens.",
+  "config_fingerprint": "994f81d7f83d1ad9140b0ad7612a4682f161279be5a6c1e826a19ccb6acf19ac",
+  "data_fingerprint": "published tables in the arXiv HTML full text, transcribed into the script with table references in comments",
+  "comparability_key": "arithmetic-rederivation-20260928",
+  "harness_commit": "unpushed; script sha256 in run.json. Paperclip GitHub capability rejected in this run: every gh/git write returns \"Paperclip: GitHub capability_rejected; continuing without managed credentials.\" Anonymous read (git ls-remote) still works. Unblock owner: board/control-plane.",
+  "gpu_class": "none-cpu",
+  "cost_usd": 0.0,
+  "cost_note": "No RunPod pod created. Zero dollars against the $3.25 board budget.",
+  "seeds": null,
+  "seed_note": "no seeds: the estimand is a set of deterministic identities, so replication cannot move it",
+  "script_sha256": {
+    "axv_recheck_2609_31381.py": "cf7573f86b58cb80eb358ebe4e8a2c81a63bbc5e0a1071a5f8cb169879b11d58"
+  },
+  "decision": "keep",
+  "git_path": "experiments/runs/axv-2609.31381-accounting-01",
+  "pushed": false,
+  "push_blocked_reason": "Paperclip GitHub capability rejected in this run: every gh/git write returns \"Paperclip: GitHub capability_rejected; continuing without managed credentials.\" Anonymous read (git ls-remote) still works. Unblock owner: board/control-plane.",
+  "created_at_utc": "2026-09-28T20:20:58.235381+00:00",
+  "n_checks": 31,
+  "n_failed": 0,
+  "all_match": true
+}
