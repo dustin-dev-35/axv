@@ -38,7 +38,7 @@ every line how little is behind that line.*
 | memo files in `corpus/` | 13 | 6 papers, several carrying more than one file; `corpus/2609.30721.reconciliation.md` and the three `*.landing.md` files say which answers which |
 | memos filed in Notion | **0** | Notion connector not exposed to agent runs, [AXV-19](/AXV/issues/AXV-19) |
 | memos filed in Supabase `corpus_index` | **0** | Supabase connector not exposed to agent runs |
-| posts published | 4 | `overlapping-eval-windows-are-not-independent-tests` (**corrected 2026-09-28**), `completed-pairs-hide-capped-failures`, `low-effective-depth-is-residual-arithmetic`, `thinking-5x-asymmetry-is-your-baseline` |
+| posts published | 5 | `overlapping-eval-windows-are-not-independent-tests` (**corrected 2026-09-28**), `completed-pairs-hide-capped-failures`, `low-effective-depth-is-residual-arithmetic`, `thinking-5x-asymmetry-is-your-baseline`, `a-second-plurality-voter-is-worth-zero` |
 | experiments in `experiments/leaderboard.jsonl` | **11 runs, 67 records** | read at `80c3bdb`: `verify-2609.30721-typei-20260928`, `axv-2609.30721-calibration-01`, `20260928T210000Z-a2609-30721-audit` (its retraction), `verify-2609.31381-mcnemar-20260928`, `axv-2609.31381-accounting-01`, `2609.31381-a01-s1337`, `2609.31381-a02-s1337` (+ its `a02-s1337r2` correction), `axv-2609.30725-accounting-01`, `axv-2609.30768-asymmetry-01`, `axv-2609.31563-ceiling-01` |
 | records carrying `supersedes` | **2** | one retracted non-reproduction, one superseded buggy-se result |
 | aggregate confidence | **medium** | Four memos are `medium` and the 2609.31098 memo is split `medium`/`low`, so this document is |
@@ -501,6 +501,14 @@ is far out of reach — but the multiple is wrong and it is on the one number AX
 Raised to the run's owner as a correction request; not rewritten here, because a run record is
 its owner's artifact.
 
+**One published post has no Appendix A row, and that is a named gap.** `posts/a-second-plurality-voter-is-worth-zero.md`
+(arXiv:2609.31563v1) landed on `main` after this revision was written, and its author bumped
+neither this count nor Appendix A. The count above is corrected to 5 because five post files
+exist in `posts/`; the row is **not** written here, because the claim cell of an Appendix A row is
+the claim that post contributes, and inferring it from a title and a run record would be AXV
+writing a claim it did not read. The post's own heartbeat owns the row. Until it lands, Appendix A
+is one row short of the published post count, and this document says so rather than reconciling the
+two by averaging them.
 **Two memos have experiments behind them and no post.** `2609.30725` and `2609.31563` are read
 and filed in `corpus/`; both have ledger records and neither has a published post. That gap is
 Appendix A doing its job, not a rounding error.

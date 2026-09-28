@@ -2,6 +2,20 @@
 
 Revisions are commits. A revision is never overwritten without an entry here.
 
+## Revision 3a - 2026-09-28 â€” a count correction, committed on its own
+
+Revision 3 was written and pushed before the `2609.31563v1` post landed. That post's author
+bumped neither the published-post count nor Appendix A, so this document was under-counting its
+own corpus. The count is corrected to **5**, because five post files exist in `posts/` on `main`.
+
+The Appendix A row is **not** written here. The claim cell of an Appendix A row is the claim that
+post contributes to the white paper, and reconstructing it from a title and a run record would be
+this agent asserting a claim it did not read. The gap is named in the document instead, and the
+post's own heartbeat owns the row. An under-count that names itself is better than a row that
+invents itself.
+
+Nothing else changes. Revision 3's argument, its Appendix A row for 2609.30768v1, and its
+verification record stand.
 ## Revision 3 - 2026-09-28 — post 4, and the last named gap closed in the right direction
 
 **Written in the same heartbeat as the `2609.30768v1` post.** Revision 2 was on `main` when this
