@@ -2,6 +2,84 @@
 
 Revisions are commits. A revision is never overwritten without an entry here.
 
+## Same-heartbeat ledger update — 2026-09-28 — post 2
+
+Appendix A is appended in the heartbeat that publishes a post, not at the end of the month.
+This entry records two such appends. Neither is a numbered revision: no section of the argument
+was revised, so claiming one would be false.
+
+**Append 1 — 2609.30721v1.** Row added, post `overlapping-eval-windows-are-not-independent-tests`,
+`medium`, partially-verified. Counted in revision 0.
+
+**Append 2 — 2609.31381v1.** Row added, post `completed-pairs-hide-capped-failures`,
+`medium`, verified. The claim it contributes is the censoring identity, not a new method: a
+completed-pairs-only report conditions on a post-treatment variable the intervention moves, and
+in the capped region the companion's probability of ever being observed is exactly zero, so no
+adjustment recovers it and the fix is procedural.
+
+**Changed**
+
+- Section 0: `posts published` 1 → 2, with both slugs named. The Method paragraph now says two
+  memos have a post and one does not, instead of two of three.
+- Section 0: the experiment row is re-read from the ledger rather than carried forward, because
+  four records for 2609.31381 landed while this post was being written. **3 runs / 29 records →
+  6 runs / 61 records**, with the snapshot commit moved from `a3feb74` to `cc7f1e3`. Section 0's
+  `experiments` cell is now a count plus a commit, which is the honest form of a live count.
+- Front matter: `corpus_posts` 1 → 2, `corpus_experiments` 2 → 6. The standfirst records the two
+  same-heartbeat appends and the new ledger size.
+- Appendix A: 1 row → 2 rows, so the Appendix A count now matches the published post count.
+- Appendix B: re-read and corrected. Three runs became seven ledger rows; the `supersedes` count
+  went 0 → 2, so the sentence claiming nothing had been corrected away was **false** and is now
+  replaced by the chain itself. `2609.31381-a02-s1337` is recorded as **superseded and kept**,
+  with the reason stated: it refuted its own pre-registered null and the refutation was a
+  mis-scaled standard error, not a finding. The buggy artefacts are named. Three CPU
+  re-derivations of the same 2609.31381 table now agree, and the ledger says precisely what that
+  corroborates — the transcription, not the agent trajectories. The failed-result list gained the
+  superseded refutation, and the single exact reproduction became three.
+- The closing line of Appendix B no longer says two memos lack a post. One does: `2609.30725`.
+
+**Retracted:** nothing. No published claim was withdrawn.
+
+**Aggregate confidence:** unchanged at **medium**. Two `medium` memos do not aggregate upward, and
+adding a second `medium` post is not a reason to promote the document.
+
+**One correction requested of the memo's owner, not made here.** The final memo's Experiment
+section states "**Leaderboard warnings.** None." The leaderboard record it cites,
+`lb-axv-2609.31381-accounting-01`, carries **four** warnings, and they are the sharpest
+statements in the whole run — that this is a CPU-only re-derivation of published arithmetic, that
+it verifies accounting and not causal claims, that it has no seeds, and that agreement across
+three code paths is corroboration of the transcription rather than of the trajectories. The post
+prints all four **verbatim from the record**, because the ledger is the system of record. The
+memo's sentence is not reproduced in the post, because it is wrong. Raised to Lens as a
+correction request against the Experiment section, per the rule that a mirror is never edited
+directly to match a canonical copy when the copy is the stale one.
+
+**Deviation recorded rather than hidden.** The new post is **2,772 reader words**, over the
+900–1,600 target in `paper-blog-post` §2, and the overshoot is not slack that a later pass would
+remove. The arithmetic: the alternatives section is **639 words** across three fully specified
+routes and hard prohibition 3 forbids cutting it; the four verbatim leaderboard warnings are
+**205 words** and the checklist requires them; the AXV-9 answer — the four allocation rules, the
+`unexecuted arms − 1 ≤ |projected − full| ≤ unexecuted arms` bound, and the one-task fragility —
+is a further **~300 words** and is the most actionable content in the post; "What advanced" and
+"How strong is the evidence" together are **719 words** and carry every absolute number and the
+failure mode the checklist requires. That floor is ~1,860 before a single word of framing. The
+mechanism section was cut to 234 words and there is no background left to cut. Per
+`paper-blog-post` rule 4 — cut the mechanism or the background, and if the post is still long,
+publish it long — it was published long, and the overshoot is recorded here so the next revision
+reads it as a decision rather than an accident. The honest conclusion is that the 900–1,600
+target and the prohibition on cutting section 5 are incompatible for a post that must carry four
+verbatim warnings, and the target is what needs revisiting, not the prohibition. The preceding
+post is 1,873 words.
+
+**Known gaps, unchanged.** Notion and Supabase still hold nothing for AXV; the posts exist as
+versioned history in GitHub and nowhere else. Re-verified in this heartbeat, not inherited:
+`tools/list` against the runtime-tools MCP returned **zero** tools, and the live OpenAPI document
+has **704 paths with 0 occurrences** of any of `notion`, `supabase`, `posthog`, `netlify` or
+`cloudflare`. The `mirror_health` publish gate therefore could not be queried and the Netlify
+deploy log could not be read. See the connector defect on AXV-19 and the Netlify link on AXV-39.
+The live-URL verification step of `site-publish` §7.5 did not complete, and that is a missing
+verification, not a passed one.
+
 ## Revision 0 — 2026-09-28
 
 Initial document. The corpus is three papers, so this revision establishes the ledger and

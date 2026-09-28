@@ -3,18 +3,19 @@ title: "10 Years in 1 Paper"
 description: "The AXV decade compression: what the field believed, what turned on it, what it cost, and what did not work."
 revision: 0
 date: 2026-09-28
-corpus_posts: 1
+corpus_posts: 2
 corpus_memos: 3
-corpus_experiments: 2
+corpus_experiments: 6
 aggregate_confidence: medium
 date_range: 2026-09-25 to 2026-09-28
 ---
 
 # 10 Years in 1 Paper
 
-*Revision 0. One published post, three memos, two experiments in the ledger. This document
-is a ledger with a spine, not yet a decade compression. It exists so the ledger discipline
-starts at post one, and it says on every line how little is behind that line.*
+*Revision 0, with two same-heartbeat ledger appends. Two published posts, three memos, six
+experiments in the ledger across 61 records. This document is a ledger with a spine, not yet a
+decade compression. It exists so the ledger discipline starts at post one, and it says on every
+line how little is behind that line.*
 
 ## 0. How to read this
 
@@ -28,8 +29,8 @@ starts at post one, and it says on every line how little is behind that line.*
 | memos filed in GitHub `corpus/` | 3 | `9398d3a`, header line added in `ff150d3` |
 | memos filed in Notion | **0** | Notion connector not exposed to agent runs |
 | memos filed in Supabase `corpus_index` | **0** | Supabase connector not exposed to agent runs |
-| posts published | 1 | `overlapping-eval-windows-are-not-independent-tests` |
-| experiments in `experiments/leaderboard.jsonl` | **3 runs, 29 records** | `verify-2609.30721-typei-20260928`, `verify-2609.31381-mcnemar-20260928`, `axv-2609.30725-accounting-01` |
+| posts published | 2 | `overlapping-eval-windows-are-not-independent-tests`, `completed-pairs-hide-capped-failures` |
+| experiments in `experiments/leaderboard.jsonl` | **6 runs, 61 records** | read at `cc7f1e3`: `verify-2609.30721-typei-20260928`, `axv-2609.30721-calibration-01`, `verify-2609.31381-mcnemar-20260928`, `axv-2609.31381-accounting-01`, `2609.31381-a01-s1337`, `2609.31381-a02-s1337` (+ its `a02-s1337r2` correction), `axv-2609.30725-accounting-01` |
 | aggregate confidence | **medium** | Every memo in the corpus is `medium`, so this document is |
 
 **Date range covered: 2026-09-25 to 2026-09-28.** Three papers, all submitted in the last
@@ -38,7 +39,7 @@ description.
 
 **Method.** Every substantive claim below resolves to a post and an arXiv ID through
 Appendix A. Nothing is recalled from memory. A claim with no post behind it does not appear.
-Two of the three memos have no post yet, so they appear in Appendix B's evidence and nowhere
+Two memos now have a post; one does not, so it appears in Appendix B's evidence and nowhere
 else in the argument. That is the ledger being honest about itself.
 
 **Confidence convention.** `high` means the effect reproduced across seeds and against a
@@ -236,27 +237,44 @@ One row per published post. This count must match the published post count in `s
 | post | arXiv ID | claim it contributes | confidence | experiment |
 | --- | --- | --- | --- | --- |
 | [Your sliding-window eval rows are not 4 tests. They are about 2.](/posts/overlapping-eval-windows-are-not-independent-tests/) | [2609.30721v1](https://arxiv.org/abs/2609.30721v1) | Overlapping eval windows are not independent tests, and subject-disjoint splitting does not make them so. 3.93–3.97× row growth buys 1.75–1.94× information. The session-centred fix assumes away between-run heterogeneity and is worse than plain IID when that is broken. | medium | partially-verified |
+| [Your 12/15 tie was manufactured by the filter, and no estimator recovers the missing arms.](/posts/completed-pairs-hide-capped-failures/) | [2609.31381v1](https://arxiv.org/abs/2609.31381v1) | Completion is an outcome, so a completed-pairs-only report conditions on a post-treatment variable the intervention moves. 12/15 against 12/15 is an exact tie on a frame where 10 of 27 first arms capped and 10 companions never ran; the sharp finite-frame bound is **[−9, +1] tasks**, an *identification bound* and not a confidence interval. In the capped region the companion's probability of ever being observed is exactly zero, so no adjustment recovers it and the fix is procedural — per-arm reservations with independent stop decisions. The width of the bound is the unresolved mass, so it does not shrink with n: a single unexecuted arm already leaves [−1, +1], and the honest answer at any n is "cannot distinguish". A consequence for AXV's own ledger, which cannot currently tell a measured zero from a wall-clock kill. | medium | verified (31/31 arithmetic identities) |
 
 ## Appendix B. Experiment ledger
 
 Read from `experiments/leaderboard.jsonl` in this repository, never from memory. **Snapshot as
-of commit `a3feb74`:** **29 records across 3 runs**. The file is append-only and other agents are
-appending to it, so a reader should re-run the count rather than trust this line; the honest
-form of a live count is the count plus the commit it was read at. No record carries a
-`supersedes`, so nothing here has been corrected away.
+of commit `cc7f1e3`:** **61 records across 6 runs**, of which **2 carry a `supersedes`**. The
+file is append-only and other agents are appending to it, so a reader should re-run the count
+rather than trust this line; the honest form of a live count is the count plus the commit it was
+read at.
 
 | run id | arXiv | cohort | metric | records / seeds | wall clock | cost | outcome |
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | `verify-2609.30721-typei-20260928` | 2609.30721v1 | `cpu-only-2026-09-28` | Type-I error at 5% nominal; variance-equivalent information growth at 75% overlap | 20 records, 63 conditions, 3 seeds (20260928/29/30), M = 1,000 MC sets per condition | 336 s | $0.00 | **verified (partially)** — direction confirmed, headline magnitudes not reproduced |
+| `axv-2609.30721-calibration-01` | 2609.30721v1 | `cpu-only-arithmetic-rederivation-20260928` | Type-I error under a declared shared-difficulty shift | 28 records, 3 seeds per arm | 0 s | $0.00 | **keep / inconclusive** — the shared-difficulty arm is 0.72–0.73 and the differential arm 0.62–0.73, while equal-subject holds 0.050–0.056 |
 | `verify-2609.31381-mcnemar-20260928` | 2609.31381v1 | `cpu-only-2026-09-28` | Minimum n for 80% power (exact two-sided McNemar); minimum attainable two-sided p at n = 3; finite-frame bound recheck | 8 records | 1.2 s | $0.00 | **verified** — the paper's bound recheck matched exactly, and a structural limit was found |
+| `axv-2609.31381-accounting-01` | 2609.31381v1 | `cpu-only-arithmetic-rederivation-20260928` | Published identities matched | 1 record, 31 identities, 0 seeds | 0 s | $0.00 | **provisional** — 31/31 identities hold; the run this post's memo cites. Verifies accounting, not the causal claims |
+| `2609.31381-a01-s1337` | 2609.31381v1 | `cpu-only-2026-09-28` | Eq. 5 finite-frame width in percentage points; endpoint counts | 1 record, 0 seeds | 0 s | $0.00 | **keep** — estimator reproduction, explicitly not a re-execution of the 86-run campaign |
+| `2609.31381-a02-s1337` | 2609.31381v1 | `cpu-only-2026-09-28` | Eq. 5 width as censoring rate c is swept against n | 1 record, seed 1337 | 0 s | $0.00 | **inconclusive — SUPERSEDED and kept.** Its pre-registered test reported H0 refuted, which was an artefact of a mis-scaled standard error, not a finding |
+| `2609.31381-a02-s1337r2` | 2609.31381v1 | `cpu-only-2026-09-28` | Eq. 5 width as c is swept against n | 1 record, seed 1337 | 0 s | $0.00 | **inconclusive** — `supersedes` the record above. The corrected standard error does not refute, and E[width] = c is an identity |
 | `axv-2609.30725-accounting-01` | 2609.30725v1 | `cpu-only-arithmetic-rederivation-20260928` | Published identities matched | 1 record, 65 identities, 0 seeds | 0 s | $0.00 | **provisional** — 65/65 arithmetic identities hold; the paper's causal claims are not verified and are not verifiable at this budget |
 
-**Harness.** The first two runs are `train.py`, self-contained on numpy and scipy, with
+**Harness.** The two `train.py` runs are self-contained on numpy and scipy, with
 `harness_commit` null and `diff.patch` empty by design: no harness change was required, so no
-`experiment/<arxiv-id>-<series>` branch exists in `dustin-dev-35/autoresearch`. The third is a
-standalone arithmetic re-derivation script with a recorded sha256. All three are recorded as
-deliberate CPU-only deviations rather than as GPU results. **Total pod spend $0.00; $3.25 of
-$3.25 remaining.**
+`experiment/<arxiv-id>-<series>` branch exists in `dustin-dev-35/autoresearch`. The three
+arithmetic re-derivations and the two 2609.31381 estimator runs are standalone scripts with
+recorded sha256 digests. All are recorded as deliberate CPU-only deviations rather than as GPU
+results. **Total pod spend $0.00; $3.25 of $3.25 remaining.**
+
+**A pre-registration protects the hypothesis, not the test statistic.** `2609.31381-a02-s1337`
+refuted its own pre-registered null at two of three censoring rates, and that verdict was wrong.
+The standard error had been computed as `sqrt(m(1-m)/(TRIALS·n²))` when a single trial's width is
+`Binom(n,c)/n` with variance `c(1-c)/n`, so the correct standard error of the mean is
+`sqrt(m(1-m)/(n·TRIALS))` — larger by a factor of √n, which is 40× at n = 1600. The understated
+standard error inflated every z-score. Both records are retained and the chain is explicit
+(`a02-s1337r2` carries `supersedes: 2609.31381-a02-s1337`); the buggy outputs survive in the run
+directory as `metrics.superseded-test1-buggy-se.json` and
+`estimator.superseded-test1-buggy-se.log`. Nothing was quietly deleted, and the refutation is
+not counted as a finding.
 
 **The decisive records, which are the results worth keeping.**
 
@@ -270,6 +288,11 @@ $3.25 remaining.**
 - `…:n80:diff10.0:p0.8` → **217 pairs** is the smallest n at which a 10-point effect is
   detectable at 80% power, at the arm level an AXV harness comparison actually runs at. AXV's
   3 seeds are two to three orders of magnitude below this.
+- `lb-axv-2609.31381-accounting-01` → **31 of 31** published arithmetic identities in
+  2609.31381v1 hold, 0 mismatches, including the sharp bound **[−9, +1] tasks** and the check
+  that the interval's width equals the unexecuted-arm count exactly. Agreement across three
+  independent CPU re-derivations is corroboration of the transcription, **not** of the agent
+  trajectories.
 - `lb-axv-2609.30725-accounting-01` → **65 of 65** published arithmetic identities in
   2609.30725v1 hold, 0 failures. A paper's arithmetic is right; whether its causal story is right
   is a different and unverified question, and the record says so itself.
@@ -281,11 +304,17 @@ $3.25 remaining.**
   **1.75×–1.94×**. Direction survived, magnitude did not.
 - The paper's headline Type-I constants: IID ran **0.069** to **0.210** across the unreleased
   persistence parameter at 75% overlap, against the paper's single 16.9% figure.
+- `2609.31381-a02-s1337`'s pre-registered test **refuted** at c = 0.20 and c = 0.10. Superseded
+  by `a02-s1337r2`, which does not refute. The refutation was an instrument defect.
 
-**One result that reproduced exactly.** `…:paper-recheck` re-derived the paper's
-finite-frame bound on 27 paired/capture boundary runs as **[−9, 1] tasks**, matching the
-paper's reported [−9, 1]. A partial identification bound that reproduces is worth one line in a
-ledger, because most of this ledger is non-reproduction.
+**Three results that reproduced exactly.** `…:paper-recheck` re-derived the paper's finite-frame
+bound on 27 paired/capture boundary runs as **[−9, 1] tasks**, matching the paper's reported
+[−9, 1]. `2609.31381-a01-s1337` re-derived the Eq. 5 interval as **[−0.3333, +0.0370]**
+against the paper's [−9/27, +1/27] to within 1e-12, with the completed-pairs-only delta exactly
+0.0000. And `axv-2609.31381-accounting-01` matched all 31 identities. Three independent
+transcriptions of the same table agreeing is worth a line in a ledger, because most of this
+ledger is non-reproduction. It is also worth being precise about what that means: it corroborates
+arithmetic, not trajectories.
 
 **Ledger warnings, verbatim, from the records themselves.** "Cohort is CPU-only. This record is
 NOT comparable with any runpod-pro6000-mig24gb-torch280-cu130 record and must not be used as its
@@ -295,10 +324,18 @@ dependence strength rather than tuned to match the paper's numbers." / "n=3 seed
 an independent repetition of the full 63-condition Monte-Carlo study, not one draw from a single
 study." / "Power is against FIXED true arm accuracies and INDEPENDENT pairs. AXV seeds inside
 one batch share the data shard, the pod and the wall-clock budget, so within-batch correlation
-makes the true n_needed LARGER. These are optimistic lower bounds." / "This verifies the paper's
-ACCOUNTING, not its CAUSAL CLAIMS. Every checked identity is a relation among published values.
-The prevalence detectors, the noise floors, the robustness verdicts, and the attribution of the
-savings to human abstraction are all taken as given and are NOT verified here."
+makes the true n_needed LARGER. These are optimistic lower bounds." / "Not comparable to any GPU
+training arm. This is a CPU-only re-derivation of the paper's PUBLISHED ARITHMETIC: it
+transcribes Tables 3, 4, 5, 7, 8 and 11 and checks identities among values the authors already
+printed. It must never serve as the baseline for a runpod-pro6000-mig24gb-torch280-cu130 arm,
+and no such arm can serve as its baseline." / "This verifies the paper's ACCOUNTING, not its
+CAUSAL CLAIMS. The 641 model requests, the 8,202,832 reported tokens, the correctness of any
+extracted answer, every counterfactual (the unexecuted arms, the larger-quota pathspec run, the
+post-PR-15 error flag) and the billing are all out of scope and are NOT verified." / "No seeds.
+The estimand is a set of 31 deterministic identities, so replication cannot move it." / "This
+verifies the paper's ACCOUNTING, not its CAUSAL CLAIMS. Every checked identity is a relation among
+published values. The prevalence detectors, the noise floors, the robustness verdicts, and the
+attribution of the savings to human abstraction are all taken as given and are NOT verified here."
 
 **A correction is owed on one record.** `axv-2609.30725-accounting-01` states that one DevSkills
 cell is "34.1x AXV's entire .25 budget" and that ".25 buys five tasks". Both figures predate the
@@ -308,6 +345,5 @@ is far out of reach — but the multiple is wrong and it is on the one number AX
 Raised to the run's owner as a correction request; not rewritten here, because a run record is
 its owner's artifact.
 
-**Two memos have experiments behind them and no post.** `2609.30725` and `2609.31381` are read
-and filed in `corpus/`; only `2609.30721` has a published post. The other two draft issues are
-open. That gap is Appendix A doing its job, not a rounding error.
+**One memo has an experiment behind it and no post.** `2609.30725` is read and filed in
+`corpus/`; its draft issue is open. That gap is Appendix A doing its job, not a rounding error.
