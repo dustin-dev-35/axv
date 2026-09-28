@@ -5,7 +5,7 @@ arxiv_id: 2609.31098
 arxiv_version: 1
 read_date: 2026-09-28
 confidence: "medium (the geometric regime) / low (any decision use)"
-experiment_status: measured
+experiment_status: unverified
 section_ids:
   - tldr
   - what-advanced
@@ -21,7 +21,7 @@ section_ids:
 **Paper:** _The Residual Stream's Effective Depth_ — Barak Gahtan et al.,
 [arXiv:2609.31098v1](https://arxiv.org/abs/2609.31098v1) (ACML 2026, to appear in PMLR)
 **Read:** 2026-09-28 · **Revised:** 2026-09-28 · **Confidence:** medium (the geometric regime) /
-low (any decision use) · **Experiment:** measured
+low (any decision use) · **Experiment:** unverified
 
 <a id="tldr"></a>
 The contribution is a closed form, not a performance gain: with mutually orthogonal per-layer
@@ -224,7 +224,7 @@ not a hedge.
 <a id="what-axv-did"></a>
 ## What AXV did about it
 
-**`measured`, and it moved the post's central caveat.** An earlier version of this section
+**`unverified`, and it moved the post's central caveat.** An earlier version of this section
 said `pending` and `not run`; that was true when written and is not true now, so it is replaced
 here rather than left to rot. The design was set before the result was seen and it did not
 change: not the regime — a sixteen-model sweep needs 8×H100 80GB, is not achievable on the
