@@ -310,7 +310,11 @@ ${ANALYTICS}
 `;
 }
 
+// Resolved in section "build" below. The placeholder is a last resort, not a
+// default: a canonical URL that resolves to NXDOMAIN is a broken claim, and it
+// fails silently, so the build says which URL it used.
 let siteUrl = 'https://axv.sh';
+let siteUrlSource = 'placeholder';
 
 function readDoc(path) {
   const raw = readFileSync(path, 'utf8');
@@ -362,11 +366,23 @@ function firstParagraphText(markdownBody, limit = 200) {
 rmSync(outDir, { recursive: true, force: true });
 mkdirSync(outDir, { recursive: true });
 
-if (process.env.AXV_SITE_URL) siteUrl = process.env.AXV_SITE_URL.replace(/\/+$/, '');
-
-// netlify.toml sets AXV_SITE_URL; a local build falls back to the placeholder.
+// Canonical URL, most specific first. A custom domain wins over the platform's
+// own hostname, and the platform hostname is read from the environment Netlify
+// already sets. That is deliberate: it means linking the repository to a Netlify
+// site is sufficient on its own, with no second configuration step to forget.
+if (process.env.AXV_SITE_URL) {
+  siteUrl = process.env.AXV_SITE_URL.replace(/\/+$/, '');
+  siteUrlSource = 'AXV_SITE_URL';
+}
 if (existsSync(join(here, 'CNAME'))) {
   siteUrl = `https://${readFileSync(join(here, 'CNAME'), 'utf8').trim()}`;
+  siteUrlSource = 'site/CNAME';
+} else {
+  const platformUrl = process.env.URL || process.env.DEPLOY_PRIME_URL || process.env.DEPLOY_URL;
+  if (platformUrl) {
+    siteUrl = platformUrl.replace(/\/+$/, '');
+    siteUrlSource = 'netlify build environment';
+  }
 }
 
 const posts = [];
@@ -488,3 +504,13 @@ console.log(
     ? 'analytics: PostHog key present, section events wired'
     : 'analytics: no POSTHOG_KEY, site builds without analytics (expected locally)'
 );
+// A build can be green and still publish a canonical URL that resolves to
+// nothing, so the deploy log names the URL it emitted and whether it is real.
+if (siteUrlSource === 'placeholder') {
+  console.error(
+    'WARN canonical URL is the placeholder https://axv.sh. Set AXV_SITE_URL, drop a CNAME in site/, or build on the platform that supplies URL.'
+  );
+  process.exitCode = 1;
+} else {
+  console.log(`canonical: ${siteUrl} (from ${siteUrlSource})`);
+}
