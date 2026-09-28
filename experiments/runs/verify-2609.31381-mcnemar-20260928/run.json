@@ -1,0 +1,73 @@
+{
+  "run_id": "verify-2609.31381-mcnemar-20260928",
+  "arxiv_id": "2609.31381",
+  "arxiv_version": "v1",
+  "issue": "AXV-6",
+  "child_issue": "AXV-9",
+  "agent": "Lens",
+  "agent_id": "1dc764c3-1c49-4bca-98de-571538e391a5",
+  "started_utc": "2026-09-28T20:24:00Z",
+  "finished_utc": "2026-09-28T20:25:00Z",
+  "status": "completed",
+  "decision": "no RunPod pod provisioned; verification run on local CPU at zero cost",
+  "question": "What is the smallest n at which AXV's complete-case paired protocol can distinguish 'no difference' from 'we stopped looking', and does the paper's censoring arithmetic recheck?",
+  "compute": {
+    "device": "CPU",
+    "gpu": null,
+    "runpod_pod_id": null,
+    "cuda": null,
+    "wall_clock_seconds": 1.0,
+    "cost_usd": 0.0,
+    "budget_remaining_usd_after_run": 3.25,
+    "python": "3.12.10",
+    "scipy": "1.18.0",
+    "rationale": "Exact binomial arithmetic. No training, no data, no accelerator. Same reasoning as verify-2609.30721-typei-20260928."
+  },
+  "harness_commit": null,
+  "harness_change": "none required; no training claim, so no change to dustin-dev-35/autoresearch and no experiment/<arxiv-id>-<series> branch",
+  "diff_patch": "empty by design; see diff.patch",
+  "seeds": [7, 11],
+  "conditions": 6,
+  "test": "exact two-sided McNemar on complete pairs, Monte-Carlo conditional on the discordant count, alpha = 0.05",
+  "primary_result": {
+    "minimum_n_for_80pct_power": {
+      "true_diff_10pp_at_p_0.80": 217,
+      "true_diff_20pp_at_p_0.80": 72,
+      "true_diff_10pp_at_p_0.70": 315,
+      "true_diff_10pp_at_p_0.60": 379,
+      "true_diff_10pp_at_p_0.50": 412,
+      "true_diff_40pp_at_p_0.70": 26
+    },
+    "minimum_n_for_50pct_power": {
+      "true_diff_10pp_at_p_0.80": 119,
+      "true_diff_20pp_at_p_0.80": 41,
+      "true_diff_40pp_at_p_0.70": 16
+    },
+    "minimum_n_for_20pct_power": {
+      "true_diff_10pp_at_p_0.80": 51,
+      "true_diff_20pp_at_p_0.80": 21,
+      "true_diff_40pp_at_p_0.70": 10
+    },
+    "affordability": {
+      "n_an_axv_batch_can_afford": 3,
+      "min_attainable_two_sided_p_by_n": {"1": 1.0, "2": 0.5, "3": 0.25, "4": 0.125, "5": 0.0625, "6": 0.03125},
+      "empirical_rejection_at_n3_under_null": 0.0,
+      "note": "At n=3 the exact two-sided McNemar test cannot reject at the 0.05 level at all. It is not a weak test, it is a test that cannot fire."
+    },
+    "paper_recheck": {
+      "n_boundary_runs": 27,
+      "recomputed_delta_tasks": [-9, 1],
+      "recomputed_delta_pp": [-33.3, 3.7],
+      "paper_reported_delta_tasks": [-9, 1],
+      "paper_reported_delta_pp": [-33.3, 3.7],
+      "matches_paper": true,
+      "completed_pair_view": "12/15 each arm; the tie is produced entirely by the filter",
+      "attenuation": "A true projected-minus-full of -9 tasks over 27 runs is a 33.3 pp deficit and appears as an exact 0 tie when the 12 stopped pairs are dropped. Censoring did not shrink a small effect; it removed every observation that carried it."
+    }
+  },
+  "caveats": [
+    "Power is computed against FIXED true arm accuracies and INDEPENDENT pairs. Seeds inside one AXV batch share the data shard, the pod and the wall-clock budget, so real within-batch correlation makes the true n_needed larger, not smaller. These are optimistic lower bounds on n.",
+    "The censoring-attenuation table is a worst-case analytic bound, not a simulation. It assumes the censored arm is always the arm that would have scored lower, which is the direction the ReVerPi stop rule produces."
+  ],
+  "files": ["run.json", "train.py", "diff.patch", "train.log", "metrics.json", "harness_commit"]
+}

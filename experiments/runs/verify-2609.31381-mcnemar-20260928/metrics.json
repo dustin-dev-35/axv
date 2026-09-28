@@ -1,0 +1,193 @@
+{
+  "meta": {
+    "generated_utc": "2026-09-28T20:05:43Z",
+    "wall_seconds": 1.2,
+    "alpha": 0.05,
+    "test": "exact two-sided McNemar on complete pairs, Monte-Carlo conditional on the discordant count",
+    "compute": "CPU only. No GPU, no RunPod pod. $0.00 of the AXV compute budget.",
+    "caveat": "Power is computed against FIXED true arm accuracies and INDEPENDENT pairs. Seeds inside one AXV batch share the data shard, the pod and the wall-clock budget, so real within-batch correlation makes the true n_needed larger, not smaller. These are therefore optimistic lower bounds on n."
+  },
+  "mcnemar": [
+    {
+      "p_a": 0.9,
+      "p_b": 0.8,
+      "label": "true diff +10 pp, p_A=0.90 vs p_B=0.80",
+      "true_diff_pp": 10.0,
+      "n_for_80pct_power": 217,
+      "n_for_50pct_power": 119,
+      "n_for_20pct_power": 51
+    },
+    {
+      "p_a": 0.9,
+      "p_b": 0.7,
+      "label": "true diff +20 pp, p_A=0.90 vs p_B=0.70",
+      "true_diff_pp": 20.0,
+      "n_for_80pct_power": 72,
+      "n_for_50pct_power": 41,
+      "n_for_20pct_power": 21
+    },
+    {
+      "p_a": 0.8,
+      "p_b": 0.7,
+      "label": "true diff +10 pp, p_A=0.80 vs p_B=0.70",
+      "true_diff_pp": 10.0,
+      "n_for_80pct_power": 315,
+      "n_for_50pct_power": 163,
+      "n_for_20pct_power": 69
+    },
+    {
+      "p_a": 0.7,
+      "p_b": 0.6,
+      "label": "true diff +10 pp, p_A=0.70 vs p_B=0.60",
+      "true_diff_pp": 10.0,
+      "n_for_80pct_power": 379,
+      "n_for_50pct_power": 196,
+      "n_for_20pct_power": 77
+    },
+    {
+      "p_a": 0.6,
+      "p_b": 0.5,
+      "label": "true diff +10 pp, p_A=0.60 vs p_B=0.50",
+      "true_diff_pp": 10.0,
+      "n_for_80pct_power": 412,
+      "n_for_50pct_power": 210,
+      "n_for_20pct_power": 81
+    },
+    {
+      "p_a": 0.9,
+      "p_b": 0.5,
+      "label": "true diff +40 pp, p_A=0.90 vs p_B=0.50",
+      "true_diff_pp": 40.0,
+      "n_for_80pct_power": 26,
+      "n_for_50pct_power": 16,
+      "n_for_20pct_power": 10
+    }
+  ],
+  "censoring": [
+    {
+      "n": 3,
+      "m_censored": 0,
+      "attenuation_factor": 1.0,
+      "note": "no censoring"
+    },
+    {
+      "n": 3,
+      "m_censored": 1,
+      "attenuation_factor": 0.6667,
+      "note": "one of 3 pairs censored one-sidedly: a true difference d can appear as at most 0.667*d"
+    },
+    {
+      "n": 3,
+      "m_censored": 2,
+      "attenuation_factor": 0.3333,
+      "note": "one of 3 pairs censored one-sidedly: a true difference d can appear as at most 0.333*d"
+    }
+  ],
+  "paper_recheck": {
+    "n_boundary_runs": 27,
+    "full_correct_known": 14,
+    "full_unexecuted": 7,
+    "projected_correct_known": 12,
+    "projected_unexecuted": 3,
+    "recomputed_delta_lower_tasks": -9,
+    "recomputed_delta_upper_tasks": 1,
+    "recomputed_delta_lower_pp": -33.33,
+    "recomputed_delta_upper_pp": 3.7,
+    "paper_reported_lower_tasks": -9,
+    "paper_reported_upper_tasks": 1,
+    "paper_reported_lower_pp": -33.3,
+    "paper_reported_upper_pp": 3.7,
+    "matches_paper": true,
+    "completed_pair_view": {
+      "n_completed_pairs": 15,
+      "full_correct": 12,
+      "projected_correct": 12,
+      "reported_tie": true,
+      "note": "12/15 each arm; the tie is produced entirely by the filter"
+    },
+    "attenuation_example": {
+      "true_delta_minus9_tasks": -9,
+      "complete_case_delta_tasks": 0,
+      "note": "A true projected-minus-full of -9 tasks over 27 runs is a 33.3 pp deficit and appears as an exact 0 tie when the 12 stopped pairs are dropped. Censoring did not shrink a small effect; it removed every observation that carried it."
+    }
+  },
+  "test_size_check": {
+    "n": 3,
+    "empirical_two_sided_rejection_at_5pct_under_null": 0.0,
+    "note": "At n=3 the exact two-sided McNemar test is degenerate: with 3 pairs the smallest attainable p-value is 0.25, so the test can never reject at the 0.05 level no matter how large the true difference. A complete-case n=3 protocol is not a weak test, it is a test that cannot fire.",
+    "min_attainable_two_sided_p_by_n": {
+      "1": 1.0,
+      "2": 0.5,
+      "3": 0.25,
+      "4": 0.125,
+      "5": 0.0625,
+      "6": 0.03125
+    }
+  },
+  "n3_summary": [
+    {
+      "true_diff_pp": 10.0,
+      "n_needed_80pct": 217,
+      "n_needed_20pct": 51,
+      "detectable_at_n3": false,
+      "max_true_pp_reported_as_null_at_n3": 15.0,
+      "smallest_true_pp_80pct_power_would_have_detected": 10.0
+    },
+    {
+      "true_diff_pp": 20.0,
+      "n_needed_80pct": 72,
+      "n_needed_20pct": 21,
+      "detectable_at_n3": false,
+      "max_true_pp_reported_as_null_at_n3": 30.0,
+      "smallest_true_pp_80pct_power_would_have_detected": 20.0
+    },
+    {
+      "true_diff_pp": 10.0,
+      "n_needed_80pct": 315,
+      "n_needed_20pct": 69,
+      "detectable_at_n3": false,
+      "max_true_pp_reported_as_null_at_n3": 15.0,
+      "smallest_true_pp_80pct_power_would_have_detected": 10.0
+    },
+    {
+      "true_diff_pp": 10.0,
+      "n_needed_80pct": 379,
+      "n_needed_20pct": 77,
+      "detectable_at_n3": false,
+      "max_true_pp_reported_as_null_at_n3": 15.0,
+      "smallest_true_pp_80pct_power_would_have_detected": 10.0
+    },
+    {
+      "true_diff_pp": 10.0,
+      "n_needed_80pct": 412,
+      "n_needed_20pct": 81,
+      "detectable_at_n3": false,
+      "max_true_pp_reported_as_null_at_n3": 15.0,
+      "smallest_true_pp_80pct_power_would_have_detected": 10.0
+    },
+    {
+      "true_diff_pp": 40.0,
+      "n_needed_80pct": 26,
+      "n_needed_20pct": 10,
+      "detectable_at_n3": false,
+      "max_true_pp_reported_as_null_at_n3": 60.0,
+      "smallest_true_pp_80pct_power_would_have_detected": 40.0
+    }
+  ],
+  "n3_headline": {
+    "affordable_n": 3,
+    "n_needed_for_10pp_at_80pct_power": [
+      217,
+      315,
+      379,
+      412
+    ],
+    "n_needed_for_20pp_at_80pct_power": [
+      72
+    ],
+    "n_needed_for_40pp_at_80pct_power": [
+      26
+    ],
+    "conclusion": "At the n=3 an AXV batch can afford, the exact paired test cannot reject at the 5% level at all (minimum attainable two-sided p is 0.25). Even ignoring that, 80% power against a 10-point difference needs n in the low hundreds, against 20 points n in the tens, and against 40 points n in the twenties. Every null AXV reports from a complete-case n=3 batch is therefore a statement about nothing."
+  }
+}

@@ -1,0 +1,10 @@
+No diff. This run required no change to the harness.
+
+The claim under test in arXiv:2609.30721 is a statement about a variance estimator
+on binary paired outcomes and about exact binomial power, not a statement about a
+training run. Nothing in karpathy/autoresearch or dustin-dev-35/autoresearch is on
+the code path, so no experiment/<arxiv-id>-<series> branch was created and
+harness_commit is null.
+
+train.py in this directory is the complete, self-contained analysis. It depends only
+on numpy and scipy.

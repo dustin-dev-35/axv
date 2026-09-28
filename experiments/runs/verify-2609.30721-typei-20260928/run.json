@@ -1,0 +1,96 @@
+{
+  "run_id": "verify-2609.30721-typei-20260928",
+  "arxiv_id": "2609.30721",
+  "arxiv_version": "v1",
+  "issue": "AXV-6",
+  "child_issue": "AXV-8",
+  "agent": "Lens",
+  "agent_id": "1dc764c3-1c49-4bca-98de-571538e391a5",
+  "started_utc": "2026-09-28T20:05:00Z",
+  "finished_utc": "2026-09-28T20:22:00Z",
+  "status": "completed",
+  "decision": "no RunPod pod provisioned; verification run on local CPU at zero cost",
+  "question": "Is the dependence-robust inference machinery the paper recommends real, and does it change the significance of a paired arm comparison?",
+  "compute": {
+    "device": "CPU",
+    "gpu": null,
+    "runpod_pod_id": null,
+    "runpod_template": null,
+    "cuda": null,
+    "wall_clock_seconds": 336,
+    "cost_usd": 0.0,
+    "budget_remaining_usd_after_run": 3.25,
+    "python": "3.12.10",
+    "numpy": "2.5.2",
+    "scipy": "1.18.0",
+    "rationale": "The claim is a statement about a variance estimator on binary paired outcomes. It is not GPU-bound. Provisioning the PRO 6000 MIG 24GB at $0.59/hr would have spent scarce AXV budget to compute the same number in more time. Board constraint 10.1 restricts GPU substitution; it does not require a GPU where none is needed. The run is recorded here as a deviation with its reason, not as a GPU result."
+  },
+  "harness_commit": null,
+  "harness_change": "none required; the claim is not a training claim, so no change to dustin-dev-35/autoresearch was needed and no experiment/<arxiv-id>-<series> branch was created",
+  "diff_patch": "empty by design; see diff.patch",
+  "seeds": [20260928, 20260929, 20260930],
+  "m_per_condition": 1000,
+  "conditions": 63,
+  "arms": [
+    "iid (pooled two-sided normal on the paired contrast)",
+    "hac (paper Eq. 5, session-centred Bartlett, K = max(K_NW, 2*K0), c = N/(N-R))",
+    "subj (equal-subject paired, t_{I-1})"
+  ],
+  "sweep": {
+    "overlap_pct": [0, 50, 75],
+    "ar1_persistence_rho": [0.0, 0.5, 0.8, 0.95, 0.99],
+    "heterogeneity_arms": ["shared_only", "shared_plus_pair"]
+  },
+  "primary_result": {
+    "type_i_error_surface_mean_over_3_seeds": {
+      "note": "columns are overlap 0/50/75; nominal is 0.05",
+      "rho=0.0":  {"iid": [0.032, 0.042, 0.069], "hac": [0.035, 0.033, 0.036], "gap_at_75": 0.033},
+      "rho=0.5":  {"iid": [0.029, 0.043, 0.077], "hac": [0.033, 0.030, 0.041], "gap_at_75": 0.036},
+      "rho=0.8":  {"iid": [0.032, 0.047, 0.074], "hac": [0.036, 0.035, 0.036], "gap_at_75": 0.038},
+      "rho=0.95": {"iid": [0.038, 0.066, 0.100], "hac": [0.035, 0.048, 0.048], "gap_at_75": 0.052},
+      "rho=0.99": {"iid": [0.073, 0.131, 0.210], "hac": [0.044, 0.061, 0.083], "gap_at_75": 0.127}
+    },
+    "target_alignment": {
+      "shared_difficulty_heterogeneity_only": {"iid": 0.059, "hac": 0.039, "subj": 0.032},
+      "plus_model_pair_heterogeneity":    {"iid": 0.776, "hac": 0.800, "subj": 0.032}
+    },
+    "information_growth_at_75pct_overlap": {
+      "nominal_row_growth": 3.97,
+      "G_info_rho_0.0": 2.81,
+      "G_info_rho_0.8": 2.78,
+      "G_info_rho_0.95": 2.69,
+      "G_info_rho_0.99": 2.62
+    }
+  },
+  "paper_comparison": {
+    "paper_iid_type_i_at_75": 0.169,
+    "paper_hac_type_i_at_75": 0.072,
+    "axv_iid_type_i_at_75": "0.069 (rho=0) to 0.210 (rho=0.99)",
+    "axv_hac_type_i_at_75": "0.036 (rho=0) to 0.083 (rho=0.99)",
+    "paper_row_growth": "3.93-3.97x",
+    "paper_information_growth": "1.75-1.94x",
+    "axv_row_growth": 3.97,
+    "axv_information_growth": "2.62-2.81x",
+    "verdict": "direction replicates, magnitude does not and is not reconstructible because the paper does not release its DGP parameters. The paper's 16.9% IID figure is bracketed by this sweep between rho=0.95 (0.100) and rho=0.99 (0.210)."
+  },
+  "prediction_checks": {
+    "total": 8,
+    "held": 8,
+    "ids": [
+      "P1a_iid_inflates_with_overlap",
+      "P1b_hac_gap_nonnegative",
+      "P1c_hac_substantially_below_iid_at_75",
+      "P2_target_alignment",
+      "P2b_shared_difficulty_cancels_in_paired_contrast",
+      "P3_info_growth_below_row_growth",
+      "P3b_information_shortfall_decomposition"
+    ]
+  },
+  "caveats": [
+    "NOT a replication. The paper does not release its DGP parameters. The estimator (Eq. 5), window geometry (L=64) and bandwidth rule are the paper's; the data-generating process is AXV's and is swept over dependence strength rather than tuned to match the paper's numbers.",
+    "The latent is Gaussian and thresholded, not a Bernoulli-AR process. Absolute Type-I values are conditional on that choice.",
+    "Three seeds, each an independent repetition of the full 63-condition Monte-Carlo study, not three draws from one. Seed spread at rho=0.99, overlap 75: IID 0.199/0.218/0.212, HAC 0.081/0.080/0.087, SUBJ 0.027/0.039/0.029.",
+    "Bins are G_info on 100 draws per overlap per seed; the row-growth denominator is exact."
+  ],
+  "files": ["run.json", "train.py", "report.py", "diff.patch", "train.log", "metrics.json", "harness_commit"]
+}
