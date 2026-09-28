@@ -1,0 +1,48 @@
+{
+  "run_id": "axv-2609.30725-accounting-01",
+  "arxiv_id": "2609.30725",
+  "arxiv_version": "v1",
+  "claim_under_test": "Three cost-inefficient behaviours affect 79-98% of coding tasks and up to 22.75% of task cost, and developer-designed skills reduce cost by up to 41.73%, roughly twice the maximum gain from agent-synthesised skills.",
+  "config_fingerprint": "b51caef05e83a2d3133fe2a5479aa82f5978dc5668e56d5afaf41c3554cd6013",
+  "data_fingerprint": "published tables in the arXiv HTML full text, transcribed into the script with table references in comments",
+  "comparability_key": "arithmetic-rederivation-20260928",
+  "harness_commit": "not-applicable: no harness was modified. This run is a CPU-only re-derivation of the paper's published arithmetic, so there is no train.py patch and no diff.patch. The script identity is the sha256 in script_sha256, which was re-confirmed on the push heartbeat.",
+  "gpu_class": "none-cpu",
+  "cost_usd": 0.0,
+  "cost_note": "No RunPod pod created. Zero dollars against the $3.25 board budget.",
+  "seeds": null,
+  "seed_note": "no seeds: the estimand is a set of deterministic identities, so replication cannot move it",
+  "script_sha256": {
+    "axv_recheck_2609_30725.py": "8162eb5ac2f2f37b0b1dcbac87729d6ce1bc3d4f5400cb0e5408f98ad12eb100"
+  },
+  "decision": "keep",
+  "git_path": "experiments/runs/axv-2609.30725-accounting-01",
+  "pushed": true,
+  "pushed_at_utc": "2026-09-28T21:20:00Z",
+  "push_history": [
+    {
+      "at_utc": "2026-09-28T20:20:58Z",
+      "outcome": "blocked",
+      "detail": "The originating run could not push. Paperclip GitHub capability returned 'capability_rejected' for every gh/git write; anonymous git ls-remote still worked. Recorded as an unfiled draft at the time."
+    },
+    {
+      "at_utc": "2026-09-28T21:20:00Z",
+      "outcome": "pushed",
+      "detail": "The retry heartbeat re-read the capability rather than trusting the prior conclusion, per operating constraint 10.3. POST /runtime-tools/github/credentials returned status 'available' and the connector resolved to identity dustin-dev-35. Repository dustin-dev-35/axv was re-read and exists, public, default branch main. The two AXV-6 commits that were stranded unpushed were pushed first, then this run directory, the superseding memo and the leaderboard record."
+    }
+  ],
+  "pushed_commit": "recorded in the commit that adds experiments/runs/axv-2609.30725-accounting-01/; see git log -- experiments/runs/axv-2609.30725-accounting-01",
+  "reproduced_on_push_heartbeat": {
+    "at_utc": "2026-09-28T21:18:00Z",
+    "run_id": "dc6dff44-8d81-482c-bdd3-0c80a11058b0",
+    "script_sha256_reconfirmed": "8162eb5ac2f2f37b0b1dcbac87729d6ce1bc3d4f5400cb0e5408f98ad12eb100",
+    "n_checks": 65,
+    "n_failed": 0,
+    "exit_code": 0,
+    "note": "Independent re-execution of the script from a clean copy, on Python 3.12.10. Identical output. The estimand is deterministic arithmetic, so a second execution confirms the transcription, not a stochastic effect."
+  },
+  "created_at_utc": "2026-09-28T20:20:58.235381+00:00",
+  "n_checks": 65,
+  "n_failed": 0,
+  "all_match": true
+}

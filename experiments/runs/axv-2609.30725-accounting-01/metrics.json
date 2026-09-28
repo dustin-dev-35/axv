@@ -1,0 +1,634 @@
+{
+  "run_id": "axv-2609.30725-accounting-01",
+  "arxiv_id": "2609.30725",
+  "arxiv_version": "v1",
+  "method": "arithmetic re-derivation of published tables; no agent runs, no training, $0.00",
+  "end_to_end_claim_status": "not-applicable",
+  "end_to_end_blocker": {
+    "reason": "one DevSkills cell on MSA S46 is 200 tasks x $0.554 = $110.80, 34.1x AXV's entire $3.25 budget; the paper's own full factorial is stated as about $7,500",
+    "harness_required": [
+      "Mini-SWE-Agent container on the board-set instance: 1x PRO 6000 MIG 24GB, 31 GB RAM, 4 vCPU, PyTorch 2.8.0, CUDA 13.0",
+      "per-task cost cap identical to the paper's: $3.00 Verified, $5.00 Pro",
+      "a token ledger splitting uncached input, cached input and output per action",
+      "at least 3 seeds per arm: the paper measures cost noise floors of 2.44-8.35% CV, so a single run cannot resolve a 7-8% effect"
+    ]
+  },
+  "amortisation": {
+    "CC": {
+      "synthesis_total_usd": 22.76,
+      "synthesis_per_task_usd": 0.07587,
+      "syn_unamortised_usd": 0.541,
+      "syn_amortised_usd": 0.617,
+      "unamortised_pct": -1.38,
+      "amortised_pct": 12.51,
+      "sign_flip": true
+    },
+    "MSA S46": {
+      "synthesis_total_usd": 37.59,
+      "synthesis_per_task_usd": 0.1253,
+      "syn_unamortised_usd": 0.496,
+      "syn_amortised_usd": 0.621,
+      "unamortised_pct": -22.32,
+      "amortised_pct": -2.7,
+      "sign_flip": false
+    },
+    "MSA MM3": {
+      "synthesis_total_usd": 5.86,
+      "synthesis_per_task_usd": 0.01953,
+      "syn_unamortised_usd": 0.462,
+      "syn_amortised_usd": 0.481,
+      "unamortised_pct": 0.15,
+      "amortised_pct": 4.39,
+      "sign_flip": false
+    },
+    "MSA Q35+": {
+      "synthesis_total_usd": 4.27,
+      "synthesis_per_task_usd": 0.01423,
+      "syn_unamortised_usd": 0.115,
+      "syn_amortised_usd": 0.13,
+      "unamortised_pct": -0.7,
+      "amortised_pct": 11.55,
+      "sign_flip": true
+    }
+  },
+  "recovered_baselines": {
+    "CC": {
+      "implied": {
+        "cg": 0.55032,
+        "syn": 0.54857,
+        "syn_amort": 0.5484,
+        "dev": 0.54962
+      },
+      "spread_pct": 0.351,
+      "print_granularity_pct": 0.182
+    },
+    "MSA S46": {
+      "implied": {
+        "cg": 0.63834,
+        "syn": 0.63852,
+        "syn_amort": 0.63823,
+        "dev": 0.63841
+      },
+      "spread_pct": 0.045,
+      "print_granularity_pct": 0.157
+    },
+    "MSA MM3": {
+      "implied": {
+        "cg": 0.46121,
+        "syn": 0.46131,
+        "syn_amort": 0.46077,
+        "dev": 0.46088
+      },
+      "spread_pct": 0.116,
+      "print_granularity_pct": 0.217
+    },
+    "MSA Q35+": {
+      "implied": {
+        "cg": 0.11581,
+        "syn": 0.11581,
+        "syn_amort": 0.11654,
+        "dev": 0.11617
+      },
+      "spread_pct": 0.63,
+      "print_granularity_pct": 0.863
+    }
+  },
+  "headline_reframing": {
+    "largest_dev_saving_pct": -41.73,
+    "dev_cells_negative": 7,
+    "dev_cells_robust": 5,
+    "largest_syn_unamortised_pct": -22.32,
+    "largest_syn_amortised_pct": -9.65,
+    "ratio_as_abstracted": 1.87,
+    "ratio_amortised": 4.32,
+    "syn_amortised_negative_cells": 3,
+    "syn_amortised_positive_cells": 5,
+    "syn_sign_flips_on_verified": 2
+  },
+  "n_checks": 65,
+  "n_failed": 0,
+  "all_match": true,
+  "checks": [
+    {
+      "name": "table14_total_sum[CC]",
+      "recomputed": 22.76,
+      "paper_or_expected": 22.76,
+      "tolerance": 0.005,
+      "match": true,
+      "note": ""
+    },
+    {
+      "name": "table14_synthesis_to_task_ratio_pct[CC]",
+      "recomputed": 14.589744,
+      "paper_or_expected": 14.59,
+      "tolerance": 0.02,
+      "match": true,
+      "note": ""
+    },
+    {
+      "name": "table14_total_sum[MSA S46]",
+      "recomputed": 37.59,
+      "paper_or_expected": 37.59,
+      "tolerance": 0.005,
+      "match": true,
+      "note": ""
+    },
+    {
+      "name": "table14_synthesis_to_task_ratio_pct[MSA S46]",
+      "recomputed": 22.636396,
+      "paper_or_expected": 22.64,
+      "tolerance": 0.02,
+      "match": true,
+      "note": ""
+    },
+    {
+      "name": "table14_total_sum[MSA MM3]",
+      "recomputed": 5.86,
+      "paper_or_expected": 5.86,
+      "tolerance": 0.005,
+      "match": true,
+      "note": ""
+    },
+    {
+      "name": "table14_synthesis_to_task_ratio_pct[MSA MM3]",
+      "recomputed": 5.351598,
+      "paper_or_expected": 5.35,
+      "tolerance": 0.02,
+      "match": true,
+      "note": ""
+    },
+    {
+      "name": "table14_total_sum[MSA Q35+]",
+      "recomputed": 4.27,
+      "paper_or_expected": 4.27,
+      "tolerance": 0.005,
+      "match": true,
+      "note": ""
+    },
+    {
+      "name": "table14_synthesis_to_task_ratio_pct[MSA Q35+]",
+      "recomputed": 13.954248,
+      "paper_or_expected": 13.95,
+      "tolerance": 0.02,
+      "match": true,
+      "note": ""
+    },
+    {
+      "name": "worst_synthesis_ratio_pct",
+      "recomputed": 22.636396,
+      "paper_or_expected": 22.64,
+      "tolerance": 0.02,
+      "match": true,
+      "note": ""
+    },
+    {
+      "name": "best_synthesis_ratio_pct",
+      "recomputed": 5.351598,
+      "paper_or_expected": 5.35,
+      "tolerance": 0.02,
+      "match": true,
+      "note": ""
+    },
+    {
+      "name": "table15_amortised_cost_identity[CC]",
+      "recomputed": 0.616867,
+      "paper_or_expected": 0.617,
+      "tolerance": 0.0015,
+      "match": true,
+      "note": "un-amortised per-task cost plus the Table 14 synthesis total spread over 300 tasks"
+    },
+    {
+      "name": "table15_amortised_cost_identity[MSA S46]",
+      "recomputed": 0.6213,
+      "paper_or_expected": 0.621,
+      "tolerance": 0.0015,
+      "match": true,
+      "note": "un-amortised per-task cost plus the Table 14 synthesis total spread over 300 tasks"
+    },
+    {
+      "name": "table15_amortised_cost_identity[MSA MM3]",
+      "recomputed": 0.481533,
+      "paper_or_expected": 0.481,
+      "tolerance": 0.0015,
+      "match": true,
+      "note": "un-amortised per-task cost plus the Table 14 synthesis total spread over 300 tasks"
+    },
+    {
+      "name": "table15_amortised_cost_identity[MSA Q35+]",
+      "recomputed": 0.129233,
+      "paper_or_expected": 0.13,
+      "tolerance": 0.0015,
+      "match": true,
+      "note": "un-amortised per-task cost plus the Table 14 synthesis total spread over 300 tasks"
+    },
+    {
+      "name": "table15_pro_amortised_cost_identity[CC]",
+      "recomputed": 0.901867,
+      "paper_or_expected": 0.902,
+      "tolerance": 0.002,
+      "match": true,
+      "note": ""
+    },
+    {
+      "name": "table15_pro_amortised_cost_identity[MSA S46]",
+      "recomputed": 1.1313,
+      "paper_or_expected": 1.132,
+      "tolerance": 0.002,
+      "match": true,
+      "note": ""
+    },
+    {
+      "name": "table15_pro_amortised_cost_identity[MSA MM3]",
+      "recomputed": 0.785533,
+      "paper_or_expected": 0.785,
+      "tolerance": 0.002,
+      "match": true,
+      "note": ""
+    },
+    {
+      "name": "table15_pro_amortised_cost_identity[MSA Q35+]",
+      "recomputed": 0.146233,
+      "paper_or_expected": 0.146,
+      "tolerance": 0.002,
+      "match": true,
+      "note": ""
+    },
+    {
+      "name": "printed_pct_mutual_consistency_spread_pct[CC]",
+      "recomputed": 0.351476,
+      "paper_or_expected": 0.0,
+      "tolerance": 1.0,
+      "match": true,
+      "note": "the four printed cost percentages for one configuration imply baselines agreeing to better than 1%, so the printed percentages and costs are mutually consistent"
+    },
+    {
+      "name": "printed_pct_mutual_consistency_spread_pct[MSA S46]",
+      "recomputed": 0.044611,
+      "paper_or_expected": 0.0,
+      "tolerance": 1.0,
+      "match": true,
+      "note": "the four printed cost percentages for one configuration imply baselines agreeing to better than 1%, so the printed percentages and costs are mutually consistent"
+    },
+    {
+      "name": "printed_pct_mutual_consistency_spread_pct[MSA MM3]",
+      "recomputed": 0.116312,
+      "paper_or_expected": 0.0,
+      "tolerance": 1.0,
+      "match": true,
+      "note": "the four printed cost percentages for one configuration imply baselines agreeing to better than 1%, so the printed percentages and costs are mutually consistent"
+    },
+    {
+      "name": "printed_pct_mutual_consistency_spread_pct[MSA Q35+]",
+      "recomputed": 0.629923,
+      "paper_or_expected": 0.0,
+      "tolerance": 1.0,
+      "match": true,
+      "note": "the four printed cost percentages for one configuration imply baselines agreeing to better than 1%, so the printed percentages and costs are mutually consistent"
+    },
+    {
+      "name": "dev_cells_negative",
+      "recomputed": 7,
+      "paper_or_expected": 7,
+      "tolerance": 0,
+      "match": true,
+      "note": "one of eight cells is a cost increase: MSA Q35+ on Pro-100 at +3.57%"
+    },
+    {
+      "name": "dev_cells_robust_at_single_run_bar",
+      "recomputed": 5,
+      "paper_or_expected": 5,
+      "tolerance": 0,
+      "match": true,
+      "note": "five of the six the paper calls robust clear the single-run bar in Table 7; the sixth, Verified-200 CC at -13.94% against a 15.87% bar, is one of the nine replicated cells in Table 8, where the bar is the weaker 1.645-sigma one"
+    },
+    {
+      "name": "largest_dev_saving_pct",
+      "recomputed": -41.73,
+      "paper_or_expected": -41.73,
+      "tolerance": 0,
+      "match": true,
+      "note": ""
+    },
+    {
+      "name": "largest_syn_unamortised_pct",
+      "recomputed": -22.32,
+      "paper_or_expected": -22.32,
+      "tolerance": 0,
+      "match": true,
+      "note": ""
+    },
+    {
+      "name": "largest_syn_amortised_pct",
+      "recomputed": -9.65,
+      "paper_or_expected": -9.65,
+      "tolerance": 0,
+      "match": true,
+      "note": "after amortisation the best SynSkills result is on Pro-100, not Verified-200"
+    },
+    {
+      "name": "abstract_ratio_as_published",
+      "recomputed": 1.869624,
+      "paper_or_expected": 1.9,
+      "tolerance": 0.05,
+      "match": true,
+      "note": "41.73 / 22.32, the 'roughly twice' in the abstract"
+    },
+    {
+      "name": "same_ratio_amortised",
+      "recomputed": 4.324352,
+      "paper_or_expected": 4.3,
+      "tolerance": 0.1,
+      "match": true,
+      "note": "41.73 / 9.65 once synthesis is paid for: 4.3x, not 2x, and on a different benchmark"
+    },
+    {
+      "name": "syn_amortised_negative_cells",
+      "recomputed": 3,
+      "paper_or_expected": 3,
+      "tolerance": 0,
+      "match": true,
+      "note": ""
+    },
+    {
+      "name": "syn_amortised_positive_cells",
+      "recomputed": 5,
+      "paper_or_expected": 5,
+      "tolerance": 0,
+      "match": true,
+      "note": "un-amortised SynSkills never raises cost in any of the eight cells; amortised it raises cost in five"
+    },
+    {
+      "name": "syn_sign_flips",
+      "recomputed": 2,
+      "paper_or_expected": 2,
+      "tolerance": 0,
+      "match": true,
+      "note": "on Verified-200, CC (-1.38 to +12.51) and MSA Q35+ (-0.70 to +11.55) change sign once synthesis is charged; MSA S46 does not, it only shrinks"
+    },
+    {
+      "name": "table1_total_freq[CC]",
+      "recomputed": 4.67,
+      "paper_or_expected": 4.67,
+      "tolerance": 0.011,
+      "match": true,
+      "note": "MSA Q35+ prints 11.68 for a sum of 11.67; a rounding artefact in the paper's total"
+    },
+    {
+      "name": "table1_total_cost[CC]",
+      "recomputed": 6.86,
+      "paper_or_expected": 6.86,
+      "tolerance": 0.005,
+      "match": true,
+      "note": ""
+    },
+    {
+      "name": "table1_total_freq[MSA S46]",
+      "recomputed": 8.5,
+      "paper_or_expected": 8.5,
+      "tolerance": 0.011,
+      "match": true,
+      "note": "MSA Q35+ prints 11.68 for a sum of 11.67; a rounding artefact in the paper's total"
+    },
+    {
+      "name": "table1_total_cost[MSA S46]",
+      "recomputed": 21.16,
+      "paper_or_expected": 21.16,
+      "tolerance": 0.005,
+      "match": true,
+      "note": ""
+    },
+    {
+      "name": "table1_total_freq[MSA MM3]",
+      "recomputed": 14.72,
+      "paper_or_expected": 14.72,
+      "tolerance": 0.011,
+      "match": true,
+      "note": "MSA Q35+ prints 11.68 for a sum of 11.67; a rounding artefact in the paper's total"
+    },
+    {
+      "name": "table1_total_cost[MSA MM3]",
+      "recomputed": 22.12,
+      "paper_or_expected": 22.12,
+      "tolerance": 0.005,
+      "match": true,
+      "note": ""
+    },
+    {
+      "name": "table1_total_freq[MSA Q35+]",
+      "recomputed": 11.67,
+      "paper_or_expected": 11.68,
+      "tolerance": 0.011,
+      "match": true,
+      "note": "MSA Q35+ prints 11.68 for a sum of 11.67; a rounding artefact in the paper's total"
+    },
+    {
+      "name": "table1_total_cost[MSA Q35+]",
+      "recomputed": 22.75,
+      "paper_or_expected": 22.75,
+      "tolerance": 0.005,
+      "match": true,
+      "note": ""
+    },
+    {
+      "name": "table1_task_prevalence_min",
+      "recomputed": 79.0,
+      "paper_or_expected": 79.0,
+      "tolerance": 0,
+      "match": true,
+      "note": ""
+    },
+    {
+      "name": "table1_task_prevalence_max",
+      "recomputed": 98.0,
+      "paper_or_expected": 98.0,
+      "tolerance": 0,
+      "match": true,
+      "note": ""
+    },
+    {
+      "name": "table1_cost_share_min",
+      "recomputed": 6.86,
+      "paper_or_expected": 6.86,
+      "tolerance": 0,
+      "match": true,
+      "note": ""
+    },
+    {
+      "name": "table1_cost_share_max",
+      "recomputed": 22.75,
+      "paper_or_expected": 22.75,
+      "tolerance": 0,
+      "match": true,
+      "note": ""
+    },
+    {
+      "name": "simscrpt_msa_over_cc_freq_min",
+      "recomputed": 5.906977,
+      "paper_or_expected": 5.91,
+      "tolerance": 0.01,
+      "match": true,
+      "note": ""
+    },
+    {
+      "name": "simscrpt_msa_over_cc_freq_max",
+      "recomputed": 9.976744,
+      "paper_or_expected": 9.98,
+      "tolerance": 0.01,
+      "match": true,
+      "note": ""
+    },
+    {
+      "name": "simscrpt_msa_over_cc_cost_ratio",
+      "recomputed": 9.382353,
+      "paper_or_expected": 9.38,
+      "tolerance": 0.01,
+      "match": true,
+      "note": "9.57% / 1.02%"
+    },
+    {
+      "name": "table9_cop_identity[CC]",
+      "recomputed": 0.678231,
+      "paper_or_expected": 0.679,
+      "tolerance": 0.002,
+      "match": true,
+      "note": "CoP equals average task cost divided by pass rate, so every CoP reduction in Table 3 is mechanically bounded by its cost reduction and its Pass@1 change"
+    },
+    {
+      "name": "table9_cop_identity[MSA S46]",
+      "recomputed": 0.745325,
+      "paper_or_expected": 0.745,
+      "tolerance": 0.002,
+      "match": true,
+      "note": "CoP equals average task cost divided by pass rate, so every CoP reduction in Table 3 is mechanically bounded by its cost reduction and its Pass@1 change"
+    },
+    {
+      "name": "table9_cop_identity[MSA MM3]",
+      "recomputed": 0.502271,
+      "paper_or_expected": 0.502,
+      "tolerance": 0.002,
+      "match": true,
+      "note": "CoP equals average task cost divided by pass rate, so every CoP reduction in Table 3 is mechanically bounded by its cost reduction and its Pass@1 change"
+    },
+    {
+      "name": "table9_cop_identity[MSA Q35+]",
+      "recomputed": 0.155322,
+      "paper_or_expected": 0.156,
+      "tolerance": 0.002,
+      "match": true,
+      "note": "CoP equals average task cost divided by pass rate, so every CoP reduction in Table 3 is mechanically bounded by its cost reduction and its Pass@1 change"
+    },
+    {
+      "name": "codegraph_cc_output_volume_ratio",
+      "recomputed": 16.610224,
+      "paper_or_expected": 16.6,
+      "tolerance": 0.05,
+      "match": true,
+      "note": ""
+    },
+    {
+      "name": "codegraph_cc_subagent_calls_eliminated_v",
+      "recomputed": 4.81,
+      "paper_or_expected": 4.81,
+      "tolerance": 0.0,
+      "match": true,
+      "note": ""
+    },
+    {
+      "name": "codegraph_cc_subagent_calls_eliminated_p",
+      "recomputed": 11.03,
+      "paper_or_expected": 11.03,
+      "tolerance": 0.0,
+      "match": true,
+      "note": ""
+    },
+    {
+      "name": "codegraph_cc_main_agent_calls_flat_v",
+      "recomputed": 0.42,
+      "paper_or_expected": 0.42,
+      "tolerance": 0.0,
+      "match": true,
+      "note": ""
+    },
+    {
+      "name": "codegraph_cc_main_agent_calls_flat_p",
+      "recomputed": 8.17,
+      "paper_or_expected": 8.17,
+      "tolerance": 0.0,
+      "match": true,
+      "note": ""
+    },
+    {
+      "name": "codegraph_h45_to_s46_price_ratio",
+      "recomputed": 3,
+      "paper_or_expected": 3,
+      "tolerance": 0,
+      "match": true,
+      "note": "the entire CC cost increase is volume moving from a 3x cheaper subagent model to the main model"
+    },
+    {
+      "name": "worst_cost_noise_cv_pct",
+      "recomputed": 8.35,
+      "paper_or_expected": 8.35,
+      "tolerance": 0,
+      "match": true,
+      "note": ""
+    },
+    {
+      "name": "best_cost_noise_cv_pct",
+      "recomputed": 2.44,
+      "paper_or_expected": 2.44,
+      "tolerance": 0,
+      "match": true,
+      "note": ""
+    },
+    {
+      "name": "worst_pass1_noise_sd_pp",
+      "recomputed": 4.0,
+      "paper_or_expected": 4.0,
+      "tolerance": 0,
+      "match": true,
+      "note": ""
+    },
+    {
+      "name": "replicated_cells",
+      "recomputed": 17,
+      "paper_or_expected": 17,
+      "tolerance": 0,
+      "match": true,
+      "note": "8 baselines times 3 runs plus 9 approach cells times 3 runs"
+    },
+    {
+      "name": "single_run_approach_cells",
+      "recomputed": 15,
+      "paper_or_expected": 15,
+      "tolerance": 0,
+      "match": true,
+      "note": "of 24 approach cells, 15 are single runs"
+    },
+    {
+      "name": "axv_one_devskills_cell_usd",
+      "recomputed": 110.8,
+      "paper_or_expected": 110.8,
+      "tolerance": 0.01,
+      "match": true,
+      "note": ""
+    },
+    {
+      "name": "axv_one_cell_as_multiple_of_whole_budget",
+      "recomputed": 34.092308,
+      "paper_or_expected": 34.09,
+      "tolerance": 0.02,
+      "match": true,
+      "note": ""
+    },
+    {
+      "name": "axv_whole_budget_in_tasks",
+      "recomputed": 5,
+      "paper_or_expected": 5,
+      "tolerance": 0,
+      "match": true,
+      "note": "at the paper's own average per-task cost, AXV's entire budget buys five tasks"
+    }
+  ],
+  "created_at_utc": "2026-09-28T20:20:06.189424+00:00"
+}

@@ -1,0 +1,55 @@
+65 checks, 0 mismatches
+{
+  "largest_dev_saving_pct": -41.73,
+  "dev_cells_negative": 7,
+  "dev_cells_robust": 5,
+  "largest_syn_unamortised_pct": -22.32,
+  "largest_syn_amortised_pct": -9.65,
+  "ratio_as_abstracted": 1.87,
+  "ratio_amortised": 4.32,
+  "syn_amortised_negative_cells": 3,
+  "syn_amortised_positive_cells": 5,
+  "syn_sign_flips_on_verified": 2
+}
+{
+  "CC": {
+    "implied": {
+      "cg": 0.55032,
+      "syn": 0.54857,
+      "syn_amort": 0.5484,
+      "dev": 0.54962
+    },
+    "spread_pct": 0.351,
+    "print_granularity_pct": 0.182
+  },
+  "MSA S46": {
+    "implied": {
+      "cg": 0.63834,
+      "syn": 0.63852,
+      "syn_amort": 0.63823,
+      "dev": 0.63841
+    },
+    "spread_pct": 0.045,
+    "print_granularity_pct": 0.157
+  },
+  "MSA MM3": {
+    "implied": {
+      "cg": 0.46121,
+      "syn": 0.46131,
+      "syn_amort": 0.46077,
+      "dev": 0.46088
+    },
+    "spread_pct": 0.116,
+    "print_granularity_pct": 0.217
+  },
+  "MSA Q35+": {
+    "implied": {
+      "cg": 0.11581,
+      "syn": 0.11581,
+      "syn_amort": 0.11654,
+      "dev": 0.11617
+    },
+    "spread_pct": 0.63,
+    "print_granularity_pct": 0.863
+  }
+}
