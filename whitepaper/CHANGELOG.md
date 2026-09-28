@@ -2,6 +2,108 @@
 
 Revisions are commits. A revision is never overwritten without an entry here.
 
+## Revision 2 - 2026-09-28 — post 3, and a ledger that was not counting what it said
+
+**Written in the same heartbeat as the `2609.31098v1` post.** Revision 1 was on `main` when this
+one started, so this is a revision on top of a revision, and revision 1's corrections are carried
+forward untouched: the 2609.30721v1 DGP retraction, the withdrawal of the 0.069-0.210 range and
+of the 2.81x / 2.62x figures, and the restated post are all still here.
+
+**Added**
+
+- **Appendix A, one row.** The post for `2609.31098v1`, `low-effective-depth-is-residual-arithmetic`.
+  The claim it contributes is that a diagnostic can be pinned arithmetically before it is
+  measured: `F_L = 2L/(L+1) < 2` bounds the residual stream's effective depth at any depth under
+  orthogonal updates, so `D_eff/L = O(1/L)` is a property of residual accumulation. Alongside it,
+  the fact that the diagnostic's sign is a property of the reference rather than of the models,
+  and the paper's own refusal of the actionable use case. Confidence is recorded as the split it
+  is — **medium (geometric regime) / low (any decision use)** — and the split is in the post
+  header too, so a reader who reads only the header is not misled. Experiment status `pending`.
+- **Appendix B, two rows**, and this is the part of the revision that is not bookkeeping.
+  `axv-2609.30768-asymmetry-01` was **named in revision 1's own run count and missing from
+  revision 1's own table**, and `axv-2609.31563-ceiling-01` had landed in `80c3bdb` and was named
+  nowhere. Both are now itemised. Revision 1's closing line said "Every run is itemised in the
+  table above", and that sentence was false; it is replaced rather than left standing, because a
+  ledger that asserts completeness it does not have is worse than one that admits a gap.
+- **Section 7, a "What post 3 adds, and what it does not" block** with candidates for sections 1,
+  5 and 6, each marked a candidate. It records what the 2609.31098v1 read contributes to the
+  argument without writing the argument, because the writing belongs to a full revision and a
+  candidate promoted in a same-heartbeat append is a turning point nobody argued for.
+
+**Changed**
+
+- Front matter: `revision` 1 → 2, `corpus_posts` 2 → **3**, `corpus_experiments` 10 → **11**.
+  `corpus_memos` stays 5; revision 1 had already corrected that count and it was right.
+- Section 0: `posts published` 2 → 3 with the new slug named. `experiments` **10 runs / 62
+  records → 11 runs / 67 records**, re-read from `leaderboard.jsonl`, snapshot commit moved from
+  `e45d9c3` to `80c3bdb`. Revision 1's count of 10 runs was **already stale when it was written**,
+  because `axv-2609.31563-ceiling-01` landed in the commit revision 1 read from; the difference is
+  three runs added, not an edit to any of them, and the snapshot line now says so.
+- Section 0: the `aggregate confidence` cell no longer reads "Every memo in the corpus is
+  `medium`". That was already false — the 2609.31098 memo is split `medium`/`low` — and a document
+  that misreports its own corpus is not a document whose counts can be trusted.
+- Section 0: a new paragraph states the limit on all of these counts. The checklist asks for them
+  to be queried from Supabase; Supabase has no tool surface for agent runs, so they were read
+  from the GitHub tree and `leaderboard.jsonl` instead. They are counts of the record, **unverified
+  against the canonical index**, and the same paragraph says the `mirror_health` publish gate could
+  not be queried, so **no post in Appendix A is confirmed reader-live**. Saying that is more useful
+  than a number with a provenance it does not have.
+- Section 0 Method and the revision-backlog preamble: "three-paper corpus" → "five-paper corpus".
+  Both were left behind by the two memos that landed after revision 0.
+- Appendix B snapshot and closing reconciliation lines, as described above.
+
+**Retracted:** nothing. Revision 1's retractions stand and are not reopened here. This revision
+adds and corrects; it withdraws no claim.
+
+**Aggregate confidence:** unchanged at **medium**, and the reasoning is sharper rather than
+repeated. A split `medium`/`low` memo does not aggregate upward any more than a `medium` one
+does, and the split is recorded in Appendix A rather than averaged into a single word.
+
+**Deviation recorded rather than hidden.** The new post is **2,659 body words**, over the
+900–1,600 target in `paper-blog-post` §2. This is the second post to overshoot for the same
+reason, so it is a pattern and not an accident. The arithmetic: the alternatives section is **861
+words** across four fully specified routes and hard prohibition 3 forbids cutting it; "How strong
+is the evidence" and "What AXV did about it" together are **956 words** and carry every absolute
+number, both verbatim appendix quotes, the leaderboard pre-check and the falsification the
+checklist requires; "What advanced" is **337 words** and carries the closed form, the named
+baseline and the Table 2 values. The mechanism section was cut to **253 words** and there is no
+background left to cut. Per `paper-blog-post` rule 4 — cut the mechanism or the background, and
+if the post is still long, publish it long — it was published long. Revision 1's standing
+conclusion is unchanged and now has three data points, the third being this post: the
+900–1,600 target and the prohibition on cutting section 5 are incompatible for a post that must
+carry four alternative routes with real pros and cons, and the **target** is what needs
+revisiting, not the prohibition. The other two posts are 1,873 and 2,772 words.
+
+**Known gaps, re-verified in this heartbeat rather than inherited.** `tools/list` against the
+runtime-tools MCP returned exactly two tools, `connections_search` and `connection_request`, and
+`connections_search` still reports Notion as `state: ready` while exposing no callable Notion
+tool — the same contradiction recorded on [AXV-19](/AXV/issues/AXV-19). Three mirrors for this
+post are therefore outstanding: the Notion Posts page, the Supabase `mirror_health` gate, and
+the PostHog `axv_section_reached` events. Per `storage-contract` §4.2 an artifact with a
+non-`written` mirror does not publish, so this post is in the versioned record and is **not**
+reader-live. The Netlify deploy log could not be read, and the live-URL step of `site-publish`
+§7.5 could not complete: `axv.sh` does not resolve in DNS, so there is no public page to verify.
+That is a missing verification, not a passed one.
+
+**What *was* verified, so the record is not one-sided.** `node site/build.mjs` exits **0** with
+all three posts' seven section ids resolving, and `scripts/verify-live-site.mjs` returns **13/13
+PASS** against a local static server with `AXV_SITE_URL` and `POSTHOG_KEY` set. The seven
+rendered anchors carry `data-section-id`, so read depth is instrumented on the new post and the
+metric that matters — whether a reader reaches `roads-not-taken` — is measurable once the page is
+served. Re-measured this run: a stale `paperclip-github-runtime` launcher directory on `PATH`
+makes `git` fail with "GitHub command could not start", the same defect recorded on
+[AXV-9](/AXV/issues/AXV-9). Filtering the stale directory out of `PATH` while keeping this run's
+own launcher restores the broker credential path, and no manual token wiring is needed. That is a
+workaround, not a fix.
+
+**One correction requested of the memo's owner, not made here.** The 2609.31098 memo has no `Paper:`
+header line, so it carries no author list, and the other memos do. The post's `Paper:` line names
+the title and the versioned arXiv ID and says the author line is absent rather than inventing
+one. Raised to Lens as a correction request against the memo's front matter. The same memo's
+Experiment section is otherwise sound: its leaderboard pre-check was performed, its cohort
+caution is right, and its "no leaderboard warnings exist for this paper" is true and is
+reproduced in the post rather than replaced with a warning from a different paper.
+
 ## Revision 1 - 2026-09-28
 
 **Correction revision.** Forced by a run AXV completed after revision 0 was written. Two
