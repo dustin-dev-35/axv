@@ -2,6 +2,56 @@
 
 Revisions are commits. A revision is never overwritten without an entry here.
 
+## Revision 3 - 2026-09-28 — post 4, and the last named gap closed in the right direction
+
+**Written in the same heartbeat as the `2609.30768v1` post.** Revision 2 was on `main` when this
+one started, so this is a revision on top of a revision, and revision 2's additions to the
+Appendix B table are carried forward untouched. No section 1-7 argument is rewritten, because the
+new source adds a ledger row and a demonstration, not a turning point. Section 2 keeps its single
+entry on purpose: a second candidate at six papers would dilute it.
+
+**Added**
+
+- `posts/thinking-5x-asymmetry-is-your-baseline.md`, from arXiv:2609.30768v1, and the Appendix A
+  row that cites it. The claim it contributes to the corpus: a count ratio is a product of a
+  transition rate and a starting-population ratio, and only the first term is about the
+  intervention. The paper's "roughly 5x in all nine cells" is a pooled figure over a per-cell
+  range of 2.41x to 48.30x, and 80% of the log-variance comes from the non-thinking arm's
+  counterfactual flip rate on three tabular datasets. The nine-of-nine result with a mechanism
+  behind it is the complementary half, `G < 1`: per pair, thinking returns an already-flipping
+  pair to agreement 6x to 45x more often than it flips an agreeing one.
+
+**Changed**
+
+- Section 0's counts, re-read from `main` and not estimated: posts 3 -> 4; papers read 5 -> 6;
+  memo files 11 -> 13. The experiment count is **unchanged** at 11 runs / 67 records, because
+  this post adds no run. Front matter `revision:` 2 -> 3, `corpus_posts` 3 -> 4, `corpus_memos`
+  5 -> 6.
+- Section 0's "Method" and the closing gap paragraph. Four memos now have a post and two do not,
+  `2609.30725` and `2609.31563`. Revision 2 named `axv-2609.30768-asymmetry-01` as the one run
+  with a prepared row payload and no post; that run is now published, so the named gap is closed
+  and the remaining unposted run is `axv-2609.31563-ceiling-01`, which has neither a post nor a
+  prepared row.
+
+**Retracted**
+
+- Nothing. No claim was withdrawn. What changed is a *count* and a *status*: one run moved from
+  "in the ledger, no post" to "in the ledger, published, and cited by Appendix A".
+
+**Known gaps in this revision**
+
+- The memo behind this revision's new post still has no canonical Notion page, so the
+  artifact-level publish gate is closed even though the post itself is pushed. The GitHub push
+  is the act of publication; the Notion page is canonical for readers. See
+  [AXV-19](/AXV/issues/AXV-19).
+- The prepared Supabase `corpus_index` and `experiment_runs` rows and the two PostHog events for
+  `2609.30768` remain unwritten. The payloads are prepared in
+  `corpus/2609.30768.landing.md` and are not duplicated here.
+- The new post runs about 2,950 words against the 900-1,600 target in the post template. The
+  alternatives section was not cut, per that template's own rule; the mechanism and evidence
+  sections were trimmed instead. The two earlier posts in this corpus are 2,568 and 2,971 words,
+  so this is a corpus-wide deviation, recorded here rather than quietly inherited.
+
 ## Revision 2 - 2026-09-28 — post 3, and a ledger that was not counting what it said
 
 **Written in the same heartbeat as the `2609.31098v1` post.** Revision 1 was on `main` when this

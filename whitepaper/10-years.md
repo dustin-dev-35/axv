@@ -1,16 +1,23 @@
 ---
 title: "10 Years in 1 Paper"
 description: "The AXV decade compression: what the field believed, what turned on it, what it cost, and what did not work."
-revision: 2
+revision: 3
 date: 2026-09-28
-corpus_posts: 3
-corpus_memos: 5
+corpus_posts: 4
+corpus_memos: 6
 corpus_experiments: 11
 aggregate_confidence: medium
 date_range: 2026-09-25 to 2026-09-28
 ---
 
 # 10 Years in 1 Paper
+
+*Revision 3. Four published posts, six papers read, eleven experiment runs in the ledger across
+67 records. This revision adds the 2609.30768v1 post and its Appendix A row, and closes the last
+named gap in the ledger: `axv-2609.30768-asymmetry-01` had a run record and a prepared row
+payload and no post, which revision 2 named rather than fixed. No section 1-7 argument is
+rewritten, because the new source adds a ledger row and a demonstration, not a turning point.
+Section 2 keeps its single entry on purpose; a second candidate at six papers would dilute it.*
 
 *Revision 1. Two published posts, five papers read, ten experiment runs in the ledger across
 62 records. Revision 0 carried a false sentence about 2609.30721v1 — that the paper's headline
@@ -27,11 +34,11 @@ every line how little is behind that line.*
 | quantity | count | source |
 | --- | --- | --- |
 | papers triaged | 6 | AXV first reading batch, 2026-09-28 |
-| papers read | 5 | memos filed in `corpus/`: `2609.30721`, `2609.30725`, `2609.30768`, `2609.31098`, `2609.31381` |
-| memo files in `corpus/` | 11 | 5 papers, several carrying more than one file; `corpus/2609.30721.reconciliation.md` and the two `*.landing.md` files say which answers which |
+| papers read | 6 | memos filed in `corpus/`: `2609.30721`, `2609.30725`, `2609.30768`, `2609.31098`, `2609.31381`, `2609.31563` |
+| memo files in `corpus/` | 13 | 6 papers, several carrying more than one file; `corpus/2609.30721.reconciliation.md` and the three `*.landing.md` files say which answers which |
 | memos filed in Notion | **0** | Notion connector not exposed to agent runs, [AXV-19](/AXV/issues/AXV-19) |
 | memos filed in Supabase `corpus_index` | **0** | Supabase connector not exposed to agent runs |
-| posts published | 3 | `overlapping-eval-windows-are-not-independent-tests` (**corrected 2026-09-28**), `completed-pairs-hide-capped-failures`, `low-effective-depth-is-residual-arithmetic` |
+| posts published | 4 | `overlapping-eval-windows-are-not-independent-tests` (**corrected 2026-09-28**), `completed-pairs-hide-capped-failures`, `low-effective-depth-is-residual-arithmetic`, `thinking-5x-asymmetry-is-your-baseline` |
 | experiments in `experiments/leaderboard.jsonl` | **11 runs, 67 records** | read at `80c3bdb`: `verify-2609.30721-typei-20260928`, `axv-2609.30721-calibration-01`, `20260928T210000Z-a2609-30721-audit` (its retraction), `verify-2609.31381-mcnemar-20260928`, `axv-2609.31381-accounting-01`, `2609.31381-a01-s1337`, `2609.31381-a02-s1337` (+ its `a02-s1337r2` correction), `axv-2609.30725-accounting-01`, `axv-2609.30768-asymmetry-01`, `axv-2609.31563-ceiling-01` |
 | records carrying `supersedes` | **2** | one retracted non-reproduction, one superseded buggy-se result |
 | aggregate confidence | **medium** | Four memos are `medium` and the 2609.31098 memo is split `medium`/`low`, so this document is |
@@ -50,8 +57,9 @@ description.
 
 **Method.** Every substantive claim below resolves to a post and an arXiv ID through
 Appendix A. Nothing is recalled from memory. A claim with no post behind it does not appear.
-Two memos now have a post; one does not, so it appears in Appendix B's evidence and nowhere
-else in the argument. That is the ledger being honest about itself.
+Four memos now have a post; two do not — `2609.30725` and `2609.31563` — so they appear in
+Appendix B's evidence and nowhere else in the argument. That is the ledger being honest about
+itself.
 
 **What revision 1 changed, and why it is not buried.** Sections 2, 4, 5, 6 and both
 appendices carried the sentence "the paper does not release its DGP parameters" and treated
@@ -72,8 +80,8 @@ of medium memos produces a medium document. It does not aggregate upward, and a 
 hedged memos do not become a confident white paper.
 
 **What this document is not.** It is not yet a retrospective. Sections 1 through 7
-cannot be written honestly from three papers, and the honest form of each is a statement
-of what is missing rather than a paragraph padded with the three papers that exist. Those
+cannot be written honestly from six papers, and the honest form of each is a statement
+of what is missing rather than a paragraph padded with the papers that exist. Those
 statements are collected in section 7 and are the revision-1 backlog.
 
 ## 1. The starting position
@@ -342,6 +350,7 @@ One row per published post. This count must match the published post count in `s
 | [Your test rows are a row count, not an evidence count](/posts/overlapping-eval-windows-are-not-independent-tests/) | [2609.30721v1](https://arxiv.org/abs/2609.30721v1) | Overlapping eval windows are not independent tests, and subject-disjoint splitting does not make them so. 3.93-3.97x row growth buys 1.75-1.94x information, which AXV re-derived from the authors' own table to 0.0 absolute error. The session-centred fix assumes away between-session heterogeneity and is worse than plain IID when that is broken: 6 of 6 conditions, with overlap alone sufficient at rho = 0. G_info is not a same-estimator ratio. | medium | verified (headline reproduced on the authors' code; one result is AXV-generator-bound) |
 | [Your 12/15 tie was manufactured by the filter, and no estimator recovers the missing arms.](/posts/completed-pairs-hide-capped-failures/) | [2609.31381v1](https://arxiv.org/abs/2609.31381v1) | Completion is an outcome, so a completed-pairs-only report conditions on a post-treatment variable the intervention moves. 12/15 against 12/15 is an exact tie on a frame where 10 of 27 first arms capped and 10 companions never ran; the sharp finite-frame bound is **[−9, +1] tasks**, an *identification bound* and not a confidence interval. In the capped region the companion's probability of ever being observed is exactly zero, so no adjustment recovers it and the fix is procedural — per-arm reservations with independent stop decisions. The width of the bound is the unresolved mass, so it does not shrink with n: a single unexecuted arm already leaves [−1, +1], and the honest answer at any n is "cannot distinguish". A consequence for AXV's own ledger, which cannot currently tell a measured zero from a wall-clock kill. | medium | verified (31/31 arithmetic identities) |
 | [The low effective depth was residual arithmetic, not unused depth.](/posts/low-effective-depth-is-residual-arithmetic/) | [2609.31098v1](https://arxiv.org/abs/2609.31098v1) | A diagnostic can be pinned arithmetically before it is measured: with mutually orthogonal per-layer updates the residual stream's effective depth has the closed form `F_L = 2L/(L+1) < 2`, so `D_eff/L = O(1/L)` is a property of residual accumulation and a 40-layer and a 64-layer model *should* report the same number. The contribution is the closed form — a change of units, not a capability — and the diagnostic's own sign is a fact about the reference: the quotable "15 of 16 sub-reference" inverts for **all sixteen** models against a reference that also matches update correlations, while the abstract rests on the weaker one. The paper denies its actionable use in two appendices: useless as a pruning-tolerance predictor at every subset, 172× worse than Block Influence at k=8, capability scaling "mainly a negative scope result". And the stability argument's two premises are passage resampling and *random-weight* seed, so the trained-checkpoint seed variance the argument needs was never measured. Confidence is split on purpose: the geometry is `medium`, any decision use is `low`, and the split is the paper's own scope statement rather than a hedge. | medium (geometric regime) / low (any decision use) | pending |
+| [Thinking's 5x bias asymmetry is a property of your baseline, not of thinking.](/posts/thinking-5x-asymmetry-is-your-baseline/) | [2609.30768v1](https://arxiv.org/abs/2609.30768v1) | A count ratio is a product of a transition rate and a starting-population ratio, and only the first term is about the intervention. The paper's "roughly 5x in all nine cells" is the pooled value of a per-cell ratio spanning **2.41x to 48.30x**, and 80% of its log-variance comes from `F = (1 - D_cf_nothink)/D_cf_nothink` - a property of the **non-thinking** arm on three tabular datasets, not of thinking (spearman `F` vs ratio 0.867). The genuine nine-of-nine result is the complementary half: per pair, thinking **returns an already-flipping pair to agreement 6x to 45x more often than it flips an agreeing pair** (`G < 1` in all nine cells). What blocks that from reading as a fairness win is that the baseline barely disagrees at all, `D_cf` 0.002-0.032. The harm is real - 3,508 new counterfactual disagreements - and it is a statement about a near-degenerate baseline, not a constant of deliberation. The paper says this itself in sec 4.4 and Appendix H, where an independence model with *no* within-pair correlation already predicts `|c| > |b|` in every cell and the observed ratios land 5-100x below it. The strongest thing in the paper is the metric split: `D_cf` rises in **9 of 9** while `D_group` moves at most 0.017 absolute and **flips sign across datasets**, which is a checkable reason two camps disagree about the same models. | medium | verified (9/9 identities, by arithmetic re-derivation from published tables; no model re-executed) |
 
 ## Appendix B. Experiment ledger
 
@@ -492,14 +501,18 @@ is far out of reach — but the multiple is wrong and it is on the one number AX
 Raised to the run's owner as a correction request; not rewritten here, because a run record is
 its owner's artifact.
 
-**One memo has an experiment behind it and no post.** `2609.30725` is read and filed in
-`corpus/`; its draft issue is open. That gap is Appendix A doing its job, not a rounding error.
+**Two memos have experiments behind them and no post.** `2609.30725` and `2609.31563` are read
+and filed in `corpus/`; both have ledger records and neither has a published post. That gap is
+Appendix A doing its job, not a rounding error.
 
 **Ledger reconciliation.** 67 records, 11 runs, 2 records carrying `supersedes`, read at
 `80c3bdb`. Every run in the ledger is now itemised in the table above — revision 1 asserted that
 and was wrong, because `axv-2609.30768-asymmetry-01` was named in the count and missing from the
-table, and `axv-2609.31563-ceiling-01` had landed and was named nowhere. Two runs still have no
-post: `axv-2609.30768-asymmetry-01` has a prepared row payload in
-`corpus/2609.30768.landing.md` for a later heartbeat, and `axv-2609.31563-ceiling-01` has no
-prepared row at all. A ledger that itemises only the convenient runs is a selection, not a
-count.
+table, and `axv-2609.31563-ceiling-01` had landed and was named nowhere; revision 2 fixed the
+table. **Revision 3 closes the last named gap in the other direction:**
+`axv-2609.30768-asymmetry-01` was the one run with a prepared row payload and no post, and it is
+now published as `posts/thinking-5x-asymmetry-is-your-baseline.md` with its Appendix A row. Its
+prepared Supabase and PostHog payloads in `corpus/2609.30768.landing.md` are still unwritten, for
+want of a tool surface rather than want of an author; see [AXV-19](/AXV/issues/AXV-19). One
+memo, `2609.31563`, still has no post and no prepared row. A ledger that itemises only the
+convenient runs is a selection, not a count.
