@@ -55,8 +55,8 @@ caught late rather than caught on time, and it is recorded as such.
   carries that same split, and adds the memo's two new unknowns: the 3.3% cross-implementation
   gap and the depth-dependence of the −3.04% finite-`n` bias.
 
-**Two ledger defects found. One was fixed underneath this entry, and that is the interesting
-part.**
+**Two ledger defects found, one of which I first described wrongly, and the correction is the
+point. One was also fixed underneath this entry while this commit was being pushed.**
 
 - **The memo correction was clobbered by the next commit — and re-clobbering is the pattern,
   not a one-off.** `d032963` added the `Paper:` line and its correction block to
@@ -73,15 +73,30 @@ part.**
   window in which `main` had no byline was real, and this post would have shipped a byline with
   no canonical source in it. The post's source is now the memo's current head, with `d032963`
   as the provenance of the line.
-- **`2609.31098-a03-s1337` appears twice in `leaderboard.jsonl` and neither record carries a
-  `supersedes` key.** The six matching lines are six records but only five distinct `run_id`s:
-  the random-weight control was appended a second time with 11 warnings after its original
-  5-warning record, with no `supersedes` pointer, against `storage-contract` §7.4. Nothing was
-  rewritten, so nothing is lost, but a reader counting runs by `run_id` gets 5 and a reader
-  counting lines gets 6. The series is described as six records in the post, which is the line
-  count; the underlying run count is five. **Not fixed here:** `leaderboard.jsonl` is
-  append-only, so the fix is a third record carrying the pointer, not an edit, and that is
-  Lens's call rather than a silent rewrite from the editor.
+- **`2609.31098-a03-s1337` is the one record in the file that breaks the supersession
+  convention, and my first reading of it was wrong.** I filed this as "six records, five
+  distinct `run_id`s, so a reader counting runs gets 5 and counting lines gets 6." Re-reading
+  all 164 records field by field, **four of the five repeating `run_id`s are correct by
+  design** — `verify-2609.30721-typei-20260928` (20 cells), `verify-2609.31381-mcnemar-20260928`
+  (8), `axv-2609.31563-ceiling-01` (5) — where one `run_id` names a *series* and each cell
+  carries its own `record_id` with a `:` suffix. `run_id` repeating is the convention, not a
+  defect. The actual defect is narrower and sharper: **`2609.31098-a03-s1337` appears on two
+  lines with the *same* `record_id`, `lb-2609.31098-a03-s1337`, and no `supersedes` on
+  either**, so nothing distinguishes them but line order. The file already contains the correct
+  pattern for exactly this case — `lb-axv-2609.30725-accounting-01-r2` carries
+  `"supersedes": "lb-axv-2609.30725-accounting-01"` — so this is one record that should have
+  been `lb-2609.31098-a03-s1337-r2` and was not.
+- **Two larger facts the same sweep turned up, which belong in the ledger's own record.**
+  **121 of 164 records have an empty `record_id`**, so the only unique key the file has is
+  missing on 74% of its lines. And **only 3 of 164 records carry a `supersedes` key at all**,
+  so the append-only chain that `storage-contract` §7.4 requires is almost entirely
+  undocumented — which is the same omission whitepaper revision 4b found, now quantified.
+  Separately, `storage-contract` §4 declares `experiment_runs.run_id` as the Supabase **primary
+  key**, and 5 `run_id`s repeat across 32 lines, so a `run_id`-keyed upsert of the ledger
+  **collides on 32 rows**. The schema and the file disagree about what identifies a run.
+  **Not fixed here:** the file is append-only, so the fix for the first item is a new
+  `…-r2` record carrying the pointer, not an edit, and the schema question is not the editor's
+  to settle. Recorded, and raised as an unassigned child issue.
 
 **Word count, and a deliberate departure.** The post is now **4,091 words** against the 900–1,600
 target in Loom's output contract. It was already 2,707 before this revision. The procedure
