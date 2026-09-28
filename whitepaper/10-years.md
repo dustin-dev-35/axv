@@ -1,19 +1,22 @@
 ---
 title: "10 Years in 1 Paper"
 description: "The AXV decade compression: what the field believed, what turned on it, what it cost, and what did not work."
-revision: 4c
+revision: 4d
 date: 2026-09-28
 corpus_posts: 6
 corpus_memos: 6
-corpus_experiments: 13
+corpus_experiments: 18
 aggregate_confidence: medium
 date_range: 2026-09-25 to 2026-09-28
 ---
 
 # 10 Years in 1 Paper
 
-*Revision 4b. Six published posts, six papers read, thirteen experiment series in the ledger
-across 157 records. This revision finishes the correction revision 1 began, in the sections
+*Revision 4d. Six published posts, six papers read, eighteen run directories in the ledger
+across 164 records. **This revision withdraws a correction made in 4b and re-derives every count it
+touched.** 4b asserted that `axv-2609.30725-accounting-01` misread the `$3.25 budget`; that
+assertion was wrong, the record is right, and the paragraph is withdrawn below. Four counts in
+section 0 and the Appendix B preamble were stale on arrival and are re-derived here. This revision finishes the correction revision 1 began, in the sections
 revision 1 started it in. Revision 1 retracted the claim that the 2609.30721v1 headline was
 conditional on an unreleased data-generating process; the retraction was correct, and what it
 left behind was worse, because it presented **7.27%** as a settled figure. The fourth
@@ -77,8 +80,8 @@ every line how little is behind that line.*
 | memos filed in Notion | **0, and no longer required** | Board decision 2026-09-28: GitHub is the record. Notion is not a mirror any more, it is simply not in use. See **Where the record lives** below |
 | memos filed in Supabase `corpus_index` | **0** | Supabase connector not exposed to agent runs. A convenience index, not the record, since the board decision |
 | posts published | **6** | — `overlapping-eval-windows-are-not-independent-tests` (**corrected 2026-09-28**), `completed-pairs-hide-capped-failures`, `low-effective-depth-is-residual-arithmetic`, `thinking-5x-asymmetry-is-your-baseline`, `a-second-plurality-voter-is-worth-zero`, `hand-written-rules-beat-generated-ones`. Counted from `posts/*.md` at `758e81a`: six files, six distinct `arxiv_id` values |
-| experiments in `experiments/leaderboard.jsonl` | **13 runs, 157 records** | read at `0a0d9a6`: the 11 series itemised in Appendix B, plus `2609.30721-a01-s1337`, `2609.30721-a01-s1338` and `2609.30721-a01-s1339` (30 records each — the three seeds of the 2609.30721v1 within-session persistence sweep). This document counts **series**; the file's `run_id` counts **per-seed and per-cell records**, so 157 records is not 157 runs and the two numbers are not comparable |
-| records carrying `supersedes` | **2** | A record counts only if `supersedes` is a non-null value. **38** was the count of records where the *key* is present, and 36 of those 38 are `"supersedes": null` - nothing superseded. The two real ones are the `20260928T210000Z-a2609-30721-audit` retraction and `2609.31381-a02-s1337r2` over `2609.31381-a02-s1337` |
+| experiments in `experiments/leaderboard.jsonl` | **18 run directories, 164 records** | read at `0a0d9a6`: the 11 series itemised in Appendix B, plus `2609.30721-a01-s1337`, `2609.30721-a01-s1338` and `2609.30721-a01-s1339` (30 records each — the three seeds of the 2609.30721v1 within-session persistence sweep). This document counts **series**; the file's `run_id` counts **per-seed and per-cell records**, so 164 records is not 164 runs and the two numbers are not comparable. Re-derived at this revision; the previous row said 13 runs and 157 records, read at `0a0d9a6`, and both figures were stale by the time this revision was written |
+| records carrying `supersedes` | **3** | A record counts only if `supersedes` is a non-null value. **45** is the count of records where the *key* is present, and 42 of those 45 are `"supersedes": null` - nothing superseded. The three real ones are the `20260928T210000Z-a2609-30721-audit` retraction, `2609.31381-a02-s1337r2` over `2609.31381-a02-s1337`, and `lb-axv-2609.30725-accounting-01-r2` over `lb-axv-2609.30725-accounting-01`. Re-derived at this revision; the previous count of 2 omitted the third, which landed after it was written |
 | aggregate confidence | **medium** | Five memos are `medium` and the 2609.31098 memo is split `medium`/`low`, so this document is |
 
 **Where the record lives, and the limit that remains.** The board decided on 2026-09-28, on
@@ -504,13 +507,16 @@ One row per published post. This count must match the published post count in `s
 ## Appendix B. Experiment ledger
 
 Read from `experiments/leaderboard.jsonl` in this repository, never from memory. **Snapshot as
-of commit `0a0d9a6`:** **157 records across 13 experiment series**, of which **2 actually
-supersede** another record. Revision 4 wrote this as "38 carry a `supersedes`", which counted
-records where the *key* is present rather than records that supersede something: **36 of those 38
-are `"supersedes": null`**. The two real retractions are `20260928T210000Z-a2609-30721-audit`
-over itself and `2609.31381-a02-s1337r2` over `2609.31381-a02-s1337`. A ledger that inflates its own
-correction count is the failure this appendix exists to catch, so the error is named here rather
-than quietly overwritten. The file is append-only and other agents are appending to it, so a reader should
+of this revision:** **164 records across 18 run directories**, of which **3 actually supersede**
+another record. Revision 4 wrote this as "38 carry a `supersedes`", which counted records where
+the *key* is present rather than records that supersede something: **36 of those 38 were
+"supersedes": null**. Revision 4d makes the same error a second time and one level deeper: it
+carried "157 records across 13 experiment series", both figures stale, and it counted **2** real
+supersedes where there are now **3**. The three are
+`20260928T210000Z-a2609-30721-audit` over itself, `2609.31381-a02-s1337r2` over
+`2609.31381-a02-s1337`, and `lb-axv-2609.30725-accounting-01-r2` over
+`lb-axv-2609.30725-accounting-01`. A ledger that inflates its own correction count is the failure
+this appendix exists to catch, so each error is named here rather than quietly overwritten. The file is append-only and other agents are appending to it, so a reader should
 re-run the count rather than trust this line; the honest form of a live count is the count plus
 the commit it was read at. Revision 0 read the file at `cc7f1e3` and reported 61 records across 6
 series. Revision 1 read it at `e45d9c3` and reported 62 records across 10 series. Revision 3 read
@@ -520,8 +526,8 @@ the same window. Revision 3a named the problem and left the figure as read rathe
 restating it; revision 4 reconciles it. **Which unit is which:** this table and this document
 count **experiment series** — one row per `experiments/runs/<run-id>/` directory — while the
 ledger's `run_id` field counts **per-seed and per-cell records**, which is why a 30-cell sweep
-contributes 30 distinct `run_id` values and one row here. Comparing 157 records against 13 runs
-is a category error, and a reader who does it will conclude the table is overstating. **No
+contributes 30 distinct `run_id` values and one row here. Comparing 164 records against 18 run
+directories is a category error, and a reader who does it will conclude the table is overstating. **No
 record exists for 2609.31098 and none was invented:** its experiment is `pending` on
 [AXV-43](/AXV/issues/AXV-43) with no pod provisioned, so the correct ledger action this heartbeat
 was no action, and a zero is the honest entry.
@@ -655,14 +661,30 @@ above. It is recorded here because a ledger row that misdescribes a run is the s
 defect as the one that started this revision: a confident sentence about something that was
 never checked.
 
-**A correction is owed on one record.** `axv-2609.30725-accounting-01` states that one DevSkills
-cell is "34.1x AXV's entire .25 budget" and that ".25 buys five tasks". Both figures predate the
-board's move to a $3.25 total: at $3.25, a $0.80 cell is 24.6% of budget and buys about six
-tasks. The direction of the conclusion is unchanged and is still correct — the end-to-end claim
-is far out of reach — but the multiple is wrong and it is on the one number AXV budgets against.
-Raised to the run's owner as a correction request; not rewritten here, because a run record is
-its owner's artifact.
+**A correction was raised on one record, and it was rejected on the arithmetic.** This revision
+previously carried a paragraph asserting that `axv-2609.30725-accounting-01` misread the
+budget: that "34.1x AXV's entire .25 budget" and ".25 buys five tasks" predated the board's
+move to a $3.25 total, and that a $0.80 cell would be 24.6% of budget and buy about six tasks.
+**That assertion was wrong, and it is withdrawn.**
 
+The record is correct. The apparent ".25" and ".80" were never budget figures: they are a
+PowerShell string-interpolation defect, reproduced and diagnosed in
+`lb-axv-2609.30725-accounting-01-r2`, where "$0.554" became ".554" and "$110.80" became ".80"
+because `$0` was read as a variable name and the leading digits were consumed. The operands were
+destroyed; **the derived figures were never wrong.** The run's own script asserts
+`AXV_BUDGET_USD = 3.25`, one cell `= 110.80`, `= 34.09 +/- 0.02`, and `int(3.25 / 0.554) = 5`, and
+all four are among the 65 identities the run verified.
+
+The proposed "about six tasks" was checked here rather than argued: six tasks at $0.554 cost
+**$3.32**, which is over the $3.25 budget, so five is the floor and not an undercount. Five is
+also what `int()` returns, because a budget buys whole tasks. The record's `34.1x` and
+`five tasks` stand.
+
+The correction request that produced the wrong "about six tasks" was raised on AXV-40, from
+AXV-14, and the record's owner rejected it. **The lesson for this document is the one it has
+now committed several times:** a correction applied from a reading of a summary rather than from
+the artifact will be a wrong correction, and naming the error in the changelog is the only part
+of the process that is free.
 **The Appendix A gap revision 3a named is closed, and it stayed visible for exactly one heartbeat.**
 `posts/a-second-plurality-voter-is-worth-zero.md` (arXiv:2609.31563v1) landed on `main` after
 revision 3 was written. Revision 3a corrected the post count to 5 and named the missing row
@@ -670,12 +692,13 @@ rather than writing one it had not read, on the grounds that an under-count whic
 beats a row which invents itself. Revision 4 is that row. The gap was real for one revision and
 is now closed, and it is left in the changelog rather than deleted, because a correction nobody
 can trace is indistinguishable from a correction that never happened.
-**One memo still has an experiment behind it and no post.** `2609.30725` is read and filed in
-`corpus/`; it has a ledger record and no published post. That gap is Appendix A doing its job,
-not a rounding error.
+**No memo now has an experiment behind it and no post.** This sentence said `2609.30725` was
+the last, which was true when written at revision 3a and false by revision 4b, when
+`posts/hand-written-rules-beat-generated-ones.md` landed and Appendix A took its row. Six memos,
+six posts, one row each. A gap that closes should be closed in the same voice that opened it.
 
-**Ledger reconciliation.** **157 records, 13 run directories, 38 records carrying a `supersedes`
-key of which 2 point at another record, 15 memo files in `corpus/`, re-read at `33113d1`.**
+**Ledger reconciliation.** **164 records, 18 run directories, 45 records carrying a `supersedes`
+key of which 3 point at another record, 15 memo files in `corpus/`, re-derived at this revision.**
 Every run in the ledger is itemised in the table above — revision 1 asserted that and was wrong,
 because `axv-2609.30768-asymmetry-01` was named in the count and missing from the table, and
 `axv-2609.31563-ceiling-01` had landed and was named nowhere; revision 2 fixed the table.
