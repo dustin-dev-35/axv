@@ -1,0 +1,15 @@
+AXV_METRICS_JSON {"L":12,"d":384,"operating_point_n":10000,"operating_point_rel_bias_pct":-3.038845872906288,"operating_point_seed_sd_D_eff":0.00045087173570316233,"seeds":[11,22,33],"sweep":[{"D_eff":[1.4952199850725256,1.4946519955943312,1.4959876718445735],"F_L":1.8461538461538463,"mean_D_eff":1.4952865508371433,"n":1000,"rel_bias_pct":-19.00531182965474,"seed_sd_D_eff":0.0006703215736717115,"seed_spread_D_eff":0.0013356762502423347},{"D_eff":[1.7203998287107711,1.7191112657433825,1.7192531735956749],"F_L":1.8461538461538463,"mean_D_eff":1.7195880893499427,"n":4000,"rel_bias_pct":-6.855645160211443,"seed_sd_D_eff":0.0007065585977638536,"seed_spread_D_eff":0.0012885629673886623},{"D_eff":[1.7897417679678538,1.790569261969658,1.7898451986399857],"F_L":1.8461538461538463,"mean_D_eff":1.7900520761924994,"n":10000,"rel_bias_pct":-3.038845872906288,"seed_sd_D_eff":0.00045087173570316233,"seed_spread_D_eff":0.0008274940018042631},{"D_eff":[1.8177240887129729,1.8175342690437648,1.8170592703946016],"F_L":1.8461538461538463,"mean_D_eff":1.81743920938378,"n":20000,"rel_bias_pct":-1.5553761583785943,"seed_sd_D_eff":0.0003424516072788414,"seed_spread_D_eff":0.0006648183183712852}]}
+AXV_RUN_END prop3-finite-n-bias status=ok
+AXV_ARM_END prop3-finite-n-bias rc=0
+=== baseline first: gamma=1.0, L=12, seed 1337 ===
+AXV_ARM_SKIPPED 2609.31098-a00-s1337 budget_guard remaining_sec=3216 need_sec=500
+baseline_rc: 99
+=== seed series: the one variable ===
+AXV_ARM_SKIPPED 2609.31098-a00-s1338 budget_guard remaining_sec=3216 need_sec=500
+AXV_ARM_SKIPPED 2609.31098-a00-s1339 budget_guard remaining_sec=3216 need_sec=500
+AXV_ARM_SKIPPED 2609.31098-a00-s1340 budget_guard remaining_sec=3216 need_sec=500
+=== between-architecture reference, same cohort, same budget ===
+AXV_ARM_SKIPPED 2609.31098-a01-s1337 budget_guard remaining_sec=3216 need_sec=500
+=== estimator positive control: the paper's own gamma=0.5 arm ===
+AXV_ARM_SKIPPED 2609.31098-a02-s1337 budget_guard remaining_sec=3216 need_sec=500
+=== random-weight control: the paper's own Table S10 null ===

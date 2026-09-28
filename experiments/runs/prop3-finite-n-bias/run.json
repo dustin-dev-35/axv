@@ -1,0 +1,138 @@
+{
+  "F_L": null,
+  "agent": "lens",
+  "arxiv_id": "2609.31098",
+  "arxiv_version": "v1",
+  "baseline_metric_value": null,
+  "baseline_run_id": null,
+  "caveat": "The D_eff measurement on this pod costs 7.8 s at n=10000, d=384, L=12. The 504 s was entirely the four-point n sweep with three synthetic seeds each, which is why the control is now runnable at the operating point only.",
+  "claim_under_test": "The seed variance of D_eff on TRAINED checkpoints is small enough that the paper's stability argument (passage bootstrap <= 3e-4 in S18 plus random-weight seed <= 2e-4 in S10) extends to trained models.",
+  "cohort": "gpu-pro6000mig24gb-torch280-deff-seedvar-20260928",
+  "comparability": "New cohort. Fixed-iteration budget (not the harness wall clock), char-level shakespeare_char (not climbmix-400b + 8192-BPE), plain pre-norm GPT decoder (not the harness sliding-window / value-embedding / Muon variant). New config_fingerprint and new data_fingerprint, therefore its own baseline, measured in the same batch. NOT comparable to any val_bpb autoresearch arm and never pooled with the CPU estimator cohorts.",
+  "config_fingerprint": "sha256:0f6d9f203613eb65ac3fb3202d7f5a41bd2355b964004a9aaba202f4e33c18c7",
+  "d": 384,
+  "d_eff": null,
+  "d_eff_over_L": null,
+  "data_fingerprint": "sha256:86c4e6aa9db7c042ec79f339dcb96d42b0075e16b8fc2e86bf0ca57e2dc565ed",
+  "decision": "inconclusive",
+  "delta": null,
+  "gamma": null,
+  "gap_to_F_L": null,
+  "git_path": "experiments/runs/prop3-finite-n-bias/",
+  "gpu": null,
+  "gpu_class": "pro6000-mig24gb",
+  "gpu_count": 1,
+  "harness_branch": "HEAD",
+  "harness_commit": "a12c61040c910fd8c9e35e054319faf92ca4b25a",
+  "harness_repo": "dustin-dev-35/autoresearch",
+  "harness_repo_upstream": "karpathy/autoresearch",
+  "harness_upstream_pin": "228791fb499afffb54b46200aca536f79142f117",
+  "host_cuda_version": "13.0",
+  "image": "runpod/pytorch:1.0.2-cu1281-torch280-ubuntu2404",
+  "improved": null,
+  "issue": "AXV-43",
+  "max_iters": null,
+  "metric_name": "prop3_rel_bias_pct",
+  "metric_value": -3.038845872906288,
+  "n_layer": 12,
+  "n_passages_used": null,
+  "n_valid_positions_per_passage": null,
+  "norm_ratio_update_over_state": null,
+  "operating_point_n": 10000,
+  "operating_point_rel_bias_pct": -3.038845872906288,
+  "operating_point_seed_sd_D_eff": 0.00045087173570316233,
+  "operator": "lens",
+  "pod_data_center": "EUR-IS-2",
+  "pod_id": "2f50e8wsshry9c",
+  "pod_type": "secure-cloud",
+  "prop3_sweep": [
+    {
+      "D_eff": [
+        1.4952199850725256,
+        1.4946519955943312,
+        1.4959876718445735
+      ],
+      "F_L": 1.8461538461538463,
+      "mean_D_eff": 1.4952865508371433,
+      "n": 1000,
+      "rel_bias_pct": -19.00531182965474,
+      "seed_sd_D_eff": 0.0006703215736717115,
+      "seed_spread_D_eff": 0.0013356762502423347
+    },
+    {
+      "D_eff": [
+        1.7203998287107711,
+        1.7191112657433825,
+        1.7192531735956749
+      ],
+      "F_L": 1.8461538461538463,
+      "mean_D_eff": 1.7195880893499427,
+      "n": 4000,
+      "rel_bias_pct": -6.855645160211443,
+      "seed_sd_D_eff": 0.0007065585977638536,
+      "seed_spread_D_eff": 0.0012885629673886623
+    },
+    {
+      "D_eff": [
+        1.7897417679678538,
+        1.790569261969658,
+        1.7898451986399857
+      ],
+      "F_L": 1.8461538461538463,
+      "mean_D_eff": 1.7900520761924994,
+      "n": 10000,
+      "rel_bias_pct": -3.038845872906288,
+      "seed_sd_D_eff": 0.00045087173570316233,
+      "seed_spread_D_eff": 0.0008274940018042631
+    },
+    {
+      "D_eff": [
+        1.8177240887129729,
+        1.8175342690437648,
+        1.8170592703946016
+      ],
+      "F_L": 1.8461538461538463,
+      "mean_D_eff": 1.81743920938378,
+      "n": 20000,
+      "rel_bias_pct": -1.5553761583785943,
+      "seed_sd_D_eff": 0.0003424516072788414,
+      "seed_spread_D_eff": 0.0006648183183712852
+    }
+  ],
+  "provisional": true,
+  "provisional_reason": "Batch truncated by AXV's own budget guard before the seed series ran, and the Runpod MCP server failed while the next pod's log was being read. See warnings.",
+  "recorded_utc": "2026-09-28T22:32:57Z",
+  "rho_lag1": null,
+  "role": "estimator-finite-n-bias-control",
+  "run_id": "prop3-finite-n-bias",
+  "run_seconds": null,
+  "seed": null,
+  "series": "2609.31098-trained-checkpoint-seed-variance",
+  "series_deviations": {
+    "architecture": "plain pre-norm GPT decoder, the architecture Appendix S17 describes, not the harness sliding-window / value-embedding / Muon variant",
+    "corpus": "char-level shakespeare_char, the corpus of the paper's own Appendix S17 arm, not the harness default climbmix-400b + 8192-BPE. New data_fingerprint.",
+    "fixed_iteration_budget_not_wall_clock": "D_eff is a checkpoint property; the paper's anchor for this configuration is stated at 'iter 5000'. A wall-clock budget would move the anchor.",
+    "not_comparable_to": "any val_bpb autoresearch arm, and never pooled with the CPU cohorts cpu-numpy-frozen-upstream-code-20260928 or cmp:estimator-cpu-v1-fixedtable-transcription"
+  },
+  "synthetic_seeds": [
+    11,
+    22,
+    33
+  ],
+  "template_id": "runpod-torch-v280",
+  "tf32": null,
+  "time_budget_kind": "fixed_iterations",
+  "time_budget_sec": null,
+  "torch_build_cuda": null,
+  "trained": null,
+  "val_loss": null,
+  "variable_changed": "n, the passage count, swept 1000/4000/10000/20000 (3 synthetic seeds each)",
+  "variable_rationale": "The paper's two stability floors are both measured on things that are not trained checkpoints: passage resampling (S18) and random-weight initialisation (S10). Seed is the axis the paper never measures, and the one every practitioner use of D_eff depends on.",
+  "warnings": [
+    "THIS IS A CONTROL, NOT A BASELINE. It establishes the finite-n bias of the D_eff estimator on the paper's own synthetic orthogonal-update construction (Proposition 3), at the series operating point. It is not a trained-checkpoint arm and can never serve as the baseline for one.",
+    "Truncated batch, AXV's own fault. In this batch the finite-n control was ordered AHEAD of the required gamma=1.0 baseline. It took 504 s of float64 Gram contractions, the budget guard then computed that no training arm could fit in the remaining envelope, and it skipped every training arm including the baseline. Six arms were skipped. The guard behaved as designed; the arm ordering was the bug. Corrected in harness commit f1e09f3, which moves the deliverable to tier 1 and makes the guard empirical instead of planned.",
+    "This number is a property of the ESTIMATOR, not of any model. At n=10000 and d=384 the estimator returns D_eff 3.04 percent BELOW the population value 2L/(L+1) for the idealised construction, and the bias shrinks as n grows (-19.01 percent at n=1000, -6.86 at n=4000, -3.04 at n=10000, -1.56 at n=20000). Any D_eff measured at finite n carries this negative bias, and the paper's own Table 2 values at N=10000 passages carry it too. The paper does not report it.",
+    "The Monte-Carlo seed spread of this synthetic construction is 0.00045 in D_eff at n=10000. That is sampling noise in the generator, not model seed sensitivity, and it must not be quoted as a seed-variance floor.",
+    "The seed variance of D_eff on TRAINED checkpoints is NOT MEASURED. That is the deliverable of this issue and it remains unmeasured."
+  ]
+}
