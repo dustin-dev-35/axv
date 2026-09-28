@@ -1,0 +1,46 @@
+==========================================================================
+arXiv:2609.31381v1  --  finite-frame bound reproduction
+==========================================================================
+
+paired/capture boundary runs: N = 27  (15 completed + 12 stopped)
+
+--- Table 3: bounded outcomes over all 27 boundaries ---
+recorded endpoint             Full   Projected
+Correct                         14          12
+Known bounded failure            6          12
+Unexecuted                       7           3
+
+--- Sec 5.2: the completed-pairs-only view (the reported 'null') ---
+  completed pairs: 15
+  full successes:     12/15
+  projected successes:12/15
+  projected - full:   +0.0000   <-- exactly zero
+
+--- Eq. 5: finite-frame bounds on projected - full ---
+  reproduced:  [-0.3333, +0.0370]  = [-33.3, +3.7] percentage points
+  paper:       [-0.3333, +0.0370]  = [-33.3, +3.7] percentage points
+  MATCH: True
+
+  interval WIDTH: 37.0 percentage points   (width/N = 0.0137)
+  unresolved companions: 10 of 54 arm-slots  ->  10/27 = 0.3704
+
+--- Sec 4.2 / A.1: observed jointly successful stratum ---
+  |J| = 11
+  members: click-parameters, boltons-indexedset, dotenv-stream, filelock-basics, filelock-contention, more-itertools-recipes, more-itertools-window, pathspec-match, sqlparse-grouping, tomlkit-datetimes, urllib3-headers
+  every non-member is ruled out by an observed zero, so membership
+  is fully identified: True
+
+--- Sec A.1 sharpness: interval width vs N, at fixed censor rate ---
+     N    width (pp)     width/N   interpretation
+    27          37.0      0.0137   same width, wider lattice
+    54          37.0      0.0069   same width, wider lattice
+   108          37.0      0.0034   same width, wider lattice
+   270          37.0      0.0014   same width, wider lattice
+   540          37.0      0.0007   same width, wider lattice
+  2700          37.0      0.0001   same width, wider lattice
+
+  Width = (number of unresolved companions)/N. Multiplying N by 10
+  multiplies the expected count of unresolved companions by 10 and
+  leaves the width unchanged. N buys precision on the location of
+  the interval, never on its width.
+

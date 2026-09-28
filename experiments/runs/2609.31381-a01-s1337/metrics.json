@@ -1,0 +1,29 @@
+{
+  "n_boundary_runs": 27,
+  "n_completed_pairs": 15,
+  "n_stopped_pairs": 12,
+  "table3_reproduced": true,
+  "endpoint_counts": {
+    "full": {
+      "correct": 14,
+      "known_bounded_failure": 6,
+      "unexecuted": 7
+    },
+    "projected": {
+      "correct": 12,
+      "known_bounded_failure": 12,
+      "unexecuted": 3
+    }
+  },
+  "completed_pairs_only_delta": 0.0,
+  "completed_pairs_only_full": "12/15",
+  "completed_pairs_only_projected": "12/15",
+  "eq5_lower": -0.3333333333333333,
+  "eq5_upper": 0.037037037037037035,
+  "eq5_width": 0.37037037037037035,
+  "eq5_matches_paper": true,
+  "joint_success_stratum_size": 11,
+  "unresolved_companions": 10,
+  "censor_rate_c": 0.37037037037037035,
+  "reproduction_status": "verified"
+}

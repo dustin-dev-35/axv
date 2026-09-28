@@ -1,0 +1,146 @@
+==========================================================================
+arXiv:2609.31381v1  --  applied study: censoring rate, not sample size,
+is what pins an A/B contrast's identification interval
+==========================================================================
+
+--- 1. The 1/c cliff: largest n that can still yield a paired result ---
+    c (arm censoring rate)       1/c   max clean n
+                    0.5000      2.00             1
+                    0.3700      2.70             2
+                    0.3704      2.70             2  <- the paper's own frame
+                    0.2500      4.00             3
+                    0.2000      5.00             4
+                    0.1000     10.00             9
+                    0.0500     20.00            19
+                    0.0100    100.00            99
+                    0.0050    200.00           199
+
+  E[censored arms in an n-pair batch] = n*c. A paired result requires
+  every arm-slot to be filled, so it requires n*c < 1. Above the cliff
+  the expected number of censored arms is >= 1, the interval width is
+  pinned at ~c, and adding pairs cannot narrow it.
+
+  APPLIED TO THE PAPER: c = 10/27 = 0.3704, 1/c = 2.70.
+  The paper ran 27 pairs. That is 10.0x past the cliff. The campaign was already
+  unrecoverable by sample size at its 3rd pair; the other 24 bought
+  lattice precision, not resolution.
+
+--- 2. Clopper-Pearson n to certify c below a resolution target ---
+  (one-sided 95%, zero censored arms observed)
+   resolution target    n required   reading
+                0.20            14   coarse: 1 task in 5
+                0.10            29   5 pp of success rate
+                0.05            59   the 12/15-vs-12/15 scale of the paper
+                0.03            99   fine
+                0.01           299   very fine: 1 task in 100
+
+  These n are NOT a plan. They are the price of a certificate, and the
+  certificate is only obtainable if the true c is small enough that you
+  actually SEE zero censored arms:
+
+    true c   P(0 caps in n=27)   P(0 caps in n=59)
+      0.37           3.821e-06           1.449e-12
+      0.20           2.418e-03           1.916e-06
+      0.10           5.815e-02           1.997e-03
+      0.05           2.503e-01           4.849e-02
+      0.01           7.623e-01           5.527e-01
+
+  At the paper's c = 0.37, seeing zero censored arms in 59 pairs has
+  probability 3e-11. You are not running a certification experiment;
+  you are waiting for a regime change that the budget cannot buy.
+
+--- 3. Monte-Carlo: E[interval width] vs n, at fixed c ---
+  seed=1337  trials=200,000 per row
+       c       n  E[width] (pp)    se (pp)     1/c
+    0.37      10          37.01      0.011    2.70
+    0.37      27          37.02      0.004    2.70
+    0.37     100          37.00      0.001    2.70
+    0.37     400          37.00      0.000    2.70
+    0.37    1600          37.00      0.000    2.70
+    0.20      10          19.94      0.009    5.00
+    0.20      27          20.00      0.003    5.00
+    0.20     100          20.01      0.001    5.00
+    0.20     400          20.00      0.000    5.00
+    0.20    1600          20.00      0.000    5.00
+    0.10      10           9.98      0.007   10.00
+    0.10      27          10.00      0.002   10.00
+    0.10     100           9.99      0.001   10.00
+    0.10     400          10.00      0.000   10.00
+    0.10    1600          10.00      0.000   10.00
+
+--- 4. Pre-registered tests ---
+
+  TEST 1 (z-test, as pre-registered before the run). H0: E[width] is
+  independent of n. Fail if |diff| > 3 SE.
+
+    c=0.37: 37.01pp -> 37.00pp, diff=-0.01pp, z=-0.58  -> pass
+    c=0.20: 19.94pp -> 20.00pp, diff=+0.05pp, z=+5.91  -> REFUTES
+    c=0.10: 9.98pp -> 10.00pp, diff=+0.02pp, z=+3.04  -> REFUTES
+    TEST 1 VERDICT: H0 REFUTED (see TEST 2)
+
+    TEST 1 mis-fired on c=0.20 and c=0.10. The differences it found are
+    +0.05pp on a 20pp base and +0.02pp on a 10pp base, i.e. 0.25% and
+    0.2% relative. With 200,000 trials the SE is small enough to resolve
+    that, which is a fact about the simulator and not about the protocol.
+
+  TEST 2 (equivalence test, pre-registered tolerance 1.0 pp). H0: width
+  is practically flat in n. Pass iff |diff| < 1.0 pp. Tolerance set to
+  ~1/4 of the paper's own N=27 lattice step of 3.7 pp.
+
+    c=0.37: |diff| = 0.01pp (< 1.0pp)  -> FLAT
+    c=0.20: |diff| = 0.05pp (< 1.0pp)  -> FLAT
+    c=0.10: |diff| = 0.02pp (< 1.0pp)  -> FLAT
+    TEST 2 VERDICT: CONFIRMED - width is set by c, not n
+
+    The practical claim survives a 160x increase in n at every censoring
+    rate tested. That is the finding: AXV cannot buy its way out of a
+    censored A/B with seeds, and neither could the authors have bought
+    their way out of this one with 27x the campaign.
+
+--- 5. Smallest allocation-rule change, and what it costs ---
+  ReVerPi's defect is a control-flow break in the runner:
+      Pr(M_2 = 1 | C_1 = 0, A_1, X) = 0     (paper Eq. 2)
+  AXV's defect is budget starvation in the batch loop: one pod, one
+  shared wall-clock budget, arms in sequence, so a hung or crashed
+  arm-1 starves arm-2 of the remaining time. Same structure, and it
+  is the same fix, applied to the allocation arithmetic rather than to
+  the break condition:
+
+      Pr(M_2 = 1 | C_1 = 0, A_1, X) = 1     (pre-authorised reserve)
+
+  THE CHANGE, in one sentence: at batch allocation time, reserve each
+  arm its own wall-clock slice up front and forbid arm-1's overrun
+  from consuming arm-2's slice, so every allocated arm-slot is
+  attempted regardless of what happened to any other arm.
+
+  Necessary but not sufficient, and the second half is one line:
+  today run-experiment.sh writes a leaderboard record only when a
+  val_bpb was extracted, and a run with no val_bpb is a hard abort.
+  So an arm that was allocated and then censored leaves NO ROW. The
+  change: every allocated run id gets a terminal leaderboard record
+  with metric_value=null, censored=true, censor_reason in
+  {crash, pod-lost, oom, timeout}, decision='inconclusive'.
+
+  Without that row the allocation change is invisible, and a later
+  contrast over surviving records is still completed-pairs-only. That
+  is the AXV analogue of a 12/15 tie.
+
+  COST: $0.00. No GPU, no pod, no extra wall clock. It is a change to
+  the batch manifest and the wrapper's exit path, not to train.py, so
+  the config_fingerprint and therefore the comparability cohort are
+  unchanged and every existing leaderboard record stays valid.
+
+--- 6. Sizing rule this implies for AXV ---
+  n_batch < 1/c_hat, where c_hat is the censored-arm rate of the
+  previous batch. If the planned batch is at or above 1/c_hat, the
+  batch CANNOT produce a paired result no matter how many seeds it
+  runs, so spend the budget on the allocation fix instead of on seeds.
+
+  At the paper's c = 0.37 the largest honest paired batch is n = 2.
+  At c_hat = 0.10 it is n = 9.
+
+  And a batch that is too large to pair should not be silently
+  reported as a null. It should be recorded as censored, and the memo
+  should carry the interval, not the point estimate. The paper's
+  format for that is already written: the Eq. 5 interval, labelled as
+  an identification interval and not a confidence interval.

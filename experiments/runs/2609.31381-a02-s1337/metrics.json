@@ -1,0 +1,187 @@
+{
+  "run_id": "2609.31381-a02-s1337",
+  "metric_name": "eq5_width_pp",
+  "metric_value": null,
+  "seed": 1337,
+  "trials_per_row": 50000,
+  "c_paper": 0.37037037037037035,
+  "cliff_1_over_c": 2.7,
+  "max_clean_batch_at_c_paper": 2,
+  "paper_batch_over_cliff": 10.0,
+  "p_clean_frame": {
+    "c=0.37,n=2": 0.3964334705075446,
+    "c=0.37,n=3": 0.24960625920845403,
+    "c=0.37,n=6": 0.06230328463603794,
+    "c=0.37,n=27": 3.7609645936501506e-06,
+    "c=0.20,n=2": 0.6400000000000001,
+    "c=0.20,n=3": 0.5120000000000001,
+    "c=0.20,n=6": 0.2621440000000001,
+    "c=0.20,n=27": 0.002417851639229262,
+    "c=0.10,n=2": 0.81,
+    "c=0.10,n=3": 0.7290000000000001,
+    "c=0.10,n=6": 0.531441,
+    "c=0.10,n=27": 0.058149737003040096,
+    "c=0.05,n=2": 0.9025,
+    "c=0.05,n=3": 0.8573749999999999,
+    "c=0.05,n=6": 0.7350918906249998,
+    "c=0.05,n=27": 0.2503440897424549
+  },
+  "p_clean_frame_6run_at_c020": 0.2621440000000001,
+  "clopper_pearson_n": {
+    "0.20": 14,
+    "0.10": 29,
+    "0.05": 59,
+    "0.03": 99,
+    "0.01": 299
+  },
+  "mc_rows": [
+    {
+      "c": 0.37,
+      "n": 10,
+      "e_width": 0.370304,
+      "se": 0.0006829040160725371,
+      "exact": 0.37
+    },
+    {
+      "c": 0.37,
+      "n": 27,
+      "e_width": 0.3698474074074074,
+      "se": 0.0004154964033729673,
+      "exact": 0.37
+    },
+    {
+      "c": 0.37,
+      "n": 100,
+      "e_width": 0.3702514,
+      "se": 0.00021594689198876655,
+      "exact": 0.37
+    },
+    {
+      "c": 0.37,
+      "n": 400,
+      "e_width": 0.3699374,
+      "se": 0.00010795455527240155,
+      "exact": 0.37
+    },
+    {
+      "c": 0.37,
+      "n": 1600,
+      "e_width": 0.3700258,
+      "se": 5.397993925227686e-05,
+      "exact": 0.37
+    },
+    {
+      "c": 0.2,
+      "n": 10,
+      "e_width": 0.199604,
+      "se": 0.0005652649700520987,
+      "exact": 0.2
+    },
+    {
+      "c": 0.2,
+      "n": 27,
+      "e_width": 0.1993777777777778,
+      "se": 0.0003438628920414225,
+      "exact": 0.2
+    },
+    {
+      "c": 0.2,
+      "n": 100,
+      "e_width": 0.1997288,
+      "se": 0.00017879441067917084,
+      "exact": 0.2
+    },
+    {
+      "c": 0.2,
+      "n": 400,
+      "e_width": 0.2001336,
+      "se": 8.946511670786552e-05,
+      "exact": 0.2
+    },
+    {
+      "c": 0.2,
+      "n": 1600,
+      "e_width": 0.199960975,
+      "se": 4.471808687167998e-05,
+      "exact": 0.2
+    },
+    {
+      "c": 0.1,
+      "n": 10,
+      "e_width": 0.10008999999999998,
+      "se": 0.00042443372132760604,
+      "exact": 0.1
+    },
+    {
+      "c": 0.1,
+      "n": 27,
+      "e_width": 0.09995703703703704,
+      "se": 0.00025814958021617567,
+      "exact": 0.1
+    },
+    {
+      "c": 0.1,
+      "n": 100,
+      "e_width": 0.0998562,
+      "se": 0.00013407829005589235,
+      "exact": 0.1
+    },
+    {
+      "c": 0.1,
+      "n": 400,
+      "e_width": 0.10005974999999999,
+      "se": 6.709984963840735e-05,
+      "exact": 0.1
+    },
+    {
+      "c": 0.1,
+      "n": 1600,
+      "e_width": 0.10002245,
+      "se": 3.354436605005331e-05,
+      "exact": 0.1
+    }
+  ],
+  "max_mc_deviation_from_exact_pp": 0.062222222222221846,
+  "test1_ztest": {
+    "0.37": {
+      "diff": -0.0002782000000000062,
+      "z": -0.4061111655387848,
+      "pass": true
+    },
+    "0.20": {
+      "diff": 0.00035697500000000937,
+      "z": 0.6295510801283313,
+      "pass": true
+    },
+    "0.10": {
+      "diff": -6.754999999998568e-05,
+      "z": -0.15865849647626007,
+      "pass": true
+    }
+  },
+  "test1_verdict_h0_not_refuted": true,
+  "test2_equivalence_tol_pp": 1.0,
+  "test2_equivalence": {
+    "0.37": {
+      "diff": -0.0002782000000000062,
+      "flat": true
+    },
+    "0.20": {
+      "diff": 0.00035697500000000937,
+      "flat": true
+    },
+    "0.10": {
+      "diff": -6.754999999998568e-05,
+      "flat": true
+    }
+  },
+  "test2_verdict_flat": true,
+  "baseline_run_id": "2609.31381-a01-s1337",
+  "baseline_metric_value": 37.03703703703704,
+  "delta": null,
+  "supersedes_note": "Corrects the first execution of this run, which reported TEST 1 REFUTED. That verdict came from a standard error understated by a factor of sqrt(n): sqrt(m(1-m)/(TRIALS*n*n)) was used instead of sqrt(m(1-m)/(n*TRIALS)). E[width]=c is an identity, so exact independence is the true H0 and the corrected instrument confirms it. Both verdicts are retained; the earlier one is superseded.",
+  "experiment_status": "verified",
+  "cost_usd": 0.0,
+  "pods_provisioned": 0,
+  "gpu_seconds": 0
+}

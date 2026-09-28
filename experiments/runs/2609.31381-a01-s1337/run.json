@@ -1,0 +1,80 @@
+{
+  "run_id": "2609.31381-a01-s1337",
+  "arxiv_id": "2609.31381",
+  "arxiv_version": "v1",
+  "claim_under_test": "The paper's own arithmetic. From the 27 disclosed boundary runs (arXiv:2609.31381v1 Tables 7 and 8), Table 3's endpoint counts are Full 14 correct / 6 known bounded failure / 7 unexecuted and Projected 12 / 12 / 3; the completed-pairs-only view is exactly 12/15 for each arm; and the sharp finite-frame bounds of Eq. 5 are Delta_27 in [-9/27, +1/27] = [-33.3, +3.7] percentage points. The paper's selector claims are also reproduced: 4 fitting pairs and 13 outside-fitting runs over the 17-run both-known frame, with 3-vs-3 failures and +0.9% logical tokens overall but 3-vs-2 failures and +8.6% outside fitting.",
+  "variable_changed": "none. This is the reference implementation: a direct transcription of the paper's definitions (Eq. 1, 2, 5, 6, 7 and the interval maps of Sec 4.1) fed the paper's own per-run tables. No variable is swept and no arm is contrasted, which is what makes it the baseline for 2609.31381-a02-s1337.",
+  "variable_rationale": "A reproduction arm with no variable is the correct design for a reference implementation: the only thing that can fail is the transcription, and a swept variable would confound that with the sweep.",
+  "run_kind": "estimator-reproduction",
+  "reproduction_kind": "estimator reproduction, NOT a re-execution of the 86-run agent campaign",
+  "reproduction_kind_note": "This run calls no model, no provider, and no GPU. It re-derives the paper's reported numbers from the paper's own disclosed tables, and it re-implements the paper's bound formula rather than trusting the paper's printed interval. It therefore verifies the paper's arithmetic and its transcription, NOT the paper's agent trajectories, token counts, or the model behaviour they record. It is recorded as an estimator reproduction in every mirror and is never described as a campaign re-run.",
+  "is_pod_run": false,
+  "gpu": "none",
+  "gpu_class": "cpu-only",
+  "gpu_count": 0,
+  "pod_id": null,
+  "template_id": null,
+  "cuda_version": null,
+  "harness_repo": null,
+  "harness_commit": null,
+  "code_sha256": "see diff.patch for the committed estimator.py",
+  "seed": null,
+  "seed_note": "Not applicable. No model is fit and no randomness is drawn; the script is a deterministic function of the two transcribed tables. The three-seed rule in the autoresearch-experiment skill does not apply.",
+  "time_budget_sec": 0,
+  "metric_name": "eq5_width_pp",
+  "metric_value": 37.037037037037035,
+  "metric_value_note": "The reproduced width of the Eq. 5 identification interval on Delta_27, in percentage points of success rate: 10 unresolved companions over 27 pairs. The paper's printed endpoints -33.3 and +3.7 give the same 37.0 pp width.",
+  "baseline_run_id": null,
+  "baseline_note": "This run IS the baseline. It is the reference implementation for the estimator cohort, and 2609.31381-a02-s1337 reuses its reproduced censor rate c = 10/27 as its default parameter. No training baseline exists or is needed: the claim under test is arithmetic over a disclosed table, not a val_bpb improvement.",
+  "delta": null,
+  "decision": "keep",
+  "result": {
+    "table3_reproduced": true,
+    "endpoint_counts": {
+      "full": {"correct": 14, "known_bounded_failure": 6, "unexecuted": 7},
+      "projected": {"correct": 12, "known_bounded_failure": 12, "unexecuted": 3}
+    },
+    "completed_pairs_only": {
+      "n": 15,
+      "full": "12/15",
+      "projected": "12/15",
+      "delta": 0.0,
+      "note": "Exactly zero. This is the tie the paper calls a filter artefact."
+    },
+    "eq5_bounds": {
+      "lower": -0.3333333333333333,
+      "upper": 0.037037037037037035,
+      "width": 0.37037037037037035,
+      "matches_paper": true,
+      "match_tolerance": 1e-12,
+      "also_reproduced_in_task_units": "projected success in [12,15], full success in [14,21], so projected-minus-full in [-9,+1] tasks out of 27, which is the paper's stated form"
+    },
+    "joint_success_stratum": {
+      "size": 11,
+      "members": ["click-parameters", "boltons-indexedset", "dotenv-stream", "filelock-basics", "filelock-contention", "more-itertools-recipes", "more-itertools-window", "pathspec-match", "sqlparse-grouping", "tomlkit-datetimes", "urllib3-headers"],
+      "fully_identified": true,
+      "identification_argument": "Every one of the 12 incomplete pairs contains at least one observed zero, so no missing outcome can move a run into or out of J. The paper's Sec 4.2 / A.1 argument, re-implemented."
+    },
+    "censor_rate_c": 0.37037037037037035,
+    "unresolved_companions": 10,
+    "width_vs_n_at_fixed_c": {
+      "N": [27, 54, 108, 270, 540, 2700],
+      "width_pp": [37.0, 37.0, 37.0, 37.0, 37.0, 37.0],
+      "interpretation": "Width = unresolved companions / N. Scaling N by 10 scales the expected count of unresolved companions by 10 and leaves the width unchanged. N buys precision on the location of the interval, never on its width."
+    },
+    "selector_stratification_not_reproduced": "The fitting / outside-fitting token split of Table 4 (+8.6% over 13 runs) and Table 11's policy comparison depend on per-pair token totals that Table 8 does not carry. Table 8 has Task/First/History bytes/Rule/Y_F-Y_P/q_F-q_P and no T_F, T_P or ratio columns, so the token half of the selector claim is NOT reproduced here and is NOT claimed as reproduced. The failure-count half IS reproduced and is consistent with Table 4: the four fitting tasks contribute 1 full failure and 0 selector failures, and the 13 non-fitting runs contribute 2 full and 3 selector failures, giving 3 and 3 overall. See the memo's evidence section for what this leaves unverified."
+  },
+  "comparability_key": "cmp:estimator-cpu-v1-fixedtable-transcription",
+  "comparability_note": "Not a training run. Must never be placed in a karpathy/autoresearch training cohort.",
+  "started_at": "2026-09-28T19:30:00Z",
+  "ended_at": "2026-09-28T19:58:00Z",
+  "wall_clock_sec": 1680,
+  "cost_usd": 0.0,
+  "gpu_seconds": 0,
+  "pods_provisioned": 0,
+  "operator": "lens",
+  "budget_impact_usd": 0.0,
+  "budget_remaining_usd": 3.25,
+  "leaderboard_check": "NOT PERFORMED. The GitHub broker transport was unavailable for this run (gh reports broker_transport_unavailable), so experiments/leaderboard.jsonl could not be read and the `baseline --fingerprint` pre-check could not be executed. No pod was provisioned, so no baseline reuse decision arose and no baseline was re-run. This run is not-applicable to the karpathy/autoresearch harness and does not enter a training comparability cohort. Its own record is appended to the AXV leaderboard in the same commit as the memo, on a separate estimator comparability key. This caveat is carried verbatim into the memo.",
+  "caveat": "The reproduction verifies the paper's arithmetic and its transcription from Tables 7 and 8, not the underlying agent trajectories, the model, or the token accounting. Two transcription points were checked against independent tables in the paper rather than against the primary source: the rows for tomlkit-datetimes and urllib3-headers, which the HTML table body splits across a page break, were cross-checked against the eleven-row joint-success stratum of Table 10, where both appear as (1,1). Every one of the twelve Table 8 rows was verified character-for-character against the paper text. The paper's own ancillary files (anc/analysis/derive.py, anc/analysis/test_data.py) were not executed, so a divergence between this transcription and the authors' own derivation script would not be caught here."
+}
