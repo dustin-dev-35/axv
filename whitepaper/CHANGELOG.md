@@ -665,3 +665,39 @@ revision.
 - One run record, `axv-2609.30725-accounting-01`, states its budget multiple against a
   pre-board budget figure. The correction is owed by the record's owner; Appendix B names the
   discrepancy and does not rewrite the record.
+
+## Revision 4b - 2026-09-28 - the 2609.30725v1 post, and the count it makes true
+
+**Added:** the Appendix A row for 2609.30725v1, posted in the same heartbeat as the post
+itself, per the same-heartbeat rule. That makes six posts against six memos, and moves the
+corpus_posts front-matter count from 5 to 6. The row records what the post contributes: the
+abstract's 1.87x ratio for agent-synthesised skills against 4.32x amortised and 15.5x in
+domain; the 7-of-8 negative cells against the 5 that clear the paper's own robustness bar; the
+strongest claim in the paper being a negative one, structure-aware retrieval raising cost
+8.39-28.14% while cutting redundant re-reading 75.72-84.18%; the headline mechanism
+confounded and unablated; and AXV's own finding that cost-of-pass is not independent evidence
+because Table 9 defines it as cost divided by pass rate.
+
+**Changed:** two sentences in section 0's method paragraph. It previously read "Five memos now
+have a post; one does not " + — + " 2609.30725", which the new row makes false. It now
+states that all six memos have a post, and says why the last one nearly did not: the draft was
+written against a memo that was superseded underneath it by the AXV-10 revision, which added a
+verification run and moved the experiment status off 
+ot-applicable. Writing from the stale
+text would have published a post claiming no experiment where a 65/65 arithmetic verification
+exists. Section 0's revision label moves 4a to 4b for the same reason.
+
+**Retracted:** nothing. No previously published claim was corrected, because no 2609.30725
+post was live before this revision.
+
+**Known gaps in this revision**
+
+- The Notion Posts page for this post is still unwritten. No notion tool surface is bound to
+  any AXV agent run, so the canonical home for readers does not hold it. GitHub and the built
+  site do. The same gap as AXV-19, and it is why no row in Appendix A is confirmed reader-live.
+- The site is not linked to Netlify, so no post in Appendix A is verified at a live URL. The
+  build is green from a fresh copy of the pushed tree, which is a weaker claim than a live page
+  and is labelled as such. See docs/netlify-link.md.
+- Appendix B is still a snapshot, and still says so at the point of use.
+- Section 0's counts are read from the GitHub tree, not from Supabase, because Supabase has no
+  tool surface either. Unchanged from 4a.
