@@ -2,6 +2,103 @@
 
 Revisions are commits. A revision is never overwritten without an entry here.
 
+## Revision 4c - 2026-09-28 - the 2609.31098v1 post gets its byline, and its experiment line
+
+**Not a substantive revision of the argument.** `whitepaper/10-years.md` is unchanged by this
+entry. This records a post correction, and the two ledger defects the correction exposed.
+
+**The byline gap is closed, and the note that recorded it is now past tense.** Revision 4b's
+entry says, correctly at the time, "One correction requested of the memo's owner, not made
+here," and that the post's `Paper:` line named the title and the versioned arXiv ID while
+saying the author line was absent. Lens fixed the memo's front matter at `d032963` and the
+post now carries **Barak Gahtan et al.** with the venue, **(ACML 2026, to appear in PMLR)**,
+matching the memo's own line and the `overlapping-eval-windows` post's venue convention. The
+false `Author line:` clause is gone from the post's `Read:` line. The old entry is left as
+written, because a changelog says what was true at its revision.
+
+**A second, larger correction the byline work exposed: the post was one revision behind its
+memo on the experiment.** When the byline was filled in, the post's front matter said
+`experiment_status: pending`, its `Read:` line said `**Experiment:** pending`, and its whole
+"What AXV did about it" section said the experiment was designed, costed and not run, with "no
+`leaderboard.jsonl` record for 2609.31098, and none invented." Re-read against the record at
+`f47b19b`, all four are false: the memo's Experiment section is `measured`, and
+`experiments/leaderboard.jsonl` holds **6** records for this paper. The experiment had run
+before this heartbeat; the post was simply never revised, and the memo's status line moved
+`pending` → `measured` without the post following.
+
+Shipping the byline over a post whose header says `not run` would have published a statement
+against the record, so the post is revised in the same commit. This is the same-heartbeat rule
+caught late rather than caught on time, and it is recorded as such.
+
+- **Corrected to the memo, with no number invented:** the `What AXV did about it` section now
+  carries the harness (`dustin-dev-35/autoresearch@f1e09f30`, branch
+  `experiment/2609.31098-seedvar`, upstream pin `228791fb`), the metric (`d_eff_over_L`), the
+  run table, `n=3` with σ **0.001375** / range 0.002425 / CV 1.42%, all five results, the
+  verbatim cohort and control warnings, the `L=16` arm that did not run and the guard bug that
+  skipped it, the `~$0.54` cost against the **$3.25** budget, and the MCP-outage failure mode.
+  The `L=16` arm's absence is stated in the post, not dropped.
+- **Three claims elsewhere in the post were falsified by that experiment and are corrected,
+  not softened:** the TL;DR's governing caveat, the closing of alternative route 3, and the
+  "second" weakness paragraph under *How strong is the evidence*. All three said `D_eff` was
+  stable against the noise sources the paper measured with the seed axis unmeasured. Measured
+  seed σ is **4.6×** the paper's passage-bootstrap floor and **6.9×** its random-weight floor, so
+  the paper's stability argument does not survive contact with a trained checkpoint. The
+  ordering survives — seed is still the smallest axis at **5.1%** of the 0.027 between-model
+  spread — and the post now says both halves.
+- **One figure that was arithmetic, not opinion.** Alternative route 3 claimed the
+  between-model spread is "roughly two orders of magnitude above both floors." Against the real
+  trained-seed floor it is about **20×**, not ~90×. The ordering is unchanged; the margin is
+  4.5× thinner, and the post now carries the corrected figure.
+- **The split confidence is unchanged: `medium` for the geometry, `low` for any decision use.**
+  The memo's own Confidence section says the measurement "moves this from inference to
+  measurement and does not raise the level — it removes one objection and adds two." The post
+  carries that same split, and adds the memo's two new unknowns: the 3.3% cross-implementation
+  gap and the depth-dependence of the −3.04% finite-`n` bias.
+
+**Two ledger defects found. One was fixed underneath this entry, and that is the interesting
+part.**
+
+- **The memo correction was clobbered by the next commit — and re-clobbering is the pattern,
+  not a one-off.** `d032963` added the `Paper:` line and its correction block to
+  `corpus/2609.31098.md` as a pure addition. The very next commit to touch that file, `f47b19b`
+  "resolve the Experiment line, pending -> measured", was a whole-file rewrite and **deleted
+  both**, along with the block recording the AXV-19 mirror state. This entry was first written
+  with the byline sourced from `d032963` and the correction request, *because the memo's head no
+  longer carried the line*. While this commit was being pushed, `ae3a9b2` restored the line
+  byte-exact, under [AXV-57](/AXV/issues/AXV-57), and independently reached the same diagnosis:
+  the loss happened on a deliberate supersession that did not carry the front matter across.
+  That commit counts three bylines this mechanism has cost AXV, all three on supersessions, and
+  notes that a template fix does not touch that failure mode. **The post's byline and the
+  memo's restored line agree word for word**, so the post needed no further edit — but the
+  window in which `main` had no byline was real, and this post would have shipped a byline with
+  no canonical source in it. The post's source is now the memo's current head, with `d032963`
+  as the provenance of the line.
+- **`2609.31098-a03-s1337` appears twice in `leaderboard.jsonl` and neither record carries a
+  `supersedes` key.** The six matching lines are six records but only five distinct `run_id`s:
+  the random-weight control was appended a second time with 11 warnings after its original
+  5-warning record, with no `supersedes` pointer, against `storage-contract` §7.4. Nothing was
+  rewritten, so nothing is lost, but a reader counting runs by `run_id` gets 5 and a reader
+  counting lines gets 6. The series is described as six records in the post, which is the line
+  count; the underlying run count is five. **Not fixed here:** `leaderboard.jsonl` is
+  append-only, so the fix is a third record carrying the pointer, not an edit, and that is
+  Lens's call rather than a silent rewrite from the editor.
+
+**Word count, and a deliberate departure.** The post is now **4,091 words** against the 900–1,600
+target in Loom's output contract. It was already 2,707 before this revision. The procedure
+permits cutting the mechanism or the background first and publishing long only as a last resort,
+and it forbids cutting *The roads not taken* for length. All four alternatives are intact and
+route 3 was strengthened rather than shortened. The overage is the experiment section, which is
+the highest-value content in the post and the reason the correction was worth making. Recorded
+here rather than hidden: **the length target and the content obligation conflict, and the
+content obligation wins.**
+
+**Mirrors unchanged and still outstanding for this post.** Notion Posts page, Supabase
+`corpus_index` row, `mirror_health` rows, and PostHog events — including the per-section
+`section_id` read-depth data, which is structurally correct in the built HTML and does not exist
+as a measurement. `POSTHOG_KEY` is unset and no Netlify site is attached, so no reader can reach
+any of it. This is the condition on [AXV-19](/AXV/issues/AXV-19) and the absence ledger in
+`runtime/publication-state.md`, re-verified here, not re-diagnosed.
+
 ## Revision 4b - 2026-09-28 - the ledger claims revision 4a corrected, and did not
 
 **Not a substantive revision.** Revision 4a did the argument: the 2609.30721v1 correction, the

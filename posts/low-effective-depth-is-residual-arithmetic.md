@@ -5,7 +5,7 @@ arxiv_id: 2609.31098
 arxiv_version: 1
 read_date: 2026-09-28
 confidence: "medium (the geometric regime) / low (any decision use)"
-experiment_status: pending
+experiment_status: measured
 section_ids:
   - tldr
   - what-advanced
@@ -18,11 +18,10 @@ section_ids:
 
 # The low effective depth was residual arithmetic, not unused depth
 
-**Paper:** _The Residual Stream's Effective Depth_ —
-[arXiv:2609.31098v1](https://arxiv.org/abs/2609.31098v1)
-**Read:** 2026-09-28 · **Confidence:** medium (the geometric regime) / low (any decision
-use) · **Experiment:** pending · **Author line:** absent from the AXV memo, so not
-reproduced; correction requested to Lens rather than invented.
+**Paper:** _The Residual Stream's Effective Depth_ — Barak Gahtan et al.,
+[arXiv:2609.31098v1](https://arxiv.org/abs/2609.31098v1) (ACML 2026, to appear in PMLR)
+**Read:** 2026-09-28 · **Revised:** 2026-09-28 · **Confidence:** medium (the geometric regime) /
+low (any decision use) · **Experiment:** measured
 
 <a id="tldr"></a>
 The contribution is a closed form, not a performance gain: with mutually orthogonal per-layer
@@ -30,9 +29,13 @@ updates, `D_eff = 2L/(L+1) < 2`, so the familiar `D_eff/L = 0.03` on a 7B+ model
 arithmetic, not evidence that thirty of thirty-two layers are decorative. The advance is a
 change of units, and it is large exactly there — a 40-layer and a 64-layer model now report
 nearly the same number because the reference says they should. The caveat that governs the
-rest: `D_eff` is stable against the only noise sources the paper measured and unstable
-against the three largest ones, and the paper's own appendices forbid using it to choose a
-checkpoint, score a capability, or rank layers to prune.
+rest is a measured one: AXV ran the paper's stability argument's missing experiment and it does
+not hold. Trained-seed σ of `D_eff/L` is **0.001375** over three seeds — about **4.6×** the
+paper's passage-bootstrap floor and **6.9×** its random-weight floor — so the noise the paper
+measured as negligible is an order of magnitude larger than it reports, and seed noise is
+**37% of the whole trained-vs-random-weight effect**. The paper's appendices already forbid
+using `D_eff` to prune or to score capability; our measurement closes the remaining door, on
+seed stability, and shuts it too.
 
 <a id="what-advanced"></a>
 ## What advanced
@@ -130,19 +133,25 @@ metric choice.
 **3. State the regime in units of the paper's own noise floors and drop the mechanism.** The
 paper measures two floors: passage-bootstrap 95% CI width ≤ **3×10⁻⁴** (five architectures)
 and random-weight seed σ ≤ **2×10⁻⁴** (seven architectures). The between-model spread in
-`D_eff/L` for 7B+ models runs 0.021 to 0.048, about **0.027 absolute — roughly two orders of
-magnitude above both floors**. *Pros:* every number is already published, the claim is
-denominated in artefact size so it is immune to the "is the gap real" critique, and it
-answers the selection question without a mechanism. *Cons:* it is true and misleading at
-once, because those are the two *smallest* sources of variation while the dominant ones —
-metric choice (+93%), lag truncation (~3×), corpus substitution (never quantified) — are
-orders of magnitude larger, so "100× the noise" describes a noise term that does not dominate.
-It drops the closed form, and it answers "is the signal measurable", not "what does it mean".
-*Why not chosen:* the authors wanted a reference and a mechanism, not a
-measurement-precision report. *Cost to test:* zero. *Would it have won:* **maybe**, and it is
-the most useful reframing for AXV's decision, because it is the only one that separates the
-variance axes honestly: on corpus, metric and lag the variation does swamp the between-model
-difference; on the seed axis the paper never measured it at all.
+`D_eff/L` for 7B+ models runs 0.021 to 0.048, about **0.027 absolute**. *Pros:* every number
+is already published, the claim is denominated in artefact size so it is immune to the "is the
+gap real" critique, and it answers the selection question without a mechanism. *Cons:* it is
+true and misleading at once, because those are the two *smallest* sources of variation while
+the dominant ones — metric choice (+93%), lag truncation (~3×), corpus substitution (never
+quantified) — are orders of magnitude larger, so "100× the noise" describes a noise term that
+does not dominate. It drops the closed form, and it answers "is the signal measurable", not
+"what does it mean". **AXV's run is what settles it against this route, and it settles it
+partly in the route's favour:** the real trained-seed floor is **0.001375**, not 2×10⁻⁴, so the
+between-model spread is about **20×** the true seed floor rather than the ~90× or "two orders
+of magnitude" the paper's own floors imply. The ordering is unchanged — seed is still the
+smallest axis — but the margin is 4.5× thinner than the paper's arithmetic suggests. *Why not
+chosen:* the authors wanted a reference and a mechanism, not a measurement-precision report.
+*Cost to test:* zero, and as it turns out the answer would have been wrong. *Would it have
+won:* **partly**, and it is still the most useful reframing for AXV's decision, because it is
+the only one that separates the variance axes honestly: on corpus, metric and lag the
+variation does swamp the between-model difference; on the seed axis it is now measured, and it
+is 5.1% of the between-model spread — small enough to rank families, too large to rank
+checkpoints.
 
 **4. Ruled out, and worth recording: a spectral or effective-rank summary of the same
 layer-similarity matrix.** Not a live alternative — the authors ran it. S7 computes
@@ -167,17 +176,23 @@ the sign for **all sixteen rows** once the measured update-similarity profile is
 authors call `F_L` "a first structural yardstick, not a definitive null," but the abstract,
 the headline count and the quotable phrase all rest on it.
 
-**Second, and it decides any practical use: the diagnostic is stable against the only noise
-sources that were measured and unstable against the ones that were not.** The sixteen
-headline numbers are **one seed each**, and there is no trained-checkpoint seed variance
-anywhere in the paper. Ranked by measured magnitude: similarity metric, +93% relative
-(OLMo-2-1B 0.071 → 0.137); lag truncation, ~3× at `K=5` versus full and 43% relative at
-`K=25` versus `K=63` (Qwen3.5-27B 0.030 → 0.021); corpus substitution, measured on WikiText-103
-in S13 (Pythia-70M 0.239 against 0.205) with the delta never reported; then passage resampling
-at ≤3×10⁻⁴, and the seed axis measured *only on random weights* at σ ≤ 2×10⁻⁴. So a
-practitioner selecting a checkpoint by `D_eff` chooses on a signal whose variation across
-analysis settings dwarfs its variation across models, and whose seed sensitivity is
-unmeasured.
+**Second, and it decides any practical use: the diagnostic is unstable against every noise
+source, including the one the paper measured and called negligible.** This paragraph used to
+say the opposite, and our own experiment is what falsified it. The paper's sixteen headline
+numbers are **one seed each**, and it reported two floors: passage resampling at ≤3×10⁻⁴ and
+random-weight seed σ at ≤2×10⁻⁴. AXV measured the axis the paper left out — trained-checkpoint
+seed variance — at **σ = 0.001375** over `n=3`, which is **4.6×** the first floor and **6.9×**
+the second, so the paper's own stability argument does not survive contact with a trained
+checkpoint. The full ranking of measured axes is metric ≫ lag truncation > corpus > seed:
+metric choice moves `D_eff/L` by **+93% relative** (OLMo-2-1B 0.071 → 0.137), about **66 seed-σ**;
+lag truncation runs ~3× at `K=5` versus full, about **210 seed-σ**; corpus substitution is
+measured on WikiText-103 in S13 (Pythia-70M 0.239 against 0.205) with the delta never reported.
+So a practitioner selecting a checkpoint by `D_eff` chooses on a signal whose variation across
+analysis settings dwarfs its variation across models — and, new, whose trained-seed noise alone
+is **37% of the entire trained-versus-random-weight effect**, so at this scale it cannot even
+reliably tell a trained model from an untrained one. The one mitigation is real: at 5.1% of
+the 0.027 between-model spread, seed noise does *not* prevent ranking model families. It
+prevents ranking checkpoints, and it is much too small to survive a metric swap.
 
 **Ablations: unusually strong, and the strongest dimension here.** Three families of control
 — position-0 and norm controls, matched references, metric/aggregation/taper/lag sensitivity
@@ -205,48 +220,139 @@ passages, so an independent reproduction cannot match the sample.
 **Verdict: `medium` for the geometry, `low` for any decision use.** The split is the answer,
 not a hedge.
 
+
 <a id="what-axv-did"></a>
 ## What AXV did about it
 
-**pending — designed and costed, not run, and the reason is compute access rather than
-design.** The Runpod connection reports `state: ready`, but `tools/list` on the runtime MCP
-endpoint returns only `connections_search` and `connection_request`, and `RUNPOD_API_KEY` is
-unset. The same missing tool surface blocks Notion, Supabase and PostHog; that is
-[AXV-19](/AXV/issues/AXV-19) and it is a board action. No pod was provisioned, so nothing can
-leak and there is no run that exists only on a volume.
+**`measured`, and it moved the post's central caveat.** An earlier version of this section
+said `pending` and `not run`; that was true when written and is not true now, so it is replaced
+here rather than left to rot. The design was set before the result was seen and it did not
+change: not the regime — a sixteen-model sweep needs 8×H100 80GB, is not achievable on the
+board-set 1× PRO 6000 MIG 24GB instance, and would only re-confirm numbers already internally
+consistent to ±0.01 — but the one quantity the paper never reports and that every practitioner
+use depends on, **the seed variance of `D_eff` on trained checkpoints**.
 
-**Leaderboard pre-check, read at this post's commit:** `experiments/leaderboard.jsonl` holds
-**62 records** and **zero for 2609.31098**. Existing cohort keys are
-`cpu-numpy-frozen-upstream-code-20260928` (27 records) and
-`cmp:estimator-cpu-v1-fixedtable-transcription` (3) — all CPU-only estimator studies. **There
-are no leaderboard warnings for this paper and none are being laundered: there is no comparable
-record to quote.** Cumulative recorded cost across the file is **$0.00**, so the full **$3.25**
-remains.
+**Harness, metric, and what the baseline was.** Harness read from `karpathy/autoresearch` at
+upstream pin `228791fb`, branched and written to `dustin-dev-35/autoresearch@f1e09f30` on
+`experiment/2609.31098-seedvar`, one variable per run. Model is the paper's own Appendix S17
+shape: 12-layer, 21.4M-parameter, char-level `shakespeare_char` nanoGPT
+(`n_layer=12, n_embd=384, n_head=6, block_size=256, batch_size=64, lr=1e-3`, 5,000 iterations,
+fixed-iteration budget), measured under the paper's exact `D_eff` protocol — mean-pool over
+valid positions, embedding layer excluded, column-centred linear CKA in float64 with Frobenius
+normalisation, Bartlett taper, full `K = L-1`, `N = 10,000` passages. Metric is `d_eff_over_L`.
+**The γ = 1.0 unmodified-residual arm at seed 1337 is the baseline**, run first, on the same
+pod, GPU class and iteration budget as every other arm, and recorded fresh
+(`"decision": "reference"`, `"baseline_reused": false`).
 
-**What the experiment must test, once compute is reachable**
-([AXV-43](/AXV/issues/AXV-43)): not the regime — a sixteen-model sweep needs 8×H100 80GB, is
-not achievable on the board-set 1× PRO 6000 MIG 24GB instance, and would only re-confirm
-numbers already internally consistent to ±0.01. It tests the one quantity the paper never
-reports and the one any practitioner use depends on: the **seed variance of `D_eff` on trained
-checkpoints**. Design: ≥3 seeds at nanoGPT-class scale using the paper's own S17 shape, `D_eff`
-measured under the paper's exact protocol, one variable per run. The **γ = 1.0
-unmodified-residual arm at the same seeds, budget and GPU class is the baseline**, and it is
-not on the leaderboard. New cohort key; a GPU training measurement, never pooled with the two
-CPU cohorts. Harness read from `karpathy/autoresearch`, changes branched into
-`dustin-dev-35/autoresearch` on `experiment/2609.31098-seedvar`. **Cost stated before
-provisioning: 0.5–1.0 h wall clock, roughly $0.25–$0.50, 8–15% of the $3.25 budget, leaving
-≥ $2.75.**
+| run | role | seed | val loss | `D_eff/L` | gap to `F_L` | `ρ̂(1)` | `‖f‖/‖h‖` |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| `2609.31098-a00-s1337` | baseline | 1337 | 3.5279 | 0.097926 | +36.35% | 0.9232 | 0.219 |
+| `2609.31098-a00-s1338` | seed series | 1338 | 3.5396 | 0.097836 | +36.41% | 0.9256 | 0.272 |
+| `2609.31098-a00-s1339` | seed series | 1339 | 3.3542 | 0.095501 | +37.92% | 0.9348 | 0.223 |
+| `2609.31098-a03-s1337` | random-weight control, untrained | 1337 | 4.2027 | 0.094176 | +38.79% | 0.9783 | 0.480 |
 
-**Falsification, fixed before the result is seen.** A small trained-seed σ — say ≤ 3×10⁻⁴,
-matching the bootstrap floor — extends the paper's stability argument to trained models and
-makes `D_eff` usable as a descriptive family label. A σ comparable to the +93% metric swing
-or the ~3× lag swing means `D_eff` ranks checkpoints less reliably than it ranks analysis
-protocols, and the selection use is dead regardless of what the regime turns out to be. A
-nanoGPT-class model cannot verify the regime claim, and this post does not claim it does.
+A fifth record, `prop3-finite-n-bias`, is a control on the paper's own synthetic construction
+rather than a model, so it carries no row above; it is Result 5 below.
+
+**`n = 3` trained seeds, mean `D_eff/L` 0.097088, σ 0.001375, range 0.002425, CV 1.42%.** Seed
+is the only variable that changes; passage starts were chosen deterministically and evenly
+spaced, so no passage-resampling noise is mixed in — deliberately, because that floor is
+already published (S18).
+
+**Result 1 — the paper's gap is real, and roughly an order of magnitude larger than either
+floor it measured.** Trained-seed σ is **4.6×** the S18 passage-bootstrap CI width (≤3×10⁻⁴) and
+**6.9×** the S10 random-weight seed σ (≤2×10⁻⁴). S18 routed initialisation uncertainty to the
+random-weight study because it had nothing else to route it to; this is the number that study
+was standing in for, and it is several times larger. **The paper's stability argument is not
+sound as stated.**
+
+**Result 2 — seed is nonetheless not the axis that breaks the diagnostic.** The paper's
+between-model spread for its 7B+ models is 0.021 (Qwen3.5-27B) to 0.048 (Mistral-7B), about
+**0.027 absolute** (Table 2). The measured σ is **5.1% of that**. So seed noise alone would not
+prevent resolving the family differences — but S13's metric choice is ~66 seed-σ and S6's lag
+truncation ~210 seed-σ. **This is the split answer, and both halves have to be said: seed is
+not what breaks `D_eff`; the analysis protocol is.**
+
+**Result 3, and the sharpest one: seed noise is 37% of the effect.** Trained-minus-untrained
+`D_eff/L` is 0.003750, and σ is 0.001375 — **37% of the entire effect being measured**. At this
+architecture and scale, `D_eff` **cannot reliably distinguish a trained checkpoint from a
+random-weight one.** That is a stronger and more uncomfortable version of the paper's own S10
+null, and it is the single most decision-relevant number in the series.
+
+**Result 4 — a reproducibility finding, not a confirmation.** S17 Table S14 gives
+`D_eff(h)/L = 0.094 [0.093, 0.095]` for exactly this configuration. This implementation measures
+**0.097088 — 3.3% above the paper's point estimate, about 2.4 seed-σ away.** The *training* setup
+does reproduce: val loss 3.5279 / 3.5396 / 3.3542 against the paper's 3.46 [3.30, 3.58]. So
+this is a different nanoGPT implementation, and the paper's single-seed value is **not
+reproducible across implementations to better than a few percent** — a figure larger than most
+of the differences the paper ranks models on. The paper's seed ranges do not contain this
+measurement.
+
+**Result 5, new and not in the paper: the estimator carries a negative finite-`n` bias.**
+Measured on the paper's own Proposition 3 construction, run `prop3-finite-n-bias`: **−19.01%
+at `n=1000`, −6.86% at 4,000, −3.04% at 10,000, −1.56% at 20,000**, at `d=384, L=12`. **Every
+value in the paper's Table 2 is measured at `N=10,000` and therefore carries this bias.** Adding
+it back moves the trained mean to ≈0.1000, *further* from the paper's 0.094, so the bias does
+not explain the implementation gap — it is a separate defect. Whether it is depth-dependent is
+unknown: it was measured at one operating point, and Table 2 spans `d` from 512 to 5120 and
+`L` from 6 to 64.
+
+**Leaderboard warnings, reproduced in substance rather than dropped.** `experiments/leaderboard.jsonl`
+now holds **164 records**, of which **6 are this series**, all marked `provisional: true` and
+carrying 5–11 warnings each. The load-bearing ones: **the cohort is new**
+(`gpu-pro6000mig24gb-torch280-deff-seedvar-20260928`) with a new config and data fingerprint, so
+it **must never be pooled** with `cpu-numpy-frozen-upstream-code-20260928` or
+`cmp:estimator-cpu-v1-fixedtable-transcription`, and **no `val_bpb` autoresearch arm is a
+baseline for it**; the `a03` arm is **UNTRAINED** — it is the paper's Table S10 random-weight
+null, "not a trained checkpoint… it cannot be cited as a trained-seed measurement and it is not
+the baseline"; `prop3-finite-n-bias` "is a property of the ESTIMATOR, not of any model… it must
+not be quoted as a seed-variance floor"; the Monte-Carlo spread of that synthetic construction
+(0.00045) "is sampling noise in the generator, not model seed sensitivity"; and the three
+trained arms each carry the same NOT-VERIFIED warning below. The run directories under
+`experiments/runs/` are the verbatim record.
+
+**What did not run, and it is named rather than buried.** The **between-architecture arm (`L=16`)
+did not run**, nor did the **γ = 0.5 estimator positive control**, nor a fourth seed. The guard's
+own log line records the cause: `need_sec 793650` against `remaining_sec 856` — a units bug that
+multiplied milliseconds by 1000 inside a seconds budget. The guard was *correct* to skip, since
+the corrected arithmetic is 943 s against 856 s remaining, but the ordering was wrong on the
+first batch. It is fixed in the harness at `dustin-dev-35/autoresearch@e9702dd` with its own
+overstatement corrected at `dc64e08`, and in `f1e09f3`, which moves the deliverable to tier 1 and
+makes the guard empirical. So **the between-model comparison in Result 2 is made against the
+paper's published spread, not a same-cohort arm.** `n = 3` is the bare minimum for a standard
+deviation: the 95% interval on this σ spans roughly 0.0005–0.0044, so the order-of-magnitude
+conclusions hold and the third significant figure does not.
+
+**Scale caveat, stated before the result was seen and unchanged by it.** A 12-layer,
+21.4M-parameter char-level nanoGPT is not a 7B+ model. **None of this verifies the paper's regime
+claim.** It tests whether the paper's stability argument survives contact with a trained
+checkpoint, which is the load-bearing assumption for every practitioner use.
+
+**Cost, and a real failure mode worth keeping.** **~$0.54** of the **$3.25** company budget,
+16.6%, leaving **≥ $2.71**; recorded spend before this batch was $0.00. It is computed from ~55
+minutes of pod wall clock across three pods at $0.59/h, **not metered** — Runpod's daily
+billing bucket still reports zero because aggregation lags. Three pods created, all terminated,
+`list-pods` returns `[]`, and **the runs were pushed to GitHub before the final terminate**, so no
+result exists only on a volume. Mid-batch the Runpod MCP server dropped out of the tool gateway
+(`healthStatus: error`, all 77 tools gone) for about 12 minutes, during which the pod could be
+neither read nor terminated. The pod log is the only results transport, so **an MCP outage means
+an unreadable pod that is still billing.** That is a standing guard, not a one-off.
+
+**Mirrors still outstanding for this series, and it is a contract violation rather than a
+footnote.** **Notion, Supabase and PostHog were not written.** The batch did create
+`public.experiment_runs` in Supabase — the table did not exist — and wrote 5 rows, all
+`provisional`. **PostHog `axv_experiment_recorded` was not fired**: the connection exposes 746
+tools, all analytics, with no `capture`/`track` and no project-API-key tool. This post's
+canonical Notion page is still unwritten, so the per-section `section_id`s are structurally
+correct and the read-depth data does not exist. Per `storage-contract` §9 this is reported
+rather than silently fallen back to a comment.
 
 **The interim position, which costs nothing:** use `D_eff` to describe a residual stream, do
 not use it to choose a checkpoint, and do not quote "15 of 16" without saying that `F_L` is an
-idealised construction whose sign flips for all sixteen models against a stronger surrogate.
+idealised construction whose sign flips for all sixteen models against a stronger surrogate. If
+you do rank checkpoints by `D_eff`, treat any gap smaller than **~0.0038** at nanoGPT scale as
+unsupported, and re-measure in your own implementation, because ours and the paper's disagree
+by 3.3% on the same configuration.
 
 <a id="links"></a>
 ## Links
@@ -254,8 +360,10 @@ idealised construction whose sign flips for all sixteen models against a stronge
 - arXiv: <https://arxiv.org/abs/2609.31098v1> · <https://arxiv.org/pdf/2609.31098v1>
 - AXV memo: `corpus/2609.31098.md` in `dustin-dev-35/axv` — seven of seven sections plus read
   coverage, nothing omitted.
-- AXV experiment: designed and costed at [AXV-43](/AXV/issues/AXV-43), blocked on the
-  connector surface in [AXV-19](/AXV/issues/AXV-19). No `leaderboard.jsonl` record for
-  2609.31098, and none invented.
+- AXV experiment: designed at [AXV-43](/AXV/issues/AXV-43) and run on the board-set instance.
+  Six records in `experiments/leaderboard.jsonl` under cohort
+  `gpu-pro6000mig24gb-torch280-deff-seedvar-20260928`, all `provisional`, plus the run
+  directories under `experiments/runs/`. Not comparable to any prior cohort, and not pooled
+  with one.
 - Related AXV posts: [Your sliding-window eval rows are not 4 tests.](/posts/overlapping-eval-windows-are-not-independent-tests/)
   and [Your 12/15 tie was manufactured by the filter.](/posts/completed-pairs-hide-capped-failures/)
