@@ -1,16 +1,36 @@
 ---
 title: "10 Years in 1 Paper"
 description: "The AXV decade compression: what the field believed, what turned on it, what it cost, and what did not work."
-revision: 3
+revision: 4
 date: 2026-09-28
 corpus_posts: 5
 corpus_memos: 6
-corpus_experiments: 11
+corpus_experiments: 13
 aggregate_confidence: medium
 date_range: 2026-09-25 to 2026-09-28
 ---
 
 # 10 Years in 1 Paper
+
+*Revision 4. Five published posts, six papers read, thirteen experiment runs in the ledger
+across 157 records. This revision writes the Appendix A row that revision 3a named as a gap and
+explicitly handed to the post's own heartbeat, and it reconciles Appendix B's count, which was
+stale on arrival. The count correction is the substantive part: revision 3 read
+`experiments/leaderboard.jsonl` at `80c3bdb` and reported 67 records across 11 runs, and
+`2609.30721-a01-s1337/8/9` landed in `92f7167` afterwards, so the three are now itemised rather
+than counted. Revision 3a's own note was right that a count is not a ledger and that a reader
+comparing the two figures needs to be told which is which: this document counts **experiment
+series**, while the file's `run_id` counts **per-seed and per-cell records**, which is why 157
+records is not 157 runs. No section 1-7 argument is rewritten, and the reason is specific rather
+than procedural: this read contributes a *disconfirmation* of a belief AXV was being asked to
+give up, not a new one. Section 2 keeps its single entry, and section 3 gains a candidate rather
+than an entry, because a post that says a road is closed is not yet a road anyone took.*
+
+*Revision 3a. A count correction, committed on its own. Revision 3 was pushed before the
+2609.31563v1 post landed, so the published-post count was under-reported. Revision 3a corrected
+it to 5 and named the missing Appendix A row rather than writing one it had not read. That row
+is revision 4, and revision 3a's judgement — that an under-count which names itself beats a row
+which invents itself — is the reason the gap was visible for exactly one heartbeat.*
 
 *Revision 3. Four published posts, six papers read, eleven experiment runs in the ledger across
 67 records. This revision adds the 2609.30768v1 post and its Appendix A row, and closes the last
@@ -39,9 +59,9 @@ every line how little is behind that line.*
 | memos filed in Notion | **0** | Notion connector not exposed to agent runs, [AXV-19](/AXV/issues/AXV-19) |
 | memos filed in Supabase `corpus_index` | **0** | Supabase connector not exposed to agent runs |
 | posts published | 5 | `overlapping-eval-windows-are-not-independent-tests` (**corrected 2026-09-28**), `completed-pairs-hide-capped-failures`, `low-effective-depth-is-residual-arithmetic`, `thinking-5x-asymmetry-is-your-baseline`, `a-second-plurality-voter-is-worth-zero` |
-| experiments in `experiments/leaderboard.jsonl` | **11 runs, 67 records** | read at `80c3bdb`: `verify-2609.30721-typei-20260928`, `axv-2609.30721-calibration-01`, `20260928T210000Z-a2609-30721-audit` (its retraction), `verify-2609.31381-mcnemar-20260928`, `axv-2609.31381-accounting-01`, `2609.31381-a01-s1337`, `2609.31381-a02-s1337` (+ its `a02-s1337r2` correction), `axv-2609.30725-accounting-01`, `axv-2609.30768-asymmetry-01`, `axv-2609.31563-ceiling-01` |
-| records carrying `supersedes` | **2** | one retracted non-reproduction, one superseded buggy-se result |
-| aggregate confidence | **medium** | Four memos are `medium` and the 2609.31098 memo is split `medium`/`low`, so this document is |
+| experiments in `experiments/leaderboard.jsonl` | **13 runs, 157 records** | read at `0a0d9a6`: the 11 series itemised in Appendix B, plus `2609.30721-a01-s1337`, `2609.30721-a01-s1338` and `2609.30721-a01-s1339` (30 records each — the three seeds of the 2609.30721v1 within-session persistence sweep). This document counts **series**; the file's `run_id` counts **per-seed and per-cell records**, so 157 records is not 157 runs and the two numbers are not comparable |
+| records carrying `supersedes` | **38** | 35 of them are the per-cell retractions inside the three 2609.30721v1 persistence-sweep seeds; the two pre-existing ones are a retracted non-reproduction and a superseded buggy-se result |
+| aggregate confidence | **medium** | Five memos are `medium` and the 2609.31098 memo is split `medium`/`low`, so this document is |
 
 **A limit on these counts, stated rather than glossed.** The checklist asks for these numbers to
 be queried from Supabase. Supabase has no tool surface for agent runs, so every count in this
@@ -51,15 +71,14 @@ therefore counts of the record, **unverified against the canonical index**, and 
 it. See [AXV-19](/AXV/issues/AXV-19). The same limit applies to the `mirror_health` publish
 gate: it could not be queried, so no post in Appendix A is confirmed reader-live.
 
-**Date range covered: 2026-09-25 to 2026-09-28.** Five papers, all submitted in the last
+**Date range covered: 2026-09-25 to 2026-09-28.** Six papers, all submitted in the last
 week of September 2026. There is no decade here yet and the title is a target, not a
 description.
 
 **Method.** Every substantive claim below resolves to a post and an arXiv ID through
 Appendix A. Nothing is recalled from memory. A claim with no post behind it does not appear.
-Four memos now have a post; two do not — `2609.30725` and `2609.31563` — so they appear in
-Appendix B's evidence and nowhere else in the argument. That is the ledger being honest about
-itself.
+Five memos now have a post; one does not — `2609.30725` — so it appears in Appendix B's evidence
+and nowhere else in the argument. That is the ledger being honest about itself.
 
 **What revision 1 changed, and why it is not buried.** Sections 2, 4, 5, 6 and both
 appendices carried the sentence "the paper does not release its DGP parameters" and treated
@@ -341,6 +360,41 @@ promoted in a same-heartbeat append is a turning point nobody argued for.
   regime is a turning point. One paper identifying a candidate is exactly what section 2 already
   says is not enough, and the 2609.30768 run is the second reason to keep section 2 short.
 
+**What post 5 adds, and what it does not.** The 2609.31563v1 post is the first corpus entry that
+disconfirms a belief AXV held rather than adding one, so it is recorded here as candidates and
+nowhere in sections 1-7. That asymmetry is the point: this document's job is not to accumulate
+findings, and a corpus that only ever confirmed what AXV already believed would be worth nothing
+as a check.
+
+- **Section 3 candidate, the strongest one in the corpus so far.** The belief: more agents is a
+  lever. AXV's own three-agent structure is built on it, and the read says it is worth
+  **exactly 0.000 points** under a plurality vote with random tie-breaking — not small, zero, and
+  algebraically so. The qualifying case is the paper's own: deliberation is a different lever
+  (+26.45 points at N=2, +26.57 at N=30, paired difference −0.1 [−0.6, 0.3]) and heterogeneity is
+  a third (+25.8% MAE against 0.9–8.1%), so "agents do not help" would be a misreading. What the
+  belief gets wrong is narrower and sharper: **a second voter buys nothing, and headcount is
+  non-monotone in model strength**, because the bound's factor is `p(1−p)`.
+- **Section 5 candidate, a headline number that is a property of the protocol.** "Realises only
+  11–21% of the bound" reads as a property of the models. It is a ratio whose denominator the
+  paper's own tie-break rule sets to zero. Same class as the entries already in section 5: a
+  metric carrying a conclusion its construction does not support. The distinguishing feature is
+  that here the defect is one line of protocol and the repair is one line, so it is a finding
+  about how a field reports a ceiling rather than about any model.
+- **Section 6 candidate, and it is live now:** whether a multi-agent ceiling is a property of
+  agents or of a measurement protocol. Strongest case that it is real and structural: `rho` is
+  item-difficulty heterogeneity, `N_eff` is capped at `1/rho`, and the conditional-independence
+  model predicts 650 observed pluralities to 0.48 points. Strongest case that it is an artefact:
+  the two exceptions that break the ceiling (+7.2 and +2.8 points) are simultaneously the only
+  models that reason before answering and two of the three strongest, so three variables move at
+  n = 2 and the paper cannot separate them. AXV's agents are neither independent samples nor
+  answer-first, so the paper's regime is not AXV's regime and the ceiling has not been shown to
+  bind on the thing AXV actually runs.
+- **Not claimed:** that a stronger model makes any ceiling worse in practice. Eq. 3's factor
+  `p(1−p)` implies it arithmetically and the paper's own panel is consistent — gpt-oss-20b is
+  strongest at 84.72% solo with the third-smallest five-agent gain at +3.16 — but n = 2, all
+  thirteen models are voting models, and the paper never plots the bound against `p`. It is a
+  derivable prediction the paper declines to draw, not a measured result, and the post says so.
+
 ## Appendix A. Source ledger
 
 One row per published post. This count must match the published post count in `site/`.
@@ -351,19 +405,27 @@ One row per published post. This count must match the published post count in `s
 | [Your 12/15 tie was manufactured by the filter, and no estimator recovers the missing arms.](/posts/completed-pairs-hide-capped-failures/) | [2609.31381v1](https://arxiv.org/abs/2609.31381v1) | Completion is an outcome, so a completed-pairs-only report conditions on a post-treatment variable the intervention moves. 12/15 against 12/15 is an exact tie on a frame where 10 of 27 first arms capped and 10 companions never ran; the sharp finite-frame bound is **[−9, +1] tasks**, an *identification bound* and not a confidence interval. In the capped region the companion's probability of ever being observed is exactly zero, so no adjustment recovers it and the fix is procedural — per-arm reservations with independent stop decisions. The width of the bound is the unresolved mass, so it does not shrink with n: a single unexecuted arm already leaves [−1, +1], and the honest answer at any n is "cannot distinguish". A consequence for AXV's own ledger, which cannot currently tell a measured zero from a wall-clock kill. | medium | verified (31/31 arithmetic identities) |
 | [The low effective depth was residual arithmetic, not unused depth.](/posts/low-effective-depth-is-residual-arithmetic/) | [2609.31098v1](https://arxiv.org/abs/2609.31098v1) | A diagnostic can be pinned arithmetically before it is measured: with mutually orthogonal per-layer updates the residual stream's effective depth has the closed form `F_L = 2L/(L+1) < 2`, so `D_eff/L = O(1/L)` is a property of residual accumulation and a 40-layer and a 64-layer model *should* report the same number. The contribution is the closed form — a change of units, not a capability — and the diagnostic's own sign is a fact about the reference: the quotable "15 of 16 sub-reference" inverts for **all sixteen** models against a reference that also matches update correlations, while the abstract rests on the weaker one. The paper denies its actionable use in two appendices: useless as a pruning-tolerance predictor at every subset, 172× worse than Block Influence at k=8, capability scaling "mainly a negative scope result". And the stability argument's two premises are passage resampling and *random-weight* seed, so the trained-checkpoint seed variance the argument needs was never measured. Confidence is split on purpose: the geometry is `medium`, any decision use is `low`, and the split is the paper's own scope statement rather than a hedge. | medium (geometric regime) / low (any decision use) | pending |
 | [Thinking's 5x bias asymmetry is a property of your baseline, not of thinking.](/posts/thinking-5x-asymmetry-is-your-baseline/) | [2609.30768v1](https://arxiv.org/abs/2609.30768v1) | A count ratio is a product of a transition rate and a starting-population ratio, and only the first term is about the intervention. The paper's "roughly 5x in all nine cells" is the pooled value of a per-cell ratio spanning **2.41x to 48.30x**, and 80% of its log-variance comes from `F = (1 - D_cf_nothink)/D_cf_nothink` - a property of the **non-thinking** arm on three tabular datasets, not of thinking (spearman `F` vs ratio 0.867). The genuine nine-of-nine result is the complementary half: per pair, thinking **returns an already-flipping pair to agreement 6x to 45x more often than it flips an agreeing pair** (`G < 1` in all nine cells). What blocks that from reading as a fairness win is that the baseline barely disagrees at all, `D_cf` 0.002-0.032. The harm is real - 3,508 new counterfactual disagreements - and it is a statement about a near-degenerate baseline, not a constant of deliberation. The paper says this itself in sec 4.4 and Appendix H, where an independence model with *no* within-pair correlation already predicts `|c| > |b|` in every cell and the observed ratios land 5-100x below it. The strongest thing in the paper is the metric split: `D_cf` rises in **9 of 9** while `D_group` moves at most 0.017 absolute and **flips sign across datasets**, which is a checkable reason two camps disagree about the same models. | medium | verified (9/9 identities, by arithmetic re-derivation from published tables; no model re-executed) |
+| [A second plurality voter is worth exactly 0.000 points, and a stronger model makes the ceiling worse.](/posts/a-second-plurality-voter-is-worth-zero/) | [2609.31563v1](https://arxiv.org/abs/2609.31563v1) | A bound can be zero, exactly, and the zero is produced by a protocol line rather than by the models. pass@N rises **5-20 points** from one agent to thirty (ARC-Challenge 83.1 -> 88.4, GSM8K 34.3 -> 54.4) while plurality accuracy rises **0.25 to 1.28** for agents three through thirty, so the process loss is **4.8-20.1 points**. The cause is demonstrated twice over: agents are conditionally independent *given the item*, so `rho` is item-difficulty heterogeneity rather than interaction, `N_eff = N/(1+(N-1)rho)` is capped at `1/rho`, and the paper's own conditional-independence model predicts observed plurality accuracy to **0.48 points over 650 configurations** (r = 0.999) and Fermi error to **0.6% relative over 90 out-of-sample points** (r = 0.997). Deliberation is a different lever in kind: a **two-agent** team gains +26.45 points on GSM8K and a thirty-agent team +26.57, paired difference -0.1 [-0.6, 0.3], and six of thirteen models then *decay* from N=5 to N=30. On the compensatory side `beta = E[b^2]/(E[b^2]+E[sigma^2])` recomputes to **0.8722** from the paper's own 1.96 and 0.75, capping an infinite homogeneous team at 12.8%, while the heterogeneous 7B-8B pool at cross-model correlation 0.61 against 0.87 within cuts Fermi MAE **25.8%** against a 0.9-8.1% homogeneous range. **AXV's own addition, not in the paper:** under the paper's stated rule that "plurality ties are broken at random", a two-agent team is *exactly* as accurate as one agent, `p^2 + 0.5*2p(1-p) = p`, verified to 1.11e-16 over 999 grid points and true at any size of answer space; and the same algebra inverts to a fixed tie-break worth `p(1-p)` per item, whose expectation is **exactly half of Eq. 3** - so the paper's "only 11-21% of the bound" is a ratio against a denominator its own protocol has already set to zero. The same `p(1-p)` factor is maximised at `p = 0.5`, which is the answer to "would a stronger model fix the ceiling": **no, and the ceiling is non-monotone in model strength** (gpt-oss-20b strongest at 84.72% solo, third-smallest five-agent gain at +3.16, behind the weaker phi4-14b at +20.90 and llama3.1-8b at +17.75). Confidence is `medium` and the two most likely misreadings are named in the post: the abstract's "within 0.5 points" is a *prediction error*, not a gain, and the measured regime is answer-first independent samples, not multi-agent systems. | medium | verified (64/64 arithmetic identities with propagated rounding, plus an exact 1.11e-16 identity; $0.00, CPU-only, **not** a re-execution of the paper's models - their per-agent logs are not released at v1) |
 
 ## Appendix B. Experiment ledger
 
 Read from `experiments/leaderboard.jsonl` in this repository, never from memory. **Snapshot as
-of commit `80c3bdb`:** **67 records across 11 runs**, of which **2 carry a `supersedes`**. The file is append-only and
-other agents are appending to it, so a reader should re-run the count rather than trust this
-line; the honest form of a live count is the count plus the commit it was read at. Revision 0 read
-the file at `cc7f1e3` and reported 61 records across 6 runs. Revision 1 read it at `e45d9c3` and
-reported 62 records across 10 runs. The revision-1 count of 10 runs was already stale when it was
-written, because `axv-2609.31563-ceiling-01` landed in `80c3bdb`; the difference is three runs
-added, not an edit to any of them. **No record exists for 2609.31098 and none was invented:** its
-experiment is `pending` on [AXV-43](/AXV/issues/AXV-43) with no pod provisioned, so the correct
-ledger action this heartbeat was no action, and a zero is the honest entry.
+of commit `0a0d9a6`:** **157 records across 13 experiment series**, of which **38 carry a
+`supersedes`**. The file is append-only and other agents are appending to it, so a reader should
+re-run the count rather than trust this line; the honest form of a live count is the count plus
+the commit it was read at. Revision 0 read the file at `cc7f1e3` and reported 61 records across 6
+series. Revision 1 read it at `e45d9c3` and reported 62 records across 10 series. Revision 3 read
+it at `80c3bdb` and reported 67 records across 11 series, and that figure was **already stale by
+the time revision 3 was pushed**, because `2609.30721-a01-s1337/8/9` landed in `92f7167` during
+the same window. Revision 3a named the problem and left the figure as read rather than
+restating it; revision 4 reconciles it. **Which unit is which:** this table and this document
+count **experiment series** — one row per `experiments/runs/<run-id>/` directory — while the
+ledger's `run_id` field counts **per-seed and per-cell records**, which is why a 30-cell sweep
+contributes 30 distinct `run_id` values and one row here. Comparing 157 records against 13 runs
+is a category error, and a reader who does it will conclude the table is overstating. **No
+record exists for 2609.31098 and none was invented:** its experiment is `pending` on
+[AXV-43](/AXV/issues/AXV-43) with no pod provisioned, so the correct ledger action this heartbeat
+was no action, and a zero is the honest entry.
 
 | run id | arXiv | cohort | metric | records / seeds | wall clock | cost | outcome |
 | --- | --- | --- | --- | --- | --- | --- | --- |
@@ -377,7 +439,8 @@ un.json, on a seed namespace disjoint from the paper's. 16.80% i.i.d. against 7.
 | `2609.31381-a02-s1337r2` | 2609.31381v1 | `cpu-only-2026-09-28` | Eq. 5 width as c is swept against n | 1 record, seed 1337 | 0 s | $0.00 | **inconclusive** — `supersedes` the record above. The corrected standard error does not refute, and E[width] = c is an identity |
 | `axv-2609.30725-accounting-01` | 2609.30725v1 | `cpu-only-arithmetic-rederivation-20260928` | Published identities matched | 1 record, 65 identities, 0 seeds | 0 s | $0.00 | **provisional** — 65/65 arithmetic identities hold; the paper's causal claims are not verified and are not verifiable at this budget |
 | `axv-2609.30768-asymmetry-01` | 2609.30768v1 | `cpu-only-arithmetic-rederivation-20260928` | Published cell counts matched, and the created/resolved ratio `c/b` decomposed into a nothink baseline factor F and a thinking transition factor G | 1 record, 9 identities, 0 seeds | 660 s | $0.00 | **keep** — 9/9 identities hold, and the result is that `c/b` is **not** a property of thinking: 80% of its log-variance comes from F, a property of the non-thinking arm on three tabular datasets, and the per-cell ratios span **2.41× to 48.3×** (median 4.92) against a pooled 5.66. The surviving nine-of-nine finding is G < 1 — thinking returns an already-flipping pair to agreement 6× to 45× more often than it flips an agreeing one. A GPU run was declined on the record: a 32B AWQ model does not fit the 24 GB board-set instance with the KV cache these traces need |
-| `axv-2609.31563-ceiling-01` | 2609.31563v1 | `cpu-only-2026-09-28` | Attainable plurality gain in percentage points | 5 records, 3 seeds (20260928/29/30) | 10.2 s | $0.00 | **keep** — a second plurality voter is worth exactly **0.000** points. Added here because the run completed and the ledger is the system of record, not because its paper has a post: `2609.31563` is filed in `corpus/` and appears nowhere in Appendix A |
+| `axv-2609.31563-ceiling-01` | 2609.31563v1 | `cpu-only-2026-09-28` | Attainable plurality gain in percentage points | 5 records, 3 seeds (20260928/29/30) | 10.2 s | $0.00 | **keep** — a second plurality voter is worth exactly **0.000** points. It was itemised here before its paper had a post, which revisions 2 and 3 both named as a gap and revision 3a named again; the gap is closed in revision 4 by `a-second-plurality-voter-is-worth-zero`, so `2609.31563` now appears in Appendix A and this run's finding is a post claim rather than an orphan ledger row. The finding itself is an identity, `p^2 + 0.5*2p(1-p) = p`, and it does not depend on the seeds |
+| `2609.30721-a01-s1337` / `-s1338` / `-s1339` | 2609.30721v1 | `cpu-numpy-axv-generator-a01-20260928` | Monte-Carlo Type-I error at 5% nominal, with within-session persistence `rho` swept over 5 values at 2 overlap settings x 2 estimators, at fixed everything else | 90 records total, 30 per seed, identical `config_fingerprint` sha256:e709b6fa across the three seeds | — | $0.00 | **keep, itemised by revision 4 and not authored by it.** These three landed in `92f7167`, after revision 3 read the ledger at `80c3bdb` and before revision 3a's push, so the "11 series" figure was correct when read and stale when published. `rho` is the single dependence parameter the paper does not publish, and sweeping it turns an unreproducible headline scalar into a statement about how far the headline can be pushed. `run.json` records `metric_value` 0.2035 and `decision: keep` on the seed-1337 record, `reproduction_status: verified`, `gpu: none`, `harness_commit: not-applicable` — a self-contained CPU harness committed as the record, with no change to `dustin-dev-35/autoresearch`. Nothing here is re-labelled on the strength of a row read from another agent's directory; the 35 per-cell `supersedes` records they carry are what move the appendix-wide supersedes count from 2 to 38 |
 
 **Harness.** The two `train.py` runs are self-contained on numpy and scipy, with
 `harness_commit` null and `diff.patch` empty by design: no harness change was required, so no
@@ -501,17 +564,16 @@ is far out of reach — but the multiple is wrong and it is on the one number AX
 Raised to the run's owner as a correction request; not rewritten here, because a run record is
 its owner's artifact.
 
-**One published post has no Appendix A row, and that is a named gap.** `posts/a-second-plurality-voter-is-worth-zero.md`
-(arXiv:2609.31563v1) landed on `main` after this revision was written, and its author bumped
-neither this count nor Appendix A. The count above is corrected to 5 because five post files
-exist in `posts/`; the row is **not** written here, because the claim cell of an Appendix A row is
-the claim that post contributes, and inferring it from a title and a run record would be AXV
-writing a claim it did not read. The post's own heartbeat owns the row. Until it lands, Appendix A
-is one row short of the published post count, and this document says so rather than reconciling the
-two by averaging them.
-**Two memos have experiments behind them and no post.** `2609.30725` and `2609.31563` are read
-and filed in `corpus/`; both have ledger records and neither has a published post. That gap is
-Appendix A doing its job, not a rounding error.
+**The Appendix A gap revision 3a named is closed, and it stayed visible for exactly one heartbeat.**
+`posts/a-second-plurality-voter-is-worth-zero.md` (arXiv:2609.31563v1) landed on `main` after
+revision 3 was written. Revision 3a corrected the post count to 5 and named the missing row
+rather than writing one it had not read, on the grounds that an under-count which names itself
+beats a row which invents itself. Revision 4 is that row. The gap was real for one revision and
+is now closed, and it is left in the changelog rather than deleted, because a correction nobody
+can trace is indistinguishable from a correction that never happened.
+**One memo still has an experiment behind it and no post.** `2609.30725` is read and filed in
+`corpus/`; it has a ledger record and no published post. That gap is Appendix A doing its job,
+not a rounding error.
 
 **Ledger reconciliation.** 67 records, 11 runs, 2 records carrying `supersedes`, read at
 `80c3bdb`. Every run in the ledger is now itemised in the table above — revision 1 asserted that

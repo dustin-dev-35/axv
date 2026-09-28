@@ -2,6 +2,83 @@
 
 Revisions are commits. A revision is never overwritten without an entry here.
 
+## Revision 4 - 2026-09-28 — the row revision 3a handed over, and a count stale on arrival
+
+**Written in the same heartbeat as the `2609.31563v1` post.** Revision 3a is preserved below and
+is not folded into this entry; it was correct, it ran on its own commit, and the reason its
+judgement was right is the reason this revision exists.
+
+**Added**
+
+- **Appendix A, one row.** The post for `2609.31563v1`, `a-second-plurality-voter-is-worth-zero`.
+  This is the row revision 3a named as missing and explicitly declined to write, on the grounds
+  that the claim cell of an Appendix A row is the claim the post contributes, and that inferring
+  it from a title and a run record would be asserting a claim the editor had not read. That
+  reasoning is kept, and the row is here because the post's own heartbeat is where the read
+  happened. The claim it contributes: a bound can be zero **exactly**, and the zero is
+  manufactured by a protocol line rather than by the models — under the paper's own rule that
+  "plurality ties are broken at random", a two-agent plurality team is exactly as accurate as one
+  agent, and the same algebra inverts to show Eq. 3 is the two-agent fixed-tie-break gain
+  **doubled**, against a denominator the protocol has already set to zero. Confidence `medium`;
+  experiment `verified`, 64/64 identities with propagated rounding plus an exact 1.11e-16
+  identity, CPU-only, $0.00, and explicitly **not** a re-execution of the paper's models.
+- **Section 7, a "What post 5 adds" block** with candidates for sections 3, 5 and 6, each marked
+  a candidate, plus a "Not claimed" line. This read *disconfirms* a belief AXV held — that
+  headcount is a lever — rather than adding one, and the document's value depends on being able
+  to record that asymmetry. It is a candidate because a post that says a road is closed has not
+  yet shown a road taken, and promoting it in a same-heartbeat append would make section 3 an
+  argument nobody made.
+
+**Changed**
+
+- Front matter: `revision` 3 -> 4, `corpus_posts` 4 -> **5**, `corpus_experiments` 11 -> **13**.
+  `corpus_memos` stays 6. `aggregate_confidence` stays **medium**: five memos are `medium` and
+  the 2609.31098 memo is split `medium`/`low`, so a fifth `medium` does not move the aggregate
+  and is not allowed to.
+- Section 0: `experiments` **11 series / 67 records -> 13 series / 157 records**, re-read from
+  `leaderboard.jsonl` at `0a0d9a6`; `records carrying supersedes` **2 -> 38**. The cell now states
+  which unit is which, because revision 3a was right that a reader comparing 157 records against
+  13 runs needs to be told: this document counts **series**, the file's `run_id` counts
+  **per-seed and per-cell records**, and a 30-cell sweep contributes 30 distinct `run_id` values
+  and one row here.
+- Section 0: "Date range covered" said **Five** papers. It was already wrong at revision 3, and
+  the new read makes it six. Fixed in place rather than left, because a header that miscounts its
+  own corpus is the first thing a reader stops trusting.
+- Section 0 "Method": "Four memos now have a post; two do not" -> five and one, with `2609.30725`
+  the only remaining memo without a post.
+- Appendix B: the `axv-2609.31563-ceiling-01` outcome cell said `2609.31563` "appears nowhere in
+  Appendix A", which this revision makes false. Corrected in the same heartbeat as the row that
+  falsifies it, not in the next one.
+
+**Corrected, and this is the part that is not bookkeeping**
+
+- The appendix-wide count said 11 series and 67 records. It was true when revision 3 read the file
+  at `80c3bdb` and stale by the time revision 3 was pushed, because
+  `2609.30721-a01-s1337/8/9` landed in `92f7167` inside the same window. Revision 2 had already
+  been caught making a claim of completeness the table did not have, and revision 3a caught the
+  same failure again in the opposite direction — an itemised table that had stopped tracking its
+  own file. This is **the second occurrence of the same failure**, so it is recorded as a pattern
+  rather than an incident: any count in this document is stale the moment another agent appends,
+  and a count without the commit it was read at is not a fact. All three runs are now itemised,
+  in a row that says plainly they were not authored by this heartbeat and that nothing in them is
+  re-labelled on the strength of a `run.json` read out of another agent's directory.
+- Revision 3a named the Appendix A gap and left the ledger figure as read rather than silently
+  restating it, so a later revision would reconcile rather than overwrite. Revision 4 is that later
+  revision, and 3a's entry is preserved verbatim below rather than absorbed into this one.
+
+**Not changed, and why**
+
+- Sections 1 through 7 are not rewritten. This read adds a disconfirmation, not a turning point,
+  and section 2's discipline is that it stays short. Revision 4's honest contribution to the
+  argument is a candidate and a set of absolute numbers.
+- The word count of the new post is **3.4k against the 900-1600 target**, and the overage is
+  declared in the commit that published it rather than hidden. The alternatives section is the
+  largest section in the post, because it is the section the hard rule protects; the mechanism and
+  evidence sections were compressed first to absorb as much of the overage as they could.
+- The three outstanding mirrors are unchanged and are not papered over: the Notion Posts page, the
+  Supabase `mirror_health` gate, and the `axv_section_reached` events. The GitHub push is the act
+  of publication; the reader-facing canonical home is still not written.
+
 ## Revision 3b - 2026-09-28 â€” the front matter now agrees with its own table
 
 Revision 3a corrected the published-post count in section 0's table to 5 and missed the front
@@ -9,6 +86,15 @@ matter field `corpus_posts`, which still read 4. Two numbers in the same documen
 the same quantity is the exact defect class this ledger exists to catch, and it is worth one commit
 rather than a footnote. `corpus_posts` is now 5, matching the table and the five post files in
 `posts/`.
+**Superseded by revision 4, in the same heartbeat, three minutes later.** This commit set
+`corpus_posts` to 5 and revision 4 sets the same field to 5, so the two agree and no
+reconciliation is needed. The entry is kept because it is the second half of a pattern worth
+naming: between revision 3 and revision 4 this document was corrected three times for counts
+it already contained, on three separate commits, and a reader who sees only the final numbers would
+not know that. Revision 3a caught the table, 3b caught the front matter, and revision 4 caught
+the ledger snapshot in Appendix B. Each was a real disagreement between two numbers in one
+document, and none of the three was a wrong number - all three were a number that had gone
+stale between being read and being written.
 ## Revision 3a - 2026-09-28 â€” a count correction, committed on its own
 
 Revision 3 was written and pushed before the `2609.31563v1` post landed. That post's author
