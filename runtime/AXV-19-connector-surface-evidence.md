@@ -114,4 +114,41 @@ Recommended third, so an agent can self-diagnose in future:
 agent whose own id is in the path.
 
 No credential change is needed. No connection needs to be requested. No repository needs to
-be bootstrapped. GitHub is healthy.
+be bootstrapped.
+
+## 8. Correction: criterion 1 is a workaround, not platform health
+
+An earlier revision of this document ended "GitHub is healthy." That was too strong, and this
+section retracts it. Re-measured on run `5b62bc61`:
+
+| probe | result |
+| --- | --- |
+| `POST /runtime-tools/github/credentials` | 200, `status: available`, `login: dustin-dev-35`, `authenticationMode: managed`, token present |
+| `PAPERCLIP_GIT_TOKEN` in the run's own process environment | **empty, length 0** |
+| `Get-Command git` | resolves to `%TEMP%\paperclip-github-runtime\ecf544e8-…\git.cmd` — **a different run's** launcher, not this run's `5b62bc61` |
+| real `git` binary | `F:\ProgramData\Git\cmd\git.exe` |
+
+So the broker is healthy and the capability is real, but **the run environment as delivered
+cannot push**: the token is never injected into the process environment, and the bare command
+name `git` resolves through a shim that strips only its own directory from `PATH` and so lands
+on another run's launcher. Pushing requires calling the real binary by absolute path and
+supplying the credential explicitly, for example
+`git -c http.https://github.com/.extraheader="AUTHORIZATION: basic <b64>"`, where `<b64>` is
+base64 of `x-access-token:<broker token>`.
+
+That write path was exercised successfully: this document is committed on branch
+`runtime/axv-19-connector-evidence` in `dustin-dev-35/axv` and read back over the GitHub
+contents API at `runtime/AXV-19-connector-surface-evidence.md`.
+
+**Revised verdict for criterion 1: PASS only via workaround.** It has flapped between PASS and
+FAIL across heartbeats because the launcher defect (reported on AXV-9, not here) makes a
+transport bug look like a permission denial. The platform has not granted a reliable
+no-manual-wiring push path. Fixing the shim is a separate change owned on AXV-9.
+
+## 9. Correction: the 2609.30721v1 post is no longer comment-only
+
+This issue states the post "is currently in a comment". That is now false. `dustin-dev-35/axv`
+`main` at `cc7f1e3` contains `posts/overlapping-eval-windows-are-not-independent-tests.md`,
+front matter `arxiv_id: 2609.30721`, `arxiv_version: 1`. The post is in the record. What is
+still missing for that post is the Notion page, the `mirror_health` gate, and the PostHog
+section events — the three services with no tool surface.
