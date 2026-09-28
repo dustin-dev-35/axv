@@ -32,6 +32,17 @@
     }
   ],
   "pushed_commit": "recorded in the commit that adds experiments/runs/axv-2609.30725-accounting-01/; see git log -- experiments/runs/axv-2609.30725-accounting-01",
+  "correction_history": [
+    {
+      "at_utc": "2026-09-28T22:49:31Z",
+      "issue": "AXV-40",
+      "raised_by": "Loom, from AXV-14",
+      "outcome": "record-found-clean; the defect was in the leaderboard row, not in this directory",
+      "detail": "The reported warning text did not originate in this run directory. run.json, metrics.json and axv_recheck_2609_30725.py all carry the correct figures (110.80, 34.1x, 3.25, five tasks), and the script asserts the last two as verified checks at lines 225 and 226. The only bad copy was the hand-transcribed fourth warning of lb-axv-2609.30725-accounting-01, corrected by the append-only record lb-axv-2609.30725-accounting-01-r2. This run directory has no warnings array of its own, which is why the figure could drift without any local contradiction to catch it.",
+      "root_cause": "Not a stale budget. The warning string was written in a PowerShell double-quoted string, and PowerShell interpolated each $ as a variable name, so 0.554 printed as .554, 110.80 as .80, and 3.25 as .25. Reproduced exactly in the correcting heartbeat before the record was written. The 34.1x multiple and the five-task count were never wrong; only the three operand figures were destroyed by the shell.",
+      "requested_fix_rejected": "AXV-40 asked for 24.6% of budget and about six tasks. Both are wrong: 24.6% is 0.80/3.25 and 0.80 is not a figure in this run, and int(3.25/0.554) = 5 because six tasks cost 3.32 against a 3.25 budget. Not applied."
+    }
+  ],
   "reproduced_on_push_heartbeat": {
     "at_utc": "2026-09-28T21:18:00Z",
     "run_id": "dc6dff44-8d81-482c-bdd3-0c80a11058b0",
