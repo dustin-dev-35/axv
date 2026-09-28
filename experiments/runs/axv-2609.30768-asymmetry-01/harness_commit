@@ -1,0 +1,10 @@
+﻿not-applicable: no harness was modified.
+
+This run executes no model and touches no harness file. The arXiv autoresearch harness
+(karpathy/autoresearch) and the AXV fork (dustin-dev-35/autoresearch) are both untouched.
+The run script is self-contained: axv_recheck_2609_30768.py, sha256
+9a8d8b6e4c644527d3e8fbaa8658982d38e1ac1254d06b1e53044c57b0b3cd96, standard library only.
+
+Consequently there is no diff.patch: there is no upstream commit to diff against, and
+fabricating one would misrepresent a harness change that did not happen.
+

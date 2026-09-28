@@ -1,0 +1,5 @@
+﻿not-applicable: see harness_commit.
+
+No harness patch exists for this run. The script is new and standalone, not a delta
+against a pinned harness revision, so a diff would be empty by fact rather than by choice.
+
