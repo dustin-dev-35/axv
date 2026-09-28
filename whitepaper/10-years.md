@@ -1,7 +1,7 @@
 ---
 title: "10 Years in 1 Paper"
 description: "The AXV decade compression: what the field believed, what turned on it, what it cost, and what did not work."
-revision: 4b
+revision: 4c
 date: 2026-09-28
 corpus_posts: 6
 corpus_memos: 6
@@ -74,21 +74,27 @@ every line how little is behind that line.*
 | papers triaged | 6 | AXV first reading batch, 2026-09-28 |
 | papers read | 6 | memos filed in `corpus/`: `2609.30721`, `2609.30725`, `2609.30768`, `2609.31098`, `2609.31381`, `2609.31563` |
 | memo files in `corpus/` | **15** | 6 papers, several carrying more than one file; `corpus/2609.30721.reconciliation.md` and the three `*.landing.md` files say which answers which. Revision 4 and revision 4a both said **13**, and it was already wrong at the commit revision 4 named: `git ls-tree 48ac942 corpus/` returns **14**. The fifteenth is `corpus/2609.31381.axv-46-addendum.md`, added in `33113d1` after revision 4 was written |
-| memos filed in Notion | **0** | Notion connector not exposed to agent runs, [AXV-19](/AXV/issues/AXV-19) |
-| memos filed in Supabase `corpus_index` | **0** | Supabase connector not exposed to agent runs |
-| posts published | 5 | `overlapping-eval-windows-are-not-independent-tests` (**corrected 2026-09-28**), `completed-pairs-hide-capped-failures`, `low-effective-depth-is-residual-arithmetic`, `thinking-5x-asymmetry-is-your-baseline`, `a-second-plurality-voter-is-worth-zero` |
+| memos filed in Notion | **0, and no longer required** | Board decision 2026-09-28: GitHub is the record. Notion is not a mirror any more, it is simply not in use. See **Where the record lives** below |
+| memos filed in Supabase `corpus_index` | **0** | Supabase connector not exposed to agent runs. A convenience index, not the record, since the board decision |
+| posts published | **6** | — `overlapping-eval-windows-are-not-independent-tests` (**corrected 2026-09-28**), `completed-pairs-hide-capped-failures`, `low-effective-depth-is-residual-arithmetic`, `thinking-5x-asymmetry-is-your-baseline`, `a-second-plurality-voter-is-worth-zero`, `hand-written-rules-beat-generated-ones`. Counted from `posts/*.md` at `758e81a`: six files, six distinct `arxiv_id` values |
 | experiments in `experiments/leaderboard.jsonl` | **13 runs, 157 records** | read at `0a0d9a6`: the 11 series itemised in Appendix B, plus `2609.30721-a01-s1337`, `2609.30721-a01-s1338` and `2609.30721-a01-s1339` (30 records each — the three seeds of the 2609.30721v1 within-session persistence sweep). This document counts **series**; the file's `run_id` counts **per-seed and per-cell records**, so 157 records is not 157 runs and the two numbers are not comparable |
 | records carrying `supersedes` | **2** | A record counts only if `supersedes` is a non-null value. **38** was the count of records where the *key* is present, and 36 of those 38 are `"supersedes": null` - nothing superseded. The two real ones are the `20260928T210000Z-a2609-30721-audit` retraction and `2609.31381-a02-s1337r2` over `2609.31381-a02-s1337` |
 | aggregate confidence | **medium** | Five memos are `medium` and the 2609.31098 memo is split `medium`/`low`, so this document is |
 
-**A limit on these counts, stated rather than glossed.** The checklist asks for these numbers to
-be queried from Supabase. Supabase has no tool surface for agent runs, so every count in this
-table was read from the GitHub tree and from `experiments/leaderboard.jsonl` instead. They are
-therefore counts of the record, **unverified against the canonical index**, and a row in
-`corpus_index` or `v_corpus_counts` that disagrees with this table is the one that will catch
-it. See [AXV-19](/AXV/issues/AXV-19). The same limit applies to the `mirror_health` publish
-gate: it could not be queried, so no post in Appendix A is confirmed reader-live.
+**Where the record lives, and the limit that remains.** The board decided on 2026-09-28, on
+[AXV-17](/AXV/issues/AXV-17), that GitHub is the record for AXV: memos in `corpus/`, posts in
+`posts/`, this document in `whitepaper/`. Notion is not the record and is not a mirror of it.
+Supabase `corpus_index` is a convenience index, and a row that disagrees with the GitHub tree
+disagrees with the record, not the other way round. The `mirror_health` publish gate is retired
+as a blocking gate: a post publishes when it is pushed to `posts/`, because there is now one
+store and it is the one that is versioned.
 
+**What that decision costs, stated rather than glossed.** Readers get the built site and the
+GitHub markdown, and no editor-friendly page. PostHog read depth is still unmeasurable, because
+`POSTHOG_KEY` is unset and the build ships no analytics snippet. And the site has no public
+address until it is linked to Netlify, so at this revision every count above is a count of the
+repository and not a count of readers. That is the price of the decision, and the decision was
+made deliberately rather than by default.
 **Date range covered: 2026-09-25 to 2026-09-28.** Six papers, all submitted in the last
 week of September 2026. There is no decade here yet and the title is a target, not a
 description.
@@ -677,8 +683,11 @@ because `axv-2609.30768-asymmetry-01` was named in the count and missing from th
 `axv-2609.30768-asymmetry-01` was the one run with a prepared row payload and no post, and it is
 now published as `posts/thinking-5x-asymmetry-is-your-baseline.md` with its Appendix A row. Its
 prepared Supabase and PostHog payloads in `corpus/2609.30768.landing.md` are still unwritten, for
-want of a tool surface rather than want of an author; see [AXV-19](/AXV/issues/AXV-19). One
-memo, `2609.31563`, still has no post and no prepared row.
+want of a tool surface rather than want of an author; see [AXV-19](/AXV/issues/AXV-19). No
+memo is without a post: `2609.31563` is published as `a-second-plurality-voter-is-worth-zero` with its
+Appendix A row. This sentence was written at revision 4 and left standing through 4a and 4b, which is
+the third instance of the failure this document names about itself: a sentence that was true when
+written and was not re-derived.
 
 **And revision 4a caught the same failure a third time, which makes it a pattern rather than an
 accident.** A count or a description in this appendix that was true when written and was not
