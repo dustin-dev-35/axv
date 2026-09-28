@@ -1,0 +1,31 @@
+# Dependencies
+node_modules/
+
+# Netlify
+.netlify/
+.netlify/functions/
+
+# Local build output
+dist/
+build/
+out/
+public/
+.cache/
+.parcel-cache/
+.astro/
+.next/
+*.tsbuildinfo
+
+# Environment and secrets. Paperclip secrets are the only home for a token.
+.env
+.env.*
+!.env.example
+
+# Editor and OS noise
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+
+# OS-level swap
+*.swp
