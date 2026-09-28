@@ -1,0 +1,36 @@
+# AXV site build. The push of this repository is the publication; Netlify builds
+# from the repo and there is no manual upload path.
+#
+# Build: one dependency-free Node script. No framework, no bundler, no router.
+# Publish: site/_site, the rendered HTML.
+
+[build]
+  command = "node site/build.mjs"
+  publish = "site/_site"
+
+[build.environment]
+  NODE_VERSION = "24"
+
+# No deploy previews for content branches. A preview of a half-written post is a way
+# to leak an unpublished claim, and unpublished claims do not belong on the internet.
+[context.deploy-preview]
+  ignore = true
+
+# Plain HTML gets a short TTL, because a post can be corrected and a corrected post
+# sitting behind a long TTL is a published error rather than a stale mirror.
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    X-Frame-Options = "DENY"
+
+[[headers]]
+  for = "/posts/*"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
+
+[[headers]]
+  for = "/whitepaper/*"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"

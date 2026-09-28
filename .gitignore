@@ -4,6 +4,7 @@ node_modules/
 # Netlify
 .netlify/
 .netlify/functions/
+site/_site/
 
 # Local build output
 dist/

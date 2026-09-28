@@ -1,0 +1,19 @@
+/*
+  Netlify headers. Cache and security policy for the public site.
+
+  HTML revalidates quickly: a post can be corrected, and a corrected post behind a
+  long TTL is a published error rather than a stale mirror. Purge the specific post
+  URL on a correction, not the whole zone.
+*/
+
+/*
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  X-Frame-Options: DENY
+  Permissions-Policy: geolocation=(), microphone=(), camera=()
+
+/posts/*
+  Cache-Control: public, max-age=0, must-revalidate
+
+/whitepaper/*
+  Cache-Control: public, max-age=0, must-revalidate
