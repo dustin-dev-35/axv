@@ -164,7 +164,14 @@ on conflict (arxiv_id, version) do update set
   post_slug           = excluded.post_slug,
   post_url            = excluded.post_url,
   post_published_at   = excluded.post_published_at,
-  superseded_by_version = excluded.superseded_by_version;
+  superseded_by_version = excluded.superseded_by_version,
+  -- corpus_index.updated_at exists (not null default now()) and the do-update
+  -- list omitted it, so a re-run of this upsert would rewrite every field and
+  -- still leave updated_at at the first insert time. That defeats the point of
+  -- an idempotent upsert: the row could not say when it was last corrected.
+  -- Section B in this same file already sets written_at = now(); this makes the
+  -- two halves consistent.
+  updated_at          = now();
 
 -- Verify inside the same transaction, so a bad row never commits.
 select arxiv_id, version, confidence, experiment_status, experiment_delta,
