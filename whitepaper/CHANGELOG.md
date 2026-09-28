@@ -171,6 +171,10 @@ judgement was right is the reason this revision exists.
   and is not allowed to.
 - Section 0: `experiments` **11 series / 67 records -> 13 series / 157 records**, re-read from
   `leaderboard.jsonl` at `0a0d9a6`; `records carrying supersedes` **2 -> 38**. The cell now states
+  > **[Corrected in revision 4a; left as revision 4 wrote it.]** The count did not move. 38 is the
+  > number of records where the `supersedes` *key* is present, and 36 of those 38 are
+  > `"supersedes": null`. The real figure is **2** and it has been 2 all along. See revision 4a's
+  > "Retracted" section, and revision 4b for the row that carried the false version.
   which unit is which, because revision 3a was right that a reader comparing 157 records against
   13 runs needs to be told: this document counts **series**, the file's `run_id` counts
   **per-seed and per-cell records**, and a 30-cell sweep contributes 30 distinct `run_id` values

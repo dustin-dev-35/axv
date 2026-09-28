@@ -263,7 +263,7 @@ survive a different null. The fourth arm's confidence is **medium**, with six na
 <a id="what-axv-did"></a>
 ## What AXV did about it
 
-**Two runs, both CPU-only, both $0.00, no pod created, so no pod to terminate. $0.00 of $3.25;
+**Three runs, all CPU-only, all $0.00, no pod created, so no pod to terminate. $0.00 of $3.25;
 $3.25 remaining.** The claim is about a variance estimator on binary paired outcomes, not
 GPU-bound, so provisioning the PRO 6000 MIG 24GB at $0.59/hr would have spent budget to compute
 the same number more slowly.
