@@ -19,20 +19,16 @@ section_ids:
 
 **Paper:** Analyzing and Mitigating Cost-Inefficient Behaviors in Coding Agents — Yiran Hu et al., [arXiv:2609.30725v1](https://arxiv.org/abs/2609.30725v1)
 **Read:** 2026-09-28 · **Confidence:** medium · **Experiment:** verified (appendix arithmetic) · not-applicable (end-to-end claim)
-
+<a id="tldr"></a>
 A paper on coding-agent cost found three recurring behaviours hitting 79.00%–98.00% of tasks
 and 6.86%–22.75% of task cost, and mitigated them with seven hand-written prompt rules that cut
 cost 7.88%–41.73% in six of eight settings. We re-derived its appendix arithmetic at $0.00, and
-its own amortisation columns say the machine-written alternative — skills an agent distils from
-its own traces — shrinks from −22.32% to **−2.70%**, with 5 of 8 cells flipping to cost
-*increases*. The caveat: the end-to-end claim rests on 15 single runs of 24 cells, and our
-verification checks the paper's *accounting*, not its causal claims.
-
-<a id="tldr"></a>
-
-## What advanced
-
+its own amortisation columns say the machine-written alternative — skills an agent distils from its
+own traces — shrinks from −22.32% to **−2.70%**, with 5 of 8 cells flipping to cost *increases*. The
+caveat: the end-to-end claim rests on 15 single runs of 24 cells, and our verification
+checks the paper's *accounting*, not its causal claims.
 <a id="what-advanced"></a>
+## What advanced
 
 The baseline is a no-op: the same four configurations on the same 300 held-out tasks, no
 intervention. **No competing method was run** — this paper's largest evidential gap.
@@ -53,11 +49,11 @@ Verified-200 alone. The other headline is a negative result the paper is candid 
 structure-aware retrieval produced **four robust cost increases of 8.39%–28.14%**, while under
 Claude Code subsumed retrieval fell **84.18%** and **75.72%** and cost still rose.
 
-## How it works
 
 <a id="how-it-works"></a>
+## How it works
 
-The paper makes three claims with three different evidential standings.
+The paper makes three claims with three different standings.
 
 *Structure-aware retrieval raises end-to-end cost* — **demonstrated**, and unusually well. Each
 CodeGraph query returns **5,199 output tokens against 313** for an ordinary retrieval: 16.6×, 140.96% more per
@@ -82,9 +78,9 @@ Before using any behaviour number, know that they get **no robustness verdict**:
 variation averages 15.68% and reaches 44.47%, exceeding the cost floor in 20 of 24 combinations.
 Every mechanism figure in the paper is mechanistic.
 
-## The roads not taken
 
 <a id="roads-not-taken"></a>
+## The roads not taken
 
 **1. Price the loop, not the tokens.** The paper's own amplification framing already does this.
 *Pros:* far smaller and more portable — it needs a token ledger with input/output/cache categories
@@ -93,16 +89,14 @@ CodeGraph's failure *before* you run it, because the diagnosis is output volume 
 *Cons:* it does not tell an engineer what to stop doing, so it is diagnostic rather than
 prescriptive, which is the paper's whole practical value; the two slopes are two points and not
 robust; and the cache effect's direction is inferred, never measured. *Cost to test:* one
-trajectory set, one ledger, no detector tuning. *Would it win:* **yes** as a first cut, and for AXV the
-only one in range.
+trajectory set, one ledger, no detector tuning. *Would it win:* **yes** as a first cut, and AXV's only one in range.
 
 **2. Randomise the intervention on a fixed trace instead of re-running the agent.** Replay a
 recorded trajectory with and without the skill text injected at a fixed step, then compare the
 divergence point. *Pros:* a paired within-trajectory design removes almost all the run-to-run
 noise the paper spends two tables fighting. Their cost noise floors are 2.44%–8.35% CV and Pass@1
 floors 0.87–4.00 points — precisely why 15 of 24 cells are single runs, why the equal-variance
-transfer needs nine extra replications, and why the study needs a 0.07 sign-reversal budget.
-*Cons:* it changes the
+transfer needs nine extra replications, and why the study needs a 0.07 sign-reversal budget. *Cons:* it changes the
 question from "does the agent do the task more cheaply" to "does this prompt change the next
 action", and prompt-level divergence does not guarantee task-level benefit — the effect can be
 real at step 12 and gone by step 40, exactly where long-distance retrieval and test re-execution
@@ -113,15 +107,16 @@ end-to-end claim.
 paper cites context compression, runtime supervision and skill optimisation, and runs none of
 them. *Pros:* "hand-written skills are worth 7.88%–41.73%" is uninterpretable without knowing what
 the alternatives deliver, and the closest competitor is already public:
-observation masking, reported as competitive with summarisation for the same token savings. A head-to-head tells an operator whether to write rules or install a library. *Cons:* each arm costs roughly $0.10–$1.10 per task across 300 tasks, so
-four more arms is $1,000+ of the budget that already forced 15 single runs.
+observation masking, reported as competitive with summarisation for the same token savings. A head-to-head tells an operator whether to write
+rules or install a library. *Cons:* each arm costs roughly $0.10–$1.10 per task across 300 tasks
+per setting, so four more arms is $1,000+ of the budget that already forced 15 single runs.
 *Why not chosen* (stated): budget. *Would it win:* **no** at AXV's budget, **yes** in principle —
 and its absence is the paper's largest evidential gap for a practitioner deciding what to do on
 Monday.
 
-## How strong is the evidence
 
 <a id="evidence-strength"></a>
+## How strong is the evidence
 
 **The most likely way this claim is wrong:** the headline compares *human-written* rules against
 *model-written* rules while the explanation is about *abstraction level* — and those are
@@ -142,9 +137,9 @@ across cost terciles of the best released leaderboard run, so its cost numbers a
 design. The LLM action-labelling fallback handles 0.94%–31.17% of steps.
 
 
-## What AXV did about it
 
 <a id="what-axv-did"></a>
+## What AXV did about it
 
 **We ran one verification. It cost $0.00. No pod was created, so the $3.25 budget is untouched and
 there is nothing to terminate.** Status splits: `not-applicable` end-to-end,
@@ -180,9 +175,9 @@ is the *amplifier*, not the share — 2.83 and 1.33, plausibly larger at our sho
 noting the saving shrinks out of domain and reverses on the cheapest configuration, the one
 closest to our cost structure.
 
-## Links
 
 <a id="links"></a>
+## Links
 
 - arXiv: <https://arxiv.org/abs/2609.30725v1> · <https://arxiv.org/pdf/2609.30725v1>
 - AXV memo: `corpus/2609.30725.md` in `dustin-dev-35/axv`
