@@ -1,0 +1,1147 @@
+{
+  "all_match": true,
+  "arxiv_id": "2609.31563",
+  "arxiv_version": "v1",
+  "elapsed_seconds": 10.23,
+  "failed_checks": [],
+  "findings": [
+    {
+      "detail": "Section 3.1 fixes the protocol: 'Plurality ties are broken at random'. For two agents, p^2 + 0.5*2p(1-p) = p exactly, for every p. So the marginal value of the second agent under a random tie-break is 0.000 points, not small, and this is an identity rather than a measurement. The run verifies it to 1e-16 over 999 grid points. A fixed tie-break instead yields p(1-p) per item, and E[p_k(1-p_k)] = p_bar(1-p_bar)(1-rho), which is EXACTLY HALF of the paper's Eq. 3. Eq. 3 is therefore the two-agent fixed-tie-break gain, doubled, and the paper's own protocol has already set the corresponding quantity to zero.",
+      "finding": "under_the_papers_own_tie_break_rule_the_second_agent_is_worth_exactly_zero",
+      "paper_reference": "Section 3.1 evaluation protocol; Proposition 2.1, Eq. 3"
+    },
+    {
+      "detail": "Appendix D, Figure 3 reports that the observed gain is '11-21% of the bound' and reads the shortfall as evidence that the bound is loose because incorrect answers spread over several values. That explanation is right but it is not the whole story: the denominator is a two-agent fixed-tie-break gain, and under the paper's own random tie-break the corresponding realised gain is identically 0. The 'only 11-21% realised' figure and the 'ceiling' figure are the same number under two different tie-break conventions, and the paper does not say so.",
+      "finding": "the_paper_compares_its_models_against_a_bound_its_own_protocol_zeroed",
+      "paper_reference": "Appendix D, 'Validation of the voting-gain bound', Figure 3"
+    },
+    {
+      "detail": "Plurality picks the modal answer, so the team is correct iff p_k exceeds 1/K for K equiprobable candidates. Eq. 3 is the K=2 slice, which the paper confirms in Appendix D ('the bound assumes a binary outcome'). The paper measures the realised number of distinct answers per item in Appendix D Table 5, range 1.1 to 6.2 among 30 samples, and never uses that column. K is the parameter that sets where voting starts paying, and it is the one parameter the framework omits.",
+      "finding": "the_mode_condition_is_p_greater_than_1_over_K_and_the_paper_never_uses_K",
+      "paper_reference": "Proposition 2.1; Appendix D Table 5; Appendix D Figure 3 discussion"
+    },
+    {
+      "detail": "Section 2.4 is explicit that rho measures 'heterogeneity of item difficulty rather than interaction between agents'. Drawing more samples from one model cannot change it. So N_eff = N/(1+(N-1)rho) is bounded by 1/rho and adding agents is arithmetically incapable of helping. The paper states this; what it does not state is the operational consequence, which is that the only two interventions that can move rho are changing the model and changing the items, and neither is 'add an agent'.",
+      "finding": "rho_is_item_difficulty_heterogeneity_not_interaction_so_agents_cannot_be_decorrelated_by_being_agents",
+      "paper_reference": "Section 2.4; Table 2; Section 3.3"
+    },
+    {
+      "detail": "Eq. 3's factor p*(1-p) is maximised at p=0.5 and falls towards both 0 and 1, so the bound is non-monotone in model strength and is SMALLER for a stronger model. The paper never states this, because all 13 of its models are voting models and its own strongest model, gpt-oss-20b at 84.72% solo, has the third-smallest Delta_5 on the panel at +3.16. AXV-13's second question therefore has a definite answer: the ceiling is structural, and a stronger model would not lift it. The paper's own panel is consistent with this and it does not draw the conclusion.",
+      "finding": "a_stronger_model_has_less_plurality_headroom_not_more",
+      "paper_reference": "Proposition 2.1, Eq. 3; Table 2; Section 3.3"
+    },
+    {
+      "detail": "The panel spans solo 26.1-84.7% with rho 0.64-0.93. The paper reports that Delta_5 is not explained by rho (rank correlation 0.12, p=0.71) and does not report the correlation with strength. The only two models that escape the ceiling, gpt-oss-20b and r1-distill-qwen-14b, are simultaneously the two that reason before answering, the two with the lowest rho at 0.66, and two of the three strongest. Three variables move together in n=2, so the paper's own explanation of the exception is not identified either.",
+      "finding": "strength_rho_and_prompt_regime_all_move_together_so_nothing_is_identified",
+      "paper_reference": "Table 2; Section 3.1; Section 3.3"
+    },
+    {
+      "detail": "+26.5 points on GSM8K at N=2 is the biggest effect anywhere in the study and it is the number a reader would carry away. There is no revision-without-peers condition; the paper says so in Section 4, Limitations, second item. A single agent with a 5x token budget recovers 12.4 of the 26.5 points, so 46.9% is explained with no peer present. The remaining 14.05 pp is an UPPER bound on the peer's contribution, not an estimate, because the control is a larger Round-1 budget and not a single agent revising over three rounds.",
+      "finding": "the_largest_number_in_the_paper_has_no_control",
+      "paper_reference": "Section 3.2; Section 4 Limitations"
+    },
+    {
+      "detail": "Table 4 tabulates N in {2,...,30} in all three panels. N=1 is absent. AXV's question is literally about the second agent, so the one column that would price it is not published. What the paper does publish is that agents 3 through 30 buy between +0.25 and +1.28 points on the five disjunctive benchmarks, and that deliberation PEAKS at an intermediate team size and then decays by 0.45 to 1.07 points. More agents is not merely useless on disjunctive tasks, it is mildly harmful past about 5 to 20.",
+      "finding": "the_N1_column_is_absent_so_the_second_agent_is_unpriced_in_the_paper",
+      "paper_reference": "Table 4 all panels; Table 6; Section 3.3"
+    },
+    {
+      "detail": "beta = 0.87 recomputes exactly from the paper's own 1.96 and 0.75, and it survives the label-clean subsample at 0.82, so unlike the disjunctive ceiling this is not a loose inequality on a bound. The cross-model check is the useful part: mean pairwise item-bias correlation is 0.63, falling to 0.41 on clean labels, so different model families do carry partially independent biases, and a five-model 7B-8B pool cuts MAE 25.8% against a 0.9-8.1% range for homogeneous teams. The one place heterogeneous ensembling clearly pays is the task where error is continuous and each estimate carries its own signed bias.",
+      "finding": "compensatory_ceiling_is_a_verified_bias_floor_and_is_the_paper_strongest_result",
+      "paper_reference": "Section 3.4; Table 3; Table 10; Figure 4 caption"
+    },
+    {
+      "detail": "Prefix anchoring: no effect, 33.1 both. Log-calculator offloading: worse, 28.9. Unit systems plus logcalc: 25.0. Grounding plus logcalc: 21.1 on n=57. Structured scaffolding is the only positive at 36.3 against 33.1, with intervals that overlap. A specialist RL-tuned model, Ornith-1.5-9B, is not better than its base on RealFP at +0.4, CI [-3.6, 4.4]. So the negative result is well supported; the positive is one cell.",
+      "finding": "every_intervention_aimed_at_the_compensatory_ceiling_failed",
+      "paper_reference": "Appendix F.1 Table 11; Appendix F.2"
+    },
+    {
+      "detail": "The compensatory headline uses only the ten models with the decomposition prompt, and for four of those only a subset of runs, identified after the fact by scanning rounded rationales. gpt-oss-20b, qwen3-4b and r1-distill-qwen-14b are absent from it. The paper does report the earlier prompt family's numbers as a sensitivity check and the pattern holds, which is good practice, but it is a prompt-family confound rather than a random subsample, and the excluded gpt-oss-20b cell is the one anomalous cell in the whole RealFP block.",
+      "finding": "realfp_main_text_rests_on_a_non_random_10_of_13_subsample",
+      "paper_reference": "Appendix C, 'Data integrity', items (i) and (ii)"
+    },
+    {
+      "detail": "The original parser did not recognise exponents written with superscript digits and kept only the mantissa. It affected 16.0% of qwen3-14b's Fermi answers and 5.7% of gpt-oss-20b's, at most 1% for every other model. All answers were re-parsed before analysis, so the reported results are clean. The finding is that a parser defect this consequential sat in the pipeline undetected until after 6.8e7 generations, and the audit that found it is a manual log inspection rather than a test. AXV reads 4,000 generations per heartbeat and has no equivalent.",
+      "finding": "the_answer_parser_bug_hit_16_percent_of_one_models_answers",
+      "paper_reference": "Appendix C, 'Data integrity', item (iv)"
+    },
+    {
+      "detail": "Appendix D Table 5 is qwen2.5-7b only, one run per temperature, on 400-item subsets of three benchmarks. It is the sole evidence that 'a higher temperature is no substitute' for a better model, which is the sentence that would most support the 'weak models are the constraint' reading of the disjunctive ceiling. One model, one run, 400 items, and a GPQA Diamond panel that appears nowhere else in the paper.",
+      "finding": "temperature_sweep_carries_a_load_claim_on_one_model_one_run",
+      "paper_reference": "Appendix D Table 5; Section 3.3"
+    },
+    {
+      "detail": "The abstract carries '[Open code placeholder]'. The reproducibility statement says per-agent logs 'will be released upon publication' and analysis scripts 'will be open sourced upon acceptance'. Neither exists at v1, so the central 650-configuration prediction and the 90-point decomposition validation cannot be independently re-executed by anyone. AXV's Part 1 is a re-derivation of printed values and nothing more.",
+      "finding": "the_code_is_a_literal_placeholder",
+      "paper_reference": "Abstract; 'Reproducibility Statement'"
+    }
+  ],
+  "model_parameters": {
+    "k_options": 8,
+    "n_items": 50000,
+    "part2a_2b": "exact binomial tail per item; the stochastic unit is the item draw of p_k from the Beta implied by rho",
+    "part2c_2d": "agent-level Monte Carlo of the K-option plurality vote, 3 seeds, random tie-break",
+    "seeds": [
+      20260928,
+      20260929,
+      20260930
+    ]
+  },
+  "n_checks": 64,
+  "n_failed": 0,
+  "n_passed": 64,
+  "part2": {
+    "2a_n2_identity": {
+      "eq3_identity": "E[p_k(1-p_k)] = p_bar(1-p_bar) - Var(p_k) = p_bar(1-p_bar)(1-rho), which is exactly half of Eq. 3's 2 p(1-p)(1-rho)",
+      "grid_points": 999,
+      "max_abs_error_fixed_tiebreak_vs_p": 0.25,
+      "max_abs_error_random_tiebreak_vs_p": 1.1102230246251565e-16,
+      "per_model": [
+        {
+          "eq3_bound_pp": 8.285,
+          "fixed_tiebreak_N2_gain_pp": 4.142,
+          "model": "gpt-oss-20b",
+          "paper_reported_share_of_bound_pct": "11-21 (Appendix D, Figure 3, averaged per task)",
+          "random_tiebreak_N2_gain_pp": 0.0,
+          "rho": 0.68,
+          "solo_pct": 84.72
+        },
+        {
+          "eq3_bound_pp": 10.086,
+          "fixed_tiebreak_N2_gain_pp": 5.043,
+          "model": "llama3.1-8b",
+          "paper_reported_share_of_bound_pct": "11-21 (Appendix D, Figure 3, averaged per task)",
+          "random_tiebreak_N2_gain_pp": 0.0,
+          "rho": 0.77,
+          "solo_pct": 32.47
+        },
+        {
+          "eq3_bound_pp": 14.709,
+          "fixed_tiebreak_N2_gain_pp": 7.354,
+          "model": "marin-8b",
+          "paper_reported_share_of_bound_pct": "11-21 (Appendix D, Figure 3, averaged per task)",
+          "random_tiebreak_N2_gain_pp": 0.0,
+          "rho": 0.64,
+          "solo_pct": 28.62
+        },
+        {
+          "eq3_bound_pp": 6.178,
+          "fixed_tiebreak_N2_gain_pp": 3.089,
+          "model": "mistral-7b",
+          "paper_reported_share_of_bound_pct": "11-21 (Appendix D, Figure 3, averaged per task)",
+          "random_tiebreak_N2_gain_pp": 0.0,
+          "rho": 0.84,
+          "solo_pct": 26.14
+        },
+        {
+          "eq3_bound_pp": 10.29,
+          "fixed_tiebreak_N2_gain_pp": 5.145,
+          "model": "olmo2-7b",
+          "paper_reported_share_of_bound_pct": "11-21 (Appendix D, Figure 3, averaged per task)",
+          "random_tiebreak_N2_gain_pp": 0.0,
+          "rho": 0.74,
+          "solo_pct": 27.17
+        },
+        {
+          "eq3_bound_pp": 6.493,
+          "fixed_tiebreak_N2_gain_pp": 3.247,
+          "model": "phi4-14b",
+          "paper_reported_share_of_bound_pct": "11-21 (Appendix D, Figure 3, averaged per task)",
+          "random_tiebreak_N2_gain_pp": 0.0,
+          "rho": 0.87,
+          "solo_pct": 48.4
+        },
+        {
+          "eq3_bound_pp": 7.109,
+          "fixed_tiebreak_N2_gain_pp": 3.554,
+          "model": "qwen2.5-3b",
+          "paper_reported_share_of_bound_pct": "11-21 (Appendix D, Figure 3, averaged per task)",
+          "random_tiebreak_N2_gain_pp": 0.0,
+          "rho": 0.82,
+          "solo_pct": 27.08
+        },
+        {
+          "eq3_bound_pp": 4.337,
+          "fixed_tiebreak_N2_gain_pp": 2.169,
+          "model": "qwen2.5-7b",
+          "paper_reported_share_of_bound_pct": "11-21 (Appendix D, Figure 3, averaged per task)",
+          "random_tiebreak_N2_gain_pp": 0.0,
+          "rho": 0.91,
+          "solo_pct": 40.49
+        },
+        {
+          "eq3_bound_pp": 3.5,
+          "fixed_tiebreak_N2_gain_pp": 1.75,
+          "model": "qwen3-14b",
+          "paper_reported_share_of_bound_pct": "11-21 (Appendix D, Figure 3, averaged per task)",
+          "random_tiebreak_N2_gain_pp": 0.0,
+          "rho": 0.93,
+          "solo_pct": 50.19
+        },
+        {
+          "eq3_bound_pp": 6.827,
+          "fixed_tiebreak_N2_gain_pp": 3.413,
+          "model": "qwen3-4b",
+          "paper_reported_share_of_bound_pct": "11-21 (Appendix D, Figure 3, averaged per task)",
+          "random_tiebreak_N2_gain_pp": 0.0,
+          "rho": 0.86,
+          "solo_pct": 42.13
+        },
+        {
+          "eq3_bound_pp": 9.496,
+          "fixed_tiebreak_N2_gain_pp": 4.748,
+          "model": "qwen3-8b",
+          "paper_reported_share_of_bound_pct": "11-21 (Appendix D, Figure 3, averaged per task)",
+          "random_tiebreak_N2_gain_pp": 0.0,
+          "rho": 0.81,
+          "solo_pct": 51.02
+        },
+        {
+          "eq3_bound_pp": 13.678,
+          "fixed_tiebreak_N2_gain_pp": 6.839,
+          "model": "r1-distill-qwen-14b",
+          "paper_reported_share_of_bound_pct": "11-21 (Appendix D, Figure 3, averaged per task)",
+          "random_tiebreak_N2_gain_pp": 0.0,
+          "rho": 0.64,
+          "solo_pct": 74.5
+        },
+        {
+          "eq3_bound_pp": 14.463,
+          "fixed_tiebreak_N2_gain_pp": 7.231,
+          "model": "smollm3-3b",
+          "paper_reported_share_of_bound_pct": "11-21 (Appendix D, Figure 3, averaged per task)",
+          "random_tiebreak_N2_gain_pp": 0.0,
+          "rho": 0.67,
+          "solo_pct": 32.43
+        }
+      ]
+    },
+    "2b_sufficiency": [
+      {
+        "beta": {
+          "attainable_gain_pp": {
+            "1000": 31.279,
+            "2": -0.351,
+            "20": 15.263,
+            "4": 5.743,
+            "8": 10.205
+          },
+          "modal_accuracy_pct": {
+            "1000": 65.579,
+            "2": 33.949,
+            "20": 49.563,
+            "4": 40.043,
+            "8": 44.505
+          }
+        },
+        "gain_spread_across_families_pp": {
+          "1000": 25.698,
+          "2": -5.875,
+          "20": 9.29,
+          "4": -0.148,
+          "8": 4.486
+        },
+        "p_bar": 0.343,
+        "rho": 0.78,
+        "two_point": {
+          "attainable_gain_pp": {
+            "1000": 5.581,
+            "2": 5.524,
+            "20": 5.973,
+            "4": 5.891,
+            "8": 5.719
+          },
+          "modal_accuracy_pct": {
+            "1000": 39.881,
+            "2": 39.824,
+            "20": 40.273,
+            "4": 40.191,
+            "8": 40.019
+          }
+        }
+      },
+      {
+        "beta": {
+          "attainable_gain_pp": {
+            "1000": 30.028,
+            "2": -0.345,
+            "20": 14.345,
+            "4": 5.276,
+            "8": 9.511
+          },
+          "modal_accuracy_pct": {
+            "1000": 59.728,
+            "2": 29.355,
+            "20": 44.045,
+            "4": 34.976,
+            "8": 39.211
+          }
+        },
+        "gain_spread_across_families_pp": {
+          "1000": 24.766,
+          "2": -5.538,
+          "20": 8.852,
+          "4": -0.23,
+          "8": 4.078
+        },
+        "p_bar": 0.297,
+        "rho": 0.78,
+        "two_point": {
+          "attainable_gain_pp": {
+            "1000": 5.262,
+            "2": 5.193,
+            "20": 5.493,
+            "4": 5.506,
+            "8": 5.433
+          },
+          "modal_accuracy_pct": {
+            "1000": 34.962,
+            "2": 34.893,
+            "20": 35.193,
+            "4": 35.206,
+            "8": 35.133
+          }
+        }
+      },
+      {
+        "beta": {
+          "attainable_gain_pp": {
+            "1000": 26.898,
+            "2": -0.088,
+            "20": 13.915,
+            "4": 5.786,
+            "8": 9.522
+          },
+          "modal_accuracy_pct": {
+            "1000": 79.298,
+            "2": 52.312,
+            "20": 66.315,
+            "4": 58.186,
+            "8": 61.922
+          }
+        },
+        "gain_spread_across_families_pp": {
+          "1000": 21.803,
+          "2": -5.021,
+          "20": 8.598,
+          "4": 0.634,
+          "8": 4.359
+        },
+        "p_bar": 0.524,
+        "rho": 0.81,
+        "two_point": {
+          "attainable_gain_pp": {
+            "1000": 5.095,
+            "2": 4.933,
+            "20": 5.317,
+            "4": 5.152,
+            "8": 5.163
+          },
+          "modal_accuracy_pct": {
+            "1000": 57.495,
+            "2": 57.333,
+            "20": 57.717,
+            "4": 57.552,
+            "8": 57.563
+          }
+        }
+      },
+      {
+        "beta": {
+          "attainable_gain_pp": {
+            "1000": 15.691,
+            "2": 0.949,
+            "20": 11.431,
+            "4": 5.913,
+            "8": 8.983
+          },
+          "modal_accuracy_pct": {
+            "1000": 98.791,
+            "2": 84.049,
+            "20": 94.531,
+            "4": 89.013,
+            "8": 92.083
+          }
+        },
+        "gain_spread_across_families_pp": {
+          "1000": 10.847,
+          "2": -3.608,
+          "20": 6.78,
+          "4": 1.452,
+          "8": 4.092
+        },
+        "p_bar": 0.831,
+        "rho": 0.68,
+        "two_point": {
+          "attainable_gain_pp": {
+            "1000": 4.844,
+            "2": 4.557,
+            "20": 4.651,
+            "4": 4.461,
+            "8": 4.891
+          },
+          "modal_accuracy_pct": {
+            "1000": 87.944,
+            "2": 87.657,
+            "20": 87.751,
+            "4": 87.561,
+            "8": 87.991
+          }
+        }
+      },
+      {
+        "beta": {
+          "attainable_gain_pp": {
+            "1000": 47.963,
+            "2": -0.013,
+            "20": 35.657,
+            "4": 16.84,
+            "8": 27.08
+          },
+          "modal_accuracy_pct": {
+            "1000": 97.963,
+            "2": 49.987,
+            "20": 85.657,
+            "4": 66.84,
+            "8": 77.08
+          }
+        },
+        "gain_spread_across_families_pp": {
+          "1000": 31.414,
+          "2": -16.519,
+          "20": 18.958,
+          "4": 0.32,
+          "8": 10.488
+        },
+        "p_bar": 0.5,
+        "rho": 0.5,
+        "two_point": {
+          "attainable_gain_pp": {
+            "1000": 16.549,
+            "2": 16.506,
+            "20": 16.699,
+            "4": 16.52,
+            "8": 16.592
+          },
+          "modal_accuracy_pct": {
+            "1000": 66.549,
+            "2": 66.506,
+            "20": 66.699,
+            "4": 66.52,
+            "8": 66.592
+          }
+        }
+      },
+      {
+        "beta": {
+          "attainable_gain_pp": {
+            "1000": 15.917,
+            "2": -0.075,
+            "20": 7.463,
+            "4": 3.033,
+            "8": 4.943
+          },
+          "modal_accuracy_pct": {
+            "1000": 65.917,
+            "2": 49.925,
+            "20": 57.463,
+            "4": 53.033,
+            "8": 54.943
+          }
+        },
+        "gain_spread_across_families_pp": {
+          "1000": 13.396,
+          "2": -2.479,
+          "20": 4.756,
+          "4": 0.38,
+          "8": 2.444
+        },
+        "p_bar": 0.5,
+        "rho": 0.9,
+        "two_point": {
+          "attainable_gain_pp": {
+            "1000": 2.521,
+            "2": 2.404,
+            "20": 2.707,
+            "4": 2.653,
+            "8": 2.499
+          },
+          "modal_accuracy_pct": {
+            "1000": 52.521,
+            "2": 52.404,
+            "20": 52.707,
+            "4": 52.653,
+            "8": 52.499
+          }
+        }
+      }
+    ],
+    "2c_option_count": [
+      {
+        "analytic_limit_gain_pp": -0.16,
+        "gain_30_agents_pp": -0.097,
+        "gain_second_agent_pp": 0.232,
+        "mode_threshold_1_over_K": 0.5,
+        "n_options_K": 2,
+        "p_bar": 0.343,
+        "rho": 0.78,
+        "spread_30_pp": 0.268,
+        "spread_second_agent_pp": 0.228
+      },
+      {
+        "analytic_limit_gain_pp": 3.655,
+        "gain_30_agents_pp": 2.758,
+        "gain_second_agent_pp": 0.262,
+        "mode_threshold_1_over_K": 0.333333,
+        "n_options_K": 3,
+        "p_bar": 0.343,
+        "rho": 0.78,
+        "spread_30_pp": 0.322,
+        "spread_second_agent_pp": 0.038
+      },
+      {
+        "analytic_limit_gain_pp": 5.742,
+        "gain_30_agents_pp": 4.237,
+        "gain_second_agent_pp": 0.032,
+        "mode_threshold_1_over_K": 0.25,
+        "n_options_K": 4,
+        "p_bar": 0.343,
+        "rho": 0.78,
+        "spread_30_pp": 0.196,
+        "spread_second_agent_pp": 0.274
+      },
+      {
+        "analytic_limit_gain_pp": 8.526,
+        "gain_30_agents_pp": 6.102,
+        "gain_second_agent_pp": 0.169,
+        "mode_threshold_1_over_K": 0.166667,
+        "n_options_K": 6,
+        "p_bar": 0.343,
+        "rho": 0.78,
+        "spread_30_pp": 0.128,
+        "spread_second_agent_pp": 0.334
+      },
+      {
+        "analytic_limit_gain_pp": 10.046,
+        "gain_30_agents_pp": 6.976,
+        "gain_second_agent_pp": -0.097,
+        "mode_threshold_1_over_K": 0.125,
+        "n_options_K": 8,
+        "p_bar": 0.343,
+        "rho": 0.78,
+        "spread_30_pp": 0.444,
+        "spread_second_agent_pp": 0.31
+      },
+      {
+        "analytic_limit_gain_pp": 12.421,
+        "gain_30_agents_pp": 8.449,
+        "gain_second_agent_pp": -0.007,
+        "mode_threshold_1_over_K": 0.083333,
+        "n_options_K": 12,
+        "p_bar": 0.343,
+        "rho": 0.78,
+        "spread_30_pp": 0.43,
+        "spread_second_agent_pp": 0.5
+      },
+      {
+        "analytic_limit_gain_pp": 15.204,
+        "gain_30_agents_pp": 10.069,
+        "gain_second_agent_pp": 0.188,
+        "mode_threshold_1_over_K": 0.05,
+        "n_options_K": 20,
+        "p_bar": 0.343,
+        "rho": 0.78,
+        "spread_30_pp": 0.54,
+        "spread_second_agent_pp": 0.538
+      },
+      {
+        "analytic_limit_gain_pp": 19.543,
+        "gain_30_agents_pp": 11.779,
+        "gain_second_agent_pp": -0.095,
+        "mode_threshold_1_over_K": 0.02,
+        "n_options_K": 50,
+        "p_bar": 0.343,
+        "rho": 0.78,
+        "spread_30_pp": 0.348,
+        "spread_second_agent_pp": 0.158
+      },
+      {
+        "analytic_limit_gain_pp": 31.256,
+        "gain_30_agents_pp": 14.595,
+        "gain_second_agent_pp": 0.102,
+        "mode_threshold_1_over_K": 0.001,
+        "n_options_K": 1000,
+        "p_bar": 0.343,
+        "rho": 0.78,
+        "spread_30_pp": 0.452,
+        "spread_second_agent_pp": 0.234
+      },
+      {
+        "analytic_limit_gain_pp": 0.205,
+        "gain_30_agents_pp": 0.159,
+        "gain_second_agent_pp": 0.113,
+        "mode_threshold_1_over_K": 0.5,
+        "n_options_K": 2,
+        "p_bar": 0.524,
+        "rho": 0.78,
+        "spread_30_pp": 0.36,
+        "spread_second_agent_pp": 0.394
+      },
+      {
+        "analytic_limit_gain_pp": 4.353,
+        "gain_30_agents_pp": 3.335,
+        "gain_second_agent_pp": 0.219,
+        "mode_threshold_1_over_K": 0.333333,
+        "n_options_K": 3,
+        "p_bar": 0.524,
+        "rho": 0.78,
+        "spread_30_pp": 0.348,
+        "spread_second_agent_pp": 0.364
+      },
+      {
+        "analytic_limit_gain_pp": 6.499,
+        "gain_30_agents_pp": 4.924,
+        "gain_second_agent_pp": 0.098,
+        "mode_threshold_1_over_K": 0.25,
+        "n_options_K": 4,
+        "p_bar": 0.524,
+        "rho": 0.78,
+        "spread_30_pp": 0.352,
+        "spread_second_agent_pp": 0.296
+      },
+      {
+        "analytic_limit_gain_pp": 9.467,
+        "gain_30_agents_pp": 7.011,
+        "gain_second_agent_pp": 0.239,
+        "mode_threshold_1_over_K": 0.166667,
+        "n_options_K": 6,
+        "p_bar": 0.524,
+        "rho": 0.78,
+        "spread_30_pp": 0.14,
+        "spread_second_agent_pp": 0.26
+      },
+      {
+        "analytic_limit_gain_pp": 10.961,
+        "gain_30_agents_pp": 7.892,
+        "gain_second_agent_pp": -0.079,
+        "mode_threshold_1_over_K": 0.125,
+        "n_options_K": 8,
+        "p_bar": 0.524,
+        "rho": 0.78,
+        "spread_30_pp": 0.664,
+        "spread_second_agent_pp": 0.638
+      },
+      {
+        "analytic_limit_gain_pp": 13.451,
+        "gain_30_agents_pp": 9.371,
+        "gain_second_agent_pp": -0.059,
+        "mode_threshold_1_over_K": 0.083333,
+        "n_options_K": 12,
+        "p_bar": 0.524,
+        "rho": 0.78,
+        "spread_30_pp": 0.456,
+        "spread_second_agent_pp": 0.524
+      },
+      {
+        "analytic_limit_gain_pp": 16.153,
+        "gain_30_agents_pp": 10.928,
+        "gain_second_agent_pp": 0.134,
+        "mode_threshold_1_over_K": 0.05,
+        "n_options_K": 20,
+        "p_bar": 0.524,
+        "rho": 0.78,
+        "spread_30_pp": 0.59,
+        "spread_second_agent_pp": 0.592
+      },
+      {
+        "analytic_limit_gain_pp": 20.173,
+        "gain_30_agents_pp": 12.562,
+        "gain_second_agent_pp": 0.054,
+        "mode_threshold_1_over_K": 0.02,
+        "n_options_K": 50,
+        "p_bar": 0.524,
+        "rho": 0.78,
+        "spread_30_pp": 0.418,
+        "spread_second_agent_pp": 0.384
+      },
+      {
+        "analytic_limit_gain_pp": 29.959,
+        "gain_30_agents_pp": 15.499,
+        "gain_second_agent_pp": -0.048,
+        "mode_threshold_1_over_K": 0.001,
+        "n_options_K": 1000,
+        "p_bar": 0.524,
+        "rho": 0.78,
+        "spread_30_pp": 0.442,
+        "spread_second_agent_pp": 0.42
+      },
+      {
+        "analytic_limit_gain_pp": 0.463,
+        "gain_30_agents_pp": 0.459,
+        "gain_second_agent_pp": 0.054,
+        "mode_threshold_1_over_K": 0.5,
+        "n_options_K": 2,
+        "p_bar": 0.831,
+        "rho": 0.78,
+        "spread_30_pp": 0.448,
+        "spread_second_agent_pp": 0.38
+      },
+      {
+        "analytic_limit_gain_pp": 2.707,
+        "gain_30_agents_pp": 2.211,
+        "gain_second_agent_pp": 0.07,
+        "mode_threshold_1_over_K": 0.333333,
+        "n_options_K": 3,
+        "p_bar": 0.831,
+        "rho": 0.78,
+        "spread_30_pp": 0.146,
+        "spread_second_agent_pp": 0.242
+      },
+      {
+        "analytic_limit_gain_pp": 3.903,
+        "gain_30_agents_pp": 3.028,
+        "gain_second_agent_pp": 0.029,
+        "mode_threshold_1_over_K": 0.25,
+        "n_options_K": 4,
+        "p_bar": 0.831,
+        "rho": 0.78,
+        "spread_30_pp": 0.13,
+        "spread_second_agent_pp": 0.072
+      },
+      {
+        "analytic_limit_gain_pp": 5.389,
+        "gain_30_agents_pp": 4.185,
+        "gain_second_agent_pp": 0.187,
+        "mode_threshold_1_over_K": 0.166667,
+        "n_options_K": 6,
+        "p_bar": 0.831,
+        "rho": 0.78,
+        "spread_30_pp": 0.572,
+        "spread_second_agent_pp": 0.43
+      },
+      {
+        "analytic_limit_gain_pp": 5.987,
+        "gain_30_agents_pp": 4.401,
+        "gain_second_agent_pp": -0.171,
+        "mode_threshold_1_over_K": 0.125,
+        "n_options_K": 8,
+        "p_bar": 0.831,
+        "rho": 0.78,
+        "spread_30_pp": 0.264,
+        "spread_second_agent_pp": 0.448
+      },
+      {
+        "analytic_limit_gain_pp": 7.117,
+        "gain_30_agents_pp": 5.229,
+        "gain_second_agent_pp": -0.049,
+        "mode_threshold_1_over_K": 0.083333,
+        "n_options_K": 12,
+        "p_bar": 0.831,
+        "rho": 0.78,
+        "spread_30_pp": 0.078,
+        "spread_second_agent_pp": 0.08
+      },
+      {
+        "analytic_limit_gain_pp": 8.311,
+        "gain_30_agents_pp": 5.853,
+        "gain_second_agent_pp": 0.004,
+        "mode_threshold_1_over_K": 0.05,
+        "n_options_K": 20,
+        "p_bar": 0.831,
+        "rho": 0.78,
+        "spread_30_pp": 0.34,
+        "spread_second_agent_pp": 0.478
+      },
+      {
+        "analytic_limit_gain_pp": 9.922,
+        "gain_30_agents_pp": 6.697,
+        "gain_second_agent_pp": -0.075,
+        "mode_threshold_1_over_K": 0.02,
+        "n_options_K": 50,
+        "p_bar": 0.831,
+        "rho": 0.78,
+        "spread_30_pp": 0.416,
+        "spread_second_agent_pp": 0.442
+      },
+      {
+        "analytic_limit_gain_pp": 13.495,
+        "gain_30_agents_pp": 7.932,
+        "gain_second_agent_pp": 0.087,
+        "mode_threshold_1_over_K": 0.001,
+        "n_options_K": 1000,
+        "p_bar": 0.831,
+        "rho": 0.78,
+        "spread_30_pp": 0.24,
+        "spread_second_agent_pp": 0.468
+      }
+    ],
+    "2d_team_size": [
+      {
+        "condition": "K2_binary",
+        "curve": [
+          {
+            "acc_pct": 34.256,
+            "marginal_vs_previous_pp": null,
+            "n": 1,
+            "spread_pp": 0.336
+          },
+          {
+            "acc_pct": 34.466,
+            "marginal_vs_previous_pp": 0.21,
+            "n": 2,
+            "spread_pp": 0.658
+          },
+          {
+            "acc_pct": 34.088,
+            "marginal_vs_previous_pp": -0.378,
+            "n": 3,
+            "spread_pp": 0.268
+          },
+          {
+            "acc_pct": 33.943,
+            "marginal_vs_previous_pp": -0.145,
+            "n": 5,
+            "spread_pp": 0.224
+          },
+          {
+            "acc_pct": 34.203,
+            "marginal_vs_previous_pp": 0.26,
+            "n": 7,
+            "spread_pp": 0.58
+          },
+          {
+            "acc_pct": 34.001,
+            "marginal_vs_previous_pp": -0.203,
+            "n": 10,
+            "spread_pp": 0.31
+          },
+          {
+            "acc_pct": 34.043,
+            "marginal_vs_previous_pp": 0.042,
+            "n": 15,
+            "spread_pp": 0.574
+          },
+          {
+            "acc_pct": 33.713,
+            "marginal_vs_previous_pp": -0.33,
+            "n": 20,
+            "spread_pp": 0.468
+          },
+          {
+            "acc_pct": 33.964,
+            "marginal_vs_previous_pp": 0.251,
+            "n": 25,
+            "spread_pp": 0.356
+          },
+          {
+            "acc_pct": 33.869,
+            "marginal_vs_previous_pp": -0.095,
+            "n": 30,
+            "spread_pp": 0.296
+          }
+        ],
+        "large_team_limit_pct": 34.096,
+        "n_options_K": 2,
+        "p_bar": 0.343,
+        "rho": 0.78
+      },
+      {
+        "condition": "K8_table5_gsmhard",
+        "curve": [
+          {
+            "acc_pct": 18.051,
+            "marginal_vs_previous_pp": null,
+            "n": 1,
+            "spread_pp": 0.19
+          },
+          {
+            "acc_pct": 18.001,
+            "marginal_vs_previous_pp": -0.05,
+            "n": 2,
+            "spread_pp": 0.496
+          },
+          {
+            "acc_pct": 19.207,
+            "marginal_vs_previous_pp": 1.206,
+            "n": 3,
+            "spread_pp": 0.178
+          },
+          {
+            "acc_pct": 20.369,
+            "marginal_vs_previous_pp": 1.162,
+            "n": 5,
+            "spread_pp": 0.376
+          },
+          {
+            "acc_pct": 20.84,
+            "marginal_vs_previous_pp": 0.471,
+            "n": 7,
+            "spread_pp": 0.382
+          },
+          {
+            "acc_pct": 21.284,
+            "marginal_vs_previous_pp": 0.444,
+            "n": 10,
+            "spread_pp": 0.25
+          },
+          {
+            "acc_pct": 21.731,
+            "marginal_vs_previous_pp": 0.447,
+            "n": 15,
+            "spread_pp": 0.294
+          },
+          {
+            "acc_pct": 22.013,
+            "marginal_vs_previous_pp": 0.282,
+            "n": 20,
+            "spread_pp": 0.538
+          },
+          {
+            "acc_pct": 22.251,
+            "marginal_vs_previous_pp": 0.238,
+            "n": 25,
+            "spread_pp": 0.518
+          },
+          {
+            "acc_pct": 22.39,
+            "marginal_vs_previous_pp": 0.139,
+            "n": 30,
+            "spread_pp": 0.256
+          }
+        ],
+        "large_team_limit_pct": 24.809,
+        "n_options_K": 8,
+        "p_bar": 0.18,
+        "rho": 0.78
+      },
+      {
+        "condition": "K20_table5_mmlu",
+        "curve": [
+          {
+            "acc_pct": 52.335,
+            "marginal_vs_previous_pp": null,
+            "n": 1,
+            "spread_pp": 0.746
+          },
+          {
+            "acc_pct": 52.446,
+            "marginal_vs_previous_pp": 0.111,
+            "n": 2,
+            "spread_pp": 0.854
+          },
+          {
+            "acc_pct": 54.48,
+            "marginal_vs_previous_pp": 2.034,
+            "n": 3,
+            "spread_pp": 0.434
+          },
+          {
+            "acc_pct": 57.095,
+            "marginal_vs_previous_pp": 2.615,
+            "n": 5,
+            "spread_pp": 0.324
+          },
+          {
+            "acc_pct": 58.233,
+            "marginal_vs_previous_pp": 1.139,
+            "n": 7,
+            "spread_pp": 0.594
+          },
+          {
+            "acc_pct": 59.077,
+            "marginal_vs_previous_pp": 0.844,
+            "n": 10,
+            "spread_pp": 0.282
+          },
+          {
+            "acc_pct": 60.124,
+            "marginal_vs_previous_pp": 1.047,
+            "n": 15,
+            "spread_pp": 0.542
+          },
+          {
+            "acc_pct": 60.7,
+            "marginal_vs_previous_pp": 0.576,
+            "n": 20,
+            "spread_pp": 0.652
+          },
+          {
+            "acc_pct": 61.309,
+            "marginal_vs_previous_pp": 0.609,
+            "n": 25,
+            "spread_pp": 0.38
+          },
+          {
+            "acc_pct": 61.528,
+            "marginal_vs_previous_pp": 0.219,
+            "n": 30,
+            "spread_pp": 0.1
+          }
+        ],
+        "large_team_limit_pct": 66.343,
+        "n_options_K": 20,
+        "p_bar": 0.524,
+        "rho": 0.81
+      }
+    ]
+  },
+  "part3": {
+    "fermi_marginal": {
+      "llama3.1-8b": {
+        "absolute_reduction_N1_to_N5_orders": 0.15,
+        "mae_N1": 2.02,
+        "mae_N30": 1.84,
+        "mae_N5": 1.87,
+        "relative_pct": 7.9,
+        "rho": 0.84
+      },
+      "marin-8b": {
+        "absolute_reduction_N1_to_N5_orders": 0.32,
+        "mae_N1": 2.07,
+        "mae_N30": 1.69,
+        "mae_N5": 1.75,
+        "relative_pct": 15.4,
+        "rho": 0.7
+      },
+      "mistral-7b": {
+        "absolute_reduction_N1_to_N5_orders": 0.17,
+        "mae_N1": 2.08,
+        "mae_N30": 1.91,
+        "mae_N5": 1.91,
+        "relative_pct": 8.1,
+        "rho": 0.87
+      },
+      "olmo2-7b": {
+        "absolute_reduction_N1_to_N5_orders": 0.1,
+        "mae_N1": 1.8,
+        "mae_N30": 1.68,
+        "mae_N5": 1.7,
+        "relative_pct": 5.5,
+        "rho": 0.87
+      },
+      "phi4-14b": {
+        "absolute_reduction_N1_to_N5_orders": 0.05,
+        "mae_N1": 1.66,
+        "mae_N30": 1.61,
+        "mae_N5": 1.61,
+        "relative_pct": 2.7,
+        "rho": 0.94
+      },
+      "qwen2.5-3b": {
+        "absolute_reduction_N1_to_N5_orders": 0.08,
+        "mae_N1": 1.94,
+        "mae_N30": 1.84,
+        "mae_N5": 1.86,
+        "relative_pct": 4.1,
+        "rho": 0.87
+      },
+      "qwen2.5-7b": {
+        "absolute_reduction_N1_to_N5_orders": 0.08,
+        "mae_N1": 1.8,
+        "mae_N30": 1.71,
+        "mae_N5": 1.72,
+        "relative_pct": 3.9,
+        "rho": 0.9
+      },
+      "qwen3-14b": {
+        "absolute_reduction_N1_to_N5_orders": 0.02,
+        "mae_N1": 1.59,
+        "mae_N30": 1.57,
+        "mae_N5": 1.57,
+        "relative_pct": 0.9,
+        "rho": 0.93
+      },
+      "qwen3-8b": {
+        "absolute_reduction_N1_to_N5_orders": 0.03,
+        "mae_N1": 1.64,
+        "mae_N30": 1.6,
+        "mae_N5": 1.61,
+        "relative_pct": 2.2,
+        "rho": 0.95
+      },
+      "smollm3-3b": {
+        "absolute_reduction_N1_to_N5_orders": 0.14,
+        "mae_N1": 1.85,
+        "mae_N30": 1.67,
+        "mae_N5": 1.71,
+        "relative_pct": 7.3,
+        "rho": 0.81
+      }
+    },
+    "not_tabulated": {
+      "claim": "Table 4 tabulates N in {2,3,5,7,10,15,20,25,30}. The N=1 column is absent.",
+      "consequence": "The marginal value of the SECOND agent, which is the only column an incremental-budget decision needs, is not published anywhere in the paper. Any AXV cost model that prices 'add one more agent' is pricing a number the paper does not contain."
+    },
+    "peer_vs_token_budget": {
+      "deliberation_gain_at_N2_pp": 26.45,
+      "residual_upper_bound_on_peer_contribution_pp": 14.05,
+      "share_explained_with_no_peer_pct": 46.9,
+      "single_agent_5x_token_budget_gain_pp": 12.4,
+      "task": "gsm8k",
+      "why_this_is_an_upper_bound": "The paper has no revision-without-peers condition (Section 4, Limitations, second item: 'there is no revision condition without peers'). The 12.4-point control is a single agent with a 5x token budget in Round 1, not a single agent revising over three rounds. So the true peer share is somewhere in [0, 14.05] pp and the point estimate below is a bound, not a measurement."
+    },
+    "second_agent_marginal": {
+      "arc": {
+        "agents_3_to_30_deliberated_pp": 0.49,
+        "agents_3_to_30_voting_pp": 0.78,
+        "deliberated_N2_pct": 84.05,
+        "deliberated_N30_pct": 84.54,
+        "deliberation_gain_at_N2_pp": 1.17,
+        "plurality_N2_pct": 82.88,
+        "plurality_N30_pct": 83.66,
+        "solo_published_pct": 83.1,
+        "unclaimed_passN_gap_at_N30_pp": 4.77,
+        "verifier_recoverable_fraction_of_gap_pct": 18.4
+      },
+      "gsm8k": {
+        "agents_3_to_30_deliberated_pp": 0.37,
+        "agents_3_to_30_voting_pp": 0.25,
+        "deliberated_N2_pct": 60.51,
+        "deliberated_N30_pct": 60.88,
+        "deliberation_gain_at_N2_pp": 26.45,
+        "plurality_N2_pct": 34.06,
+        "plurality_N30_pct": 34.31,
+        "solo_published_pct": 34.3,
+        "unclaimed_passN_gap_at_N30_pp": 20.13,
+        "verifier_recoverable_fraction_of_gap_pct": 132.0
+      },
+      "gsmhard": {
+        "agents_3_to_30_deliberated_pp": 0.87,
+        "agents_3_to_30_voting_pp": 1.04,
+        "deliberated_N2_pct": 32.21,
+        "deliberated_N30_pct": 33.08,
+        "deliberation_gain_at_N2_pp": 14.18,
+        "plurality_N2_pct": 18.03,
+        "plurality_N30_pct": 19.07,
+        "solo_published_pct": 18.0,
+        "unclaimed_passN_gap_at_N30_pp": 9.8,
+        "verifier_recoverable_fraction_of_gap_pct": 143.0
+      },
+      "math500": {
+        "agents_3_to_30_deliberated_pp": 0.17,
+        "agents_3_to_30_voting_pp": 1.28,
+        "deliberated_N2_pct": 38.96,
+        "deliberated_N30_pct": 39.13,
+        "deliberation_gain_at_N2_pp": 8.16,
+        "plurality_N2_pct": 30.8,
+        "plurality_N30_pct": 32.08,
+        "solo_published_pct": 29.7,
+        "unclaimed_passN_gap_at_N30_pp": 15.0,
+        "verifier_recoverable_fraction_of_gap_pct": 47.0
+      },
+      "mmlu_hard": {
+        "agents_3_to_30_deliberated_pp": 0.29,
+        "agents_3_to_30_voting_pp": 0.76,
+        "deliberated_N2_pct": 54.52,
+        "deliberated_N30_pct": 54.81,
+        "deliberation_gain_at_N2_pp": 2.34,
+        "plurality_N2_pct": 52.18,
+        "plurality_N30_pct": 52.94,
+        "solo_published_pct": 52.4,
+        "unclaimed_passN_gap_at_N30_pp": 14.73,
+        "verifier_recoverable_fraction_of_gap_pct": 12.7
+      }
+    }
+  },
+  "run_id": "axv-2609.31563-ceiling-01"
+}

@@ -1,0 +1,3 @@
+not-applicable
+
+This run does not use the autoresearch training harness. The claim under test is a bound on a variance decomposition and a limit of a plurality vote, not a claim about model weights, so no train.py was written and no harness commit applies. The run is one self-contained script in this directory plus numpy.

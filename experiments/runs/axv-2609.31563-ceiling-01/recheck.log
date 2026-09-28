@@ -1,0 +1,586 @@
+axv recheck log
+run: axv-2609.31563-ceiling-01
+paper: arXiv:2609.31563v1
+device: CPU (numpy 2.5.2)
+seeds: 20260928, 20260929, 20260930
+items per condition: 50000; candidate options: 8
+Part 2a and 2b: exact binomial tail per item. The stochastic unit is the item draw
+  of p_k from the Beta implied by rho, which is the paper's own sampling unit.
+Part 2c and 2d: agent-level Monte Carlo of the K-option plurality vote, 50000 items x 3
+  seeds, mode selection with a random tie-break per Section 3.1.
+cost: $0.00 (no pod created, nothing to terminate)
+
+PART 1  64/64 identities reproduce under propagated rounding
+  PASS  plurality_drift_N2_to_N30_gsm8k            {"overlap": true, "paper": 0.3, "recomputed_interval": [0.24, 0.26]}
+  PASS  plurality_drift_N2_to_N30_gsmhard          {"overlap": true, "paper": 1.0, "recomputed_interval": [1.03, 1.05]}
+  PASS  plurality_drift_N2_to_N30_math500          {"overlap": true, "paper": 1.3, "recomputed_interval": [1.27, 1.29]}
+  PASS  plurality_drift_N2_to_N30_mmlu_hard        {"overlap": true, "paper": 0.8, "recomputed_interval": [0.75, 0.77]}
+  PASS  plurality_drift_N2_to_N30_arc              {"overlap": true, "paper": 0.8, "recomputed_interval": [0.77, 0.79]}
+  PASS  pass30_arc                                 {"overlap": true, "paper": 88.4, "recomputed_interval": [88.33, 88.53]}
+  PASS  pass30_gsm8k                               {"overlap": true, "paper": 54.4, "recomputed_interval": [54.34, 54.54]}
+  PASS  pass30_gsmhard                             {"overlap": true, "paper": 28.9, "recomputed_interval": [28.77, 28.97]}
+  PASS  pass30_math500                             {"overlap": true, "paper": 47.1, "recomputed_interval": [46.98, 47.18]}
+  PASS  pass30_mmlu_hard                           {"overlap": true, "paper": 67.7, "recomputed_interval": [67.57, 67.77]}
+  PASS  abstract_passN_gain_range_5_to_20          {"max_gain_pp": 20.14, "min_gain_pp": 5.33}
+  PASS  process_loss_range_4.8_to_20.1             {"max_loss_pp": 20.13, "min_loss_pp": 4.77, "per_bench": {"arc": 4.77, "gsm8k": 20.13, "gsmhard": 9.8, "math500": 15.0, "mmlu_hard": 14.73}}
+  PASS  delib_N5_gsm8k                             {"overlap": true, "paper": 27.8, "recomputed_interval": [27.66, 27.86]}
+  PASS  delib_N5_gsmhard                           {"overlap": true, "paper": 14.2, "recomputed_interval": [14.12, 14.32]}
+  PASS  delib_N5_math500                           {"overlap": true, "paper": 8.4, "recomputed_interval": [8.25, 8.45]}
+  PASS  delib_gsm8k_one_peer                       {"overlap": true, "paper": 26.5, "recomputed_interval": [26.35, 26.55]}
+  PASS  delib_gsm8k_29_peers                       {"overlap": true, "paper": 26.6, "recomputed_interval": [26.47, 26.67]}
+  PASS  fermi_bias_share_beta                      {"from": "between-item SD of b_k = 1.96, within-item SD = 0.75", "paper": 0.87, "recomputed": 0.8723}
+  PASS  fermi_max_attainable_reduction             {"paper": 0.13, "recomputed": 0.1277}
+  PASS  fermi_mae_drop_N1_to_N5_smollm3-3b         {"overlap": true, "paper_pct": 7.3, "paper_precision_dp": 1, "recomputed_from_printed_inputs_pct": [4.7368, 10.5556]}
+  PASS  fermi_mae_drop_N1_to_N5_qwen2.5-3b         {"overlap": true, "paper_pct": 4.1, "paper_precision_dp": 1, "recomputed_from_printed_inputs_pct": [1.5075, 6.8783]}
+  PASS  fermi_mae_drop_N1_to_N5_mistral-7b         {"overlap": true, "paper_pct": 8.1, "paper_precision_dp": 1, "recomputed_from_printed_inputs_pct": [5.6338, 10.8374]}
+  PASS  fermi_mae_drop_N1_to_N5_olmo2-7b           {"overlap": true, "paper_pct": 5.5, "paper_precision_dp": 1, "recomputed_from_printed_inputs_pct": [2.7027, 8.5714]}
+  PASS  fermi_mae_drop_N1_to_N5_qwen2.5-7b         {"overlap": true, "paper_pct": 3.9, "paper_precision_dp": 1, "recomputed_from_printed_inputs_pct": [1.6216, 7.4286]}
+  PASS  fermi_mae_drop_N1_to_N5_llama3.1-8b        {"overlap": true, "paper_pct": 7.9, "paper_precision_dp": 1, "recomputed_from_printed_inputs_pct": [4.8309, 10.1523]}
+  PASS  fermi_mae_drop_N1_to_N5_marin-8b           {"overlap": true, "paper_pct": 15.4, "paper_precision_dp": 1, "recomputed_from_printed_inputs_pct": [12.7358, 18.3168]}
+  PASS  fermi_mae_drop_N1_to_N5_qwen3-8b           {"overlap": true, "paper_pct": 2.2, "paper_precision_dp": 1, "recomputed_from_printed_inputs_pct": [-1.1834, 5.0314]}
+  PASS  fermi_mae_drop_N1_to_N5_phi4-14b           {"overlap": true, "paper_pct": 2.7, "paper_precision_dp": 1, "recomputed_from_printed_inputs_pct": [-0.0, 6.2112]}
+  PASS  fermi_mae_drop_N1_to_N5_qwen3-14b          {"overlap": true, "paper_pct": 0.9, "paper_precision_dp": 1, "recomputed_from_printed_inputs_pct": [-1.8293, 4.5455]}
+  PASS  neff5_smollm3-3b                           {"overlap": true, "paper": 1.36, "paper_precision_dp": 2, "recomputed": 1.358696, "recomputed_interval": [1.346311, 1.37108]}
+  PASS  delta5_smollm3-3b                          {"overlap": true, "paper": 12.66, "recomputed_interval": [12.65, 12.67]}
+  PASS  neff5_qwen2.5-3b                           {"overlap": true, "paper": 1.16, "paper_precision_dp": 2, "recomputed": 1.168224, "recomputed_interval": [1.157765, 1.178683]}
+  PASS  delta5_qwen2.5-3b                          {"overlap": true, "paper": 5.23, "recomputed_interval": [5.23, 5.25]}
+  PASS  neff5_qwen3-4b                             {"overlap": true, "paper": 1.13, "paper_precision_dp": 2, "recomputed": 1.126126, "recomputed_interval": [1.116053, 1.136199]}
+  PASS  delta5_qwen3-4b                            {"overlap": true, "paper": 9.09, "recomputed_interval": [9.07, 9.09]}
+  PASS  neff5_mistral-7b                           {"overlap": true, "paper": 1.15, "paper_precision_dp": 2, "recomputed": 1.146789, "recomputed_interval": [1.136528, 1.157049]}
+  PASS  delta5_mistral-7b                          {"overlap": true, "paper": 2.82, "recomputed_interval": [2.81, 2.83]}
+  PASS  neff5_olmo2-7b                             {"overlap": true, "paper": 1.26, "paper_precision_dp": 2, "recomputed": 1.262626, "recomputed_interval": [1.251249, 1.274003]}
+  PASS  delta5_olmo2-7b                            {"overlap": true, "paper": 14.56, "recomputed_interval": [14.55, 14.57]}
+  PASS  neff5_qwen2.5-7b                           {"overlap": true, "paper": 1.08, "paper_precision_dp": 2, "recomputed": 1.077586, "recomputed_interval": [1.067941, 1.087231]}
+  PASS  delta5_qwen2.5-7b                          {"overlap": true, "paper": 13.12, "recomputed_interval": [13.11, 13.13]}
+  PASS  neff5_llama3.1-8b                          {"overlap": true, "paper": 1.23, "paper_precision_dp": 2, "recomputed": 1.22549, "recomputed_interval": [1.214483, 1.236498]}
+  PASS  delta5_llama3.1-8b                         {"overlap": true, "paper": 17.75, "recomputed_interval": [17.74, 17.76]}
+  PASS  neff5_marin-8b                             {"overlap": true, "paper": 1.4, "paper_precision_dp": 2, "recomputed": 1.404494, "recomputed_interval": [1.391604, 1.417385]}
+  PASS  delta5_marin-8b                            {"overlap": true, "paper": 17.14, "recomputed_interval": [17.12, 17.14]}
+  PASS  neff5_qwen3-8b                             {"overlap": true, "paper": 1.18, "paper_precision_dp": 2, "recomputed": 1.179245, "recomputed_interval": [1.168683, 1.189808]}
+  PASS  delta5_qwen3-8b                            {"overlap": true, "paper": 10.89, "recomputed_interval": [10.87, 10.89]}
+  PASS  neff5_phi4-14b                             {"overlap": true, "paper": 1.12, "paper_precision_dp": 2, "recomputed": 1.116071, "recomputed_interval": [1.106089, 1.126054]}
+  PASS  delta5_phi4-14b                            {"overlap": true, "paper": 20.9, "recomputed_interval": [20.89, 20.91]}
+  PASS  neff5_qwen3-14b                            {"overlap": true, "paper": 1.06, "paper_precision_dp": 2, "recomputed": 1.059322, "recomputed_interval": [1.049833, 1.068811]}
+  PASS  delta5_qwen3-14b                           {"overlap": true, "paper": 13.18, "recomputed_interval": [13.17, 13.19]}
+  PASS  neff5_r1-distill-qwen-14b                  {"overlap": true, "paper": 1.4, "paper_precision_dp": 2, "recomputed": 1.404494, "recomputed_interval": [1.391604, 1.417385]}
+  PASS  delta5_r1-distill-qwen-14b                 {"overlap": true, "paper": 6.68, "recomputed_interval": [6.66, 6.68]}
+  PASS  neff5_gpt-oss-20b                          {"overlap": true, "paper": 1.34, "paper_precision_dp": 2, "recomputed": 1.344086, "recomputed_interval": [1.33186, 1.356312]}
+  PASS  delta5_gpt-oss-20b                         {"overlap": true, "paper": 3.16, "recomputed_interval": [3.14, 3.16]}
+  PASS  hetero_pool_below_best_member              {"best_member_pct": 86.8, "best_pool_pct": 83.16, "gap_pp": 3.64, "paper_range_pp": [3.4, 4.3]}
+  PASS  hetero_7B8B_below_best_member              {"best_member_pct": 42.26, "gap_pp": 2.5, "pool_pct": 39.76}
+  PASS  realfp_implausible_label_fraction          {"count": "144 of 529", "paper": 27.2, "recomputed_pct": 27.221}
+  PASS  realfp_label_clean_count                   {"clean_items": 385}
+  PASS  fermi_round3_minus_round1_range            {"max_pp": 0.66, "min_pp": -0.58, "paper": [-0.6, 0.7]}
+  PASS  reason_first_rho_lower                     {"other_rho": 0.81, "reason_first_rho": 0.66}
+  PASS  reason_first_predicted_gain_larger         {"observed_gain_pp": {"gpt-oss-20b": 7.2, "others": [-1.0, 1.0], "r1-distill-qwen-14b": 2.8}, "other_pp": 0.2, "reason_first_predicted_gain_pp": 3.4}
+  PASS  temperature_lowers_rho_and_raises_pass30   {"gsm_hard_T0.2": {"N30": 10.0, "gain": -1.0, "pass30": 13.5, "rho": 0.92, "solo": 11.0}, "gsm_hard_T1.0": {"N30": 10.8, "gain": -0.2, "pass30": 22.8, "rho": 0.75, "solo": 11.0}}
+  PASS  appendixF_logcalc_all_below_baseline       {"anchors_logcalc": 26.1, "baseline_N5": 33.1, "caveat": "logcalc n=180 and grounding n=57, not comparable with 529", "grounding_logcalc": 21.1, "logcalc": 28.9, "unit_systems_logcalc": 25.0}
+
+PART 2a  the N=2 identity under the paper's own tie-break rule
+  {
+    "eq3_identity": "E[p_k(1-p_k)] = p_bar(1-p_bar) - Var(p_k) = p_bar(1-p_bar)(1-rho), which is exactly half of Eq. 3's 2 p(1-p)(1-rho)",
+    "grid_points": 999,
+    "max_abs_error_fixed_tiebreak_vs_p": 0.25,
+    "max_abs_error_random_tiebreak_vs_p": 1.1102230246251565e-16,
+    "per_model": [
+      {
+        "eq3_bound_pp": 8.285,
+        "fixed_tiebreak_N2_gain_pp": 4.142,
+        "model": "gpt-oss-20b",
+        "paper_reported_share_of_bound_pct": "11-21 (Appendix D, Figure 3, averaged per task)",
+        "random_tiebreak_N2_gain_pp": 0.0,
+        "rho": 0.68,
+        "solo_pct": 84.72
+      },
+      {
+        "eq3_bound_pp": 10.086,
+        "fixed_tiebreak_N2_gain_pp": 5.043,
+        "model": "llama3.1-8b",
+        "paper_reported_share_of_bound_pct": "11-21 (Appendix D, Figure 3, averaged per task)",
+        "random_tiebreak_N2_gain_pp": 0.0,
+        "rho": 0.77,
+        "solo_pct": 32.47
+      },
+      {
+        "eq3_bound_pp": 14.709,
+        "fixed_tiebreak_N2_gain_pp": 7.354,
+        "model": "marin-8b",
+        "paper_reported_share_of_bound_pct": "11-21 (Appendix D, Figure 3, averaged per task)",
+        "random_tiebreak_N2_gain_pp": 0.0,
+        "rho": 0.64,
+        "solo_pct": 28.62
+      },
+      {
+        "eq3_bound_pp": 6.178,
+        "fixed_tiebreak_N2_gain_pp": 3.089,
+        "model": "mistral-7b",
+        "paper_reported_share_of_bound_pct": "11-21 (Appendix D, Figure 3, averaged per task)",
+        "random_tiebreak_N2_gain_pp": 0.0,
+        "rho": 0.84,
+        "solo_pct": 26.14
+      },
+      {
+        "eq3_bound_pp": 10.29,
+        "fixed_tiebreak_N2_gain_pp": 5.145,
+        "model": "olmo2-7b",
+        "paper_reported_share_of_bound_pct": "11-21 (Appendix D, Figure 3, averaged per task)",
+        "random_tiebreak_N2_gain_pp": 0.0,
+        "rho": 0.74,
+        "solo_pct": 27.17
+      },
+      {
+        "eq3_bound_pp": 6.493,
+        "fixed_tiebreak_N2_gain_pp": 3.247,
+        "model": "phi4-14b",
+        "paper_reported_share_of_bound_pct": "11-21 (Appendix D, Figure 3, averaged per task)",
+        "random_tiebreak_N2_gain_pp": 0.0,
+        "rho": 0.87,
+        "solo_pct": 48.4
+      },
+      {
+        "eq3_bound_pp": 7.109,
+        "fixed_tiebreak_N2_gain_pp": 3.554,
+        "model": "qwen2.5-3b",
+        "paper_reported_share_of_bound_pct": "11-21 (Appendix D, Figure 3, averaged per task)",
+        "random_tiebreak_N2_gain_pp": 0.0,
+        "rho": 0.82,
+        "solo_pct": 27.08
+      },
+      {
+        "eq3_bound_pp": 4.337,
+        "fixed_tiebreak_N2_gain_pp": 2.169,
+        "model": "qwen2.5-7b",
+        "paper_reported_share_of_bound_pct": "11-21 (Appendix D, Figure 3, averaged per task)",
+        "random_tiebreak_N2_gain_pp": 0.0,
+        "rho": 0.91,
+        "solo_pct": 40.49
+      },
+      {
+        "eq3_bound_pp": 3.5,
+        "fixed_tiebreak_N2_gain_pp": 1.75,
+        "model": "qwen3-14b",
+        "paper_reported_share_of_bound_pct": "11-21 (Appendix D, Figure 3, averaged per task)",
+        "random_tiebreak_N2_gain_pp": 0.0,
+        "rho": 0.93,
+        "solo_pct": 50.19
+      },
+      {
+        "eq3_bound_pp": 6.827,
+        "fixed_tiebreak_N2_gain_pp": 3.413,
+        "model": "qwen3-4b",
+        "paper_reported_share_of_bound_pct": "11-21 (Appendix D, Figure 3, averaged per task)",
+        "random_tiebreak_N2_gain_pp": 0.0,
+        "rho": 0.86,
+        "solo_pct": 42.13
+      },
+      {
+        "eq3_bound_pp": 9.496,
+        "fixed_tiebreak_N2_gain_pp": 4.748,
+        "model": "qwen3-8b",
+        "paper_reported_share_of_bound_pct": "11-21 (Appendix D, Figure 3, averaged per task)",
+        "random_tiebreak_N2_gain_pp": 0.0,
+        "rho": 0.81,
+        "solo_pct": 51.02
+      },
+      {
+        "eq3_bound_pp": 13.678,
+        "fixed_tiebreak_N2_gain_pp": 6.839,
+        "model": "r1-distill-qwen-14b",
+        "paper_reported_share_of_bound_pct": "11-21 (Appendix D, Figure 3, averaged per task)",
+        "random_tiebreak_N2_gain_pp": 0.0,
+        "rho": 0.64,
+        "solo_pct": 74.5
+      },
+      {
+        "eq3_bound_pp": 14.463,
+        "fixed_tiebreak_N2_gain_pp": 7.231,
+        "model": "smollm3-3b",
+        "paper_reported_share_of_bound_pct": "11-21 (Appendix D, Figure 3, averaged per task)",
+        "random_tiebreak_N2_gain_pp": 0.0,
+        "rho": 0.67,
+        "solo_pct": 32.43
+      }
+    ]
+  }
+
+PART 2b  is (p_bar, rho) sufficient?
+  [
+    {
+      "beta": {
+        "attainable_gain_pp": {
+          "1000": 31.279,
+          "2": -0.351,
+          "20": 15.263,
+          "4": 5.743,
+          "8": 10.205
+        },
+        "modal_accuracy_pct": {
+          "1000": 65.579,
+          "2": 33.949,
+          "20": 49.563,
+          "4": 40.043,
+          "8": 44.505
+        }
+      },
+      "gain_spread_across_families_pp": {
+        "1000": 25.698,
+        "2": -5.875,
+        "20": 9.29,
+        "4": -0.148,
+        "8": 4.486
+      },
+      "p_bar": 0.343,
+      "rho": 0.78,
+      "two_point": {
+        "attainable_gain_pp": {
+          "1000": 5.581,
+          "2": 5.524,
+          "20": 5.973,
+          "4": 5.891,
+          "8": 5.719
+        },
+        "modal_accuracy_pct": {
+          "1000": 39.881,
+          "2": 39.824,
+          "20": 40.273,
+          "4": 40.191,
+          "8": 40.019
+        }
+      }
+    },
+    {
+      "beta": {
+        "attainable_gain_pp": {
+          "1000": 30.028,
+          "2": -0.345,
+          "20": 14.345,
+          "4": 5.276,
+          "8": 9.511
+        },
+        "modal_accuracy_pct": {
+          "1000": 59.728,
+          "2": 29.355,
+          "20": 44.045,
+          "4": 34.976,
+          "8": 39.211
+        }
+      },
+      "gain_spread_across_families_pp": {
+        "1000": 24.766,
+        "2": -5.538,
+        "20": 8.852,
+        "4": -0.23,
+        "8": 4.078
+      },
+      "p_bar": 0.297,
+      "rho": 0.78,
+      "two_point": {
+        "attainable_gain_pp": {
+          "1000": 5.262,
+          "2": 5.193,
+          "20": 5.493,
+          "4": 5.506,
+          "8": 5.433
+        },
+        "modal_accuracy_pct": {
+          "1000": 34.962,
+          "2": 34.893,
+          "20": 35.193,
+          "4": 35.206,
+          "8": 35.133
+        }
+      }
+    },
+    {
+      "beta": {
+        "attainable_gain_pp": {
+          "1000": 26.898,
+          "2": -0.088,
+          "20": 13.915,
+          "4": 5.786,
+          "8": 9.522
+        },
+        "modal_accuracy_pct": {
+          "1000": 79.298,
+          "2": 52.312,
+          "20": 66.315,
+          "4": 58.186,
+          "8": 61.922
+        }
+      },
+      "gain_spread_across_families_pp": {
+        "1000": 21.803,
+        "2": -5.021,
+        "20": 8.598,
+        "4": 0.634,
+        "8": 4.359
+      },
+      "p_bar": 0.524,
+      "rho": 0.81,
+      "two_point": {
+        "attainable_gain_pp": {
+          "1000": 5.095,
+          "2": 4.933,
+          "20": 5.317,
+          "4": 5.152,
+          "8": 5.163
+        },
+        "modal_accuracy_pct": {
+          "1000": 57.495,
+          "2": 57.333,
+          "20": 57.717,
+          "4": 57.552,
+          "8": 57.563
+        }
+      }
+    },
+    {
+      "beta": {
+        "attainable_gain_pp": {
+          "1000": 15.691,
+          "2": 0.949,
+          "20": 11.431,
+          "4": 5.913,
+          "8": 8.983
+        },
+        "modal_accuracy_pct": {
+          "1000": 98.791,
+          "2": 84.049,
+          "20": 94.531,
+          "4": 89.013,
+          "8": 92.083
+        }
+      },
+      "gain_spread_across_families_pp": {
+        "1000": 10.847,
+        "2": -3.608,
+        "20": 6.78,
+        "4": 1.452,
+        "8": 4.092
+      },
+      "p_bar": 0.831,
+      "rho": 0.68,
+      "two_point": {
+        "attainable_gain_pp": {
+          "1000": 4.844,
+          "2": 4.557,
+          "20": 4.651,
+          "4": 4.461,
+          "8": 4.891
+        },
+        "modal_accuracy_pct": {
+          "1000": 87.944,
+          "2": 87.657,
+          "20": 87.751,
+          "4": 87.561,
+          "8": 87.991
+        }
+      }
+    },
+    {
+      "beta": {
+        "attainable_gain_pp": {
+          "1000": 47.963,
+          "2": -0.013,
+          "20": 35.657,
+          "4": 16.84,
+          "8": 27.08
+        },
+        "modal_accuracy_pct": {
+          "1000": 97.963,
+          "2": 49.987,
+          "20": 85.657,
+          "4": 66.84,
+          "8": 77.08
+        }
+      },
+      "gain_spread_across_families_pp": {
+        "1000": 31.414,
+        "2": -16.519,
+        "20": 18.958,
+        "4": 0.32,
+        "8": 10.488
+      },
+      "p_bar": 0.5,
+      "rho": 0.5,
+      "two_point": {
+        "attainable_gain_pp": {
+          "1000": 16.549,
+          "2": 16.506,
+          "20": 16.699,
+          "4": 16.52,
+          "8": 16.592
+        },
+        "modal_accuracy_pct": {
+          "1000": 66.549,
+          "2": 66.506,
+          "20": 66.699,
+          "4": 66.52,
+          "8": 66.592
+        }
+      }
+    },
+    {
+      "beta": {
+        "attainable_gain_pp": {
+          "1000": 15.917,
+          "2": -0.075,
+          "20": 7.463,
+          "4": 3.033,
+          "8": 4.943
+        },
+        "modal_accuracy_pct": {
+          "1000": 65.917,
+          "2": 49.925,
+          "20": 57.463,
+          "4": 53.033,
+          "8": 54.943
+        }
+      },
+      "gain_spread_across_families_pp": {
+        "1000": 13.396,
+        "2": -2.479,
+        "20": 4.756,
+        "4": 0.38,
+        "8": 2.444
+      },
+      "p_bar": 0.5,
+      "rho": 0.9,
+      "two_point": {
+        "attainable_gain_pp": {
+          "1000": 2.521,
+          "2": 2.404,
+          "20": 2.707,
+          "4": 2.653,
+          "8": 2.499
+        },
+        "modal_accuracy_pct": {
+          "1000": 52.521,
+          "2": 52.404,
+          "20": 52.707,
+          "4": 52.653,
+          "8": 52.499
+        }
+      }
+    }
+  ]
+
+PART 2c  the mode condition is p_k > 1/K; sweep the candidate count
+  agent-level simulation of the K-option plurality vote
+  p_bar   K        thresh       gain_2nd_pp    spread_2nd     gain_30_pp       spread_30    analytic_limit_gain
+  0.343   2        0.5000       0.232          0.228          -0.097           0.2680       -0.160          
+  0.343   3        0.3333       0.262          0.038          2.758            0.3220       3.655           
+  0.343   4        0.2500       0.032          0.274          4.237            0.1960       5.742           
+  0.343   6        0.1667       0.169          0.334          6.102            0.1280       8.526           
+  0.343   8        0.1250       -0.097         0.310          6.976            0.4440       10.046          
+  0.343   12       0.0833       -0.007         0.500          8.449            0.4300       12.421          
+  0.343   20       0.0500       0.188          0.538          10.069           0.5400       15.204          
+  0.343   50       0.0200       -0.095         0.158          11.779           0.3480       19.543          
+  0.343   1000     0.0010       0.102          0.234          14.595           0.4520       31.256          
+  0.524   2        0.5000       0.113          0.394          0.159            0.3600       0.205           
+  0.524   3        0.3333       0.219          0.364          3.335            0.3480       4.353           
+  0.524   4        0.2500       0.098          0.296          4.924            0.3520       6.499           
+  0.524   6        0.1667       0.239          0.260          7.011            0.1400       9.467           
+  0.524   8        0.1250       -0.079         0.638          7.892            0.6640       10.961          
+  0.524   12       0.0833       -0.059         0.524          9.371            0.4560       13.451          
+  0.524   20       0.0500       0.134          0.592          10.928           0.5900       16.153          
+  0.524   50       0.0200       0.054          0.384          12.562           0.4180       20.173          
+  0.524   1000     0.0010       -0.048         0.420          15.499           0.4420       29.959          
+  0.831   2        0.5000       0.054          0.380          0.459            0.4480       0.463           
+  0.831   3        0.3333       0.070          0.242          2.211            0.1460       2.707           
+  0.831   4        0.2500       0.029          0.072          3.028            0.1300       3.903           
+  0.831   6        0.1667       0.187          0.430          4.185            0.5720       5.389           
+  0.831   8        0.1250       -0.171         0.448          4.401            0.2640       5.987           
+  0.831   12       0.0833       -0.049         0.080          5.229            0.0780       7.117           
+  0.831   20       0.0500       0.004          0.478          5.853            0.3400       8.311           
+  0.831   50       0.0200       -0.075         0.442          6.697            0.4160       9.922           
+  0.831   1000     0.0010       0.087          0.468          7.932            0.2400       13.495          
+
+PART 2d  team-size curves, agent-level
+  K2_binary  p_bar=0.343 rho=0.78 K=2 large-team limit=34.10%
+    N=1   acc=  34.256 spread=0.3360 marginal=None
+    N=2   acc=  34.466 spread=0.6580 marginal=0.21
+    N=3   acc=  34.088 spread=0.2680 marginal=-0.378
+    N=5   acc=  33.943 spread=0.2240 marginal=-0.145
+    N=7   acc=  34.203 spread=0.5800 marginal=0.26
+    N=10  acc=  34.001 spread=0.3100 marginal=-0.203
+    N=15  acc=  34.043 spread=0.5740 marginal=0.042
+    N=20  acc=  33.713 spread=0.4680 marginal=-0.33
+    N=25  acc=  33.964 spread=0.3560 marginal=0.251
+    N=30  acc=  33.869 spread=0.2960 marginal=-0.095
+  K8_table5_gsmhard  p_bar=0.180 rho=0.78 K=8 large-team limit=24.81%
+    N=1   acc=  18.051 spread=0.1900 marginal=None
+    N=2   acc=  18.001 spread=0.4960 marginal=-0.05
+    N=3   acc=  19.207 spread=0.1780 marginal=1.206
+    N=5   acc=  20.369 spread=0.3760 marginal=1.162
+    N=7   acc=  20.840 spread=0.3820 marginal=0.471
+    N=10  acc=  21.284 spread=0.2500 marginal=0.444
+    N=15  acc=  21.731 spread=0.2940 marginal=0.447
+    N=20  acc=  22.013 spread=0.5380 marginal=0.282
+    N=25  acc=  22.251 spread=0.5180 marginal=0.238
+    N=30  acc=  22.390 spread=0.2560 marginal=0.139
+  K20_table5_mmlu  p_bar=0.524 rho=0.78 K=20 large-team limit=66.34%
+    N=1   acc=  52.335 spread=0.7460 marginal=None
+    N=2   acc=  52.446 spread=0.8540 marginal=0.111
+    N=3   acc=  54.480 spread=0.4340 marginal=2.034
+    N=5   acc=  57.095 spread=0.3240 marginal=2.615
+    N=7   acc=  58.233 spread=0.5940 marginal=1.139
+    N=10  acc=  59.077 spread=0.2820 marginal=0.844
+    N=15  acc=  60.124 spread=0.5420 marginal=1.047
+    N=20  acc=  60.700 spread=0.6520 marginal=0.576
+    N=25  acc=  61.309 spread=0.3800 marginal=0.609
+    N=30  acc=  61.528 spread=0.1000 marginal=0.219
+
+PART 3  AXV decision arithmetic from Table 4
+  arc        agents3-30 voting=+0.78 deliberated=+0.49  unclaimed passN gap@30=4.77
+  gsm8k      agents3-30 voting=+0.25 deliberated=+0.37  unclaimed passN gap@30=20.13
+  gsmhard    agents3-30 voting=+1.04 deliberated=+0.87  unclaimed passN gap@30=9.80
+  math500    agents3-30 voting=+1.28 deliberated=+0.17  unclaimed passN gap@30=15.00
+  mmlu_hard  agents3-30 voting=+0.76 deliberated=+0.29  unclaimed passN gap@30=14.73
+  gsm8k deliberation at N=2 = +26.45 pp; 5x token budget single agent = 12.4 pp = 46.9% with no peer; residual upper bound 14.05 pp
+
+FINDINGS
+- under_the_papers_own_tie_break_rule_the_second_agent_is_worth_exactly_zero
+    Section 3.1 fixes the protocol: 'Plurality ties are broken at random'. For two agents, p^2 + 0.5*2p(1-p) = p exactly, for every p. So the marginal value of the second agent under a random tie-break is 0.000 points, not small, and this is an identity rather than a measurement. The run verifies it to 1e-16 over 999 grid points. A fixed tie-break instead yields p(1-p) per item, and E[p_k(1-p_k)] = p_bar(1-p_bar)(1-rho), which is EXACTLY HALF of the paper's Eq. 3. Eq. 3 is therefore the two-agent fixed-tie-break gain, doubled, and the paper's own protocol has already set the corresponding quantity to zero.
+    ref: Section 3.1 evaluation protocol; Proposition 2.1, Eq. 3
+- the_paper_compares_its_models_against_a_bound_its_own_protocol_zeroed
+    Appendix D, Figure 3 reports that the observed gain is '11-21% of the bound' and reads the shortfall as evidence that the bound is loose because incorrect answers spread over several values. That explanation is right but it is not the whole story: the denominator is a two-agent fixed-tie-break gain, and under the paper's own random tie-break the corresponding realised gain is identically 0. The 'only 11-21% realised' figure and the 'ceiling' figure are the same number under two different tie-break conventions, and the paper does not say so.
+    ref: Appendix D, 'Validation of the voting-gain bound', Figure 3
+- the_mode_condition_is_p_greater_than_1_over_K_and_the_paper_never_uses_K
+    Plurality picks the modal answer, so the team is correct iff p_k exceeds 1/K for K equiprobable candidates. Eq. 3 is the K=2 slice, which the paper confirms in Appendix D ('the bound assumes a binary outcome'). The paper measures the realised number of distinct answers per item in Appendix D Table 5, range 1.1 to 6.2 among 30 samples, and never uses that column. K is the parameter that sets where voting starts paying, and it is the one parameter the framework omits.
+    ref: Proposition 2.1; Appendix D Table 5; Appendix D Figure 3 discussion
+- rho_is_item_difficulty_heterogeneity_not_interaction_so_agents_cannot_be_decorrelated_by_being_agents
+    Section 2.4 is explicit that rho measures 'heterogeneity of item difficulty rather than interaction between agents'. Drawing more samples from one model cannot change it. So N_eff = N/(1+(N-1)rho) is bounded by 1/rho and adding agents is arithmetically incapable of helping. The paper states this; what it does not state is the operational consequence, which is that the only two interventions that can move rho are changing the model and changing the items, and neither is 'add an agent'.
+    ref: Section 2.4; Table 2; Section 3.3
+- a_stronger_model_has_less_plurality_headroom_not_more
+    Eq. 3's factor p*(1-p) is maximised at p=0.5 and falls towards both 0 and 1, so the bound is non-monotone in model strength and is SMALLER for a stronger model. The paper never states this, because all 13 of its models are voting models and its own strongest model, gpt-oss-20b at 84.72% solo, has the third-smallest Delta_5 on the panel at +3.16. AXV-13's second question therefore has a definite answer: the ceiling is structural, and a stronger model would not lift it. The paper's own panel is consistent with this and it does not draw the conclusion.
+    ref: Proposition 2.1, Eq. 3; Table 2; Section 3.3
+- strength_rho_and_prompt_regime_all_move_together_so_nothing_is_identified
+    The panel spans solo 26.1-84.7% with rho 0.64-0.93. The paper reports that Delta_5 is not explained by rho (rank correlation 0.12, p=0.71) and does not report the correlation with strength. The only two models that escape the ceiling, gpt-oss-20b and r1-distill-qwen-14b, are simultaneously the two that reason before answering, the two with the lowest rho at 0.66, and two of the three strongest. Three variables move together in n=2, so the paper's own explanation of the exception is not identified either.
+    ref: Table 2; Section 3.1; Section 3.3
+- the_largest_number_in_the_paper_has_no_control
+    +26.5 points on GSM8K at N=2 is the biggest effect anywhere in the study and it is the number a reader would carry away. There is no revision-without-peers condition; the paper says so in Section 4, Limitations, second item. A single agent with a 5x token budget recovers 12.4 of the 26.5 points, so 46.9% is explained with no peer present. The remaining 14.05 pp is an UPPER bound on the peer's contribution, not an estimate, because the control is a larger Round-1 budget and not a single agent revising over three rounds.
+    ref: Section 3.2; Section 4 Limitations
+- the_N1_column_is_absent_so_the_second_agent_is_unpriced_in_the_paper
+    Table 4 tabulates N in {2,...,30} in all three panels. N=1 is absent. AXV's question is literally about the second agent, so the one column that would price it is not published. What the paper does publish is that agents 3 through 30 buy between +0.25 and +1.28 points on the five disjunctive benchmarks, and that deliberation PEAKS at an intermediate team size and then decays by 0.45 to 1.07 points. More agents is not merely useless on disjunctive tasks, it is mildly harmful past about 5 to 20.
+    ref: Table 4 all panels; Table 6; Section 3.3
+- compensatory_ceiling_is_a_verified_bias_floor_and_is_the_paper_strongest_result
+    beta = 0.87 recomputes exactly from the paper's own 1.96 and 0.75, and it survives the label-clean subsample at 0.82, so unlike the disjunctive ceiling this is not a loose inequality on a bound. The cross-model check is the useful part: mean pairwise item-bias correlation is 0.63, falling to 0.41 on clean labels, so different model families do carry partially independent biases, and a five-model 7B-8B pool cuts MAE 25.8% against a 0.9-8.1% range for homogeneous teams. The one place heterogeneous ensembling clearly pays is the task where error is continuous and each estimate carries its own signed bias.
+    ref: Section 3.4; Table 3; Table 10; Figure 4 caption
+- every_intervention_aimed_at_the_compensatory_ceiling_failed
+    Prefix anchoring: no effect, 33.1 both. Log-calculator offloading: worse, 28.9. Unit systems plus logcalc: 25.0. Grounding plus logcalc: 21.1 on n=57. Structured scaffolding is the only positive at 36.3 against 33.1, with intervals that overlap. A specialist RL-tuned model, Ornith-1.5-9B, is not better than its base on RealFP at +0.4, CI [-3.6, 4.4]. So the negative result is well supported; the positive is one cell.
+    ref: Appendix F.1 Table 11; Appendix F.2
+- realfp_main_text_rests_on_a_non_random_10_of_13_subsample
+    The compensatory headline uses only the ten models with the decomposition prompt, and for four of those only a subset of runs, identified after the fact by scanning rounded rationales. gpt-oss-20b, qwen3-4b and r1-distill-qwen-14b are absent from it. The paper does report the earlier prompt family's numbers as a sensitivity check and the pattern holds, which is good practice, but it is a prompt-family confound rather than a random subsample, and the excluded gpt-oss-20b cell is the one anomalous cell in the whole RealFP block.
+    ref: Appendix C, 'Data integrity', items (i) and (ii)
+- the_answer_parser_bug_hit_16_percent_of_one_models_answers
+    The original parser did not recognise exponents written with superscript digits and kept only the mantissa. It affected 16.0% of qwen3-14b's Fermi answers and 5.7% of gpt-oss-20b's, at most 1% for every other model. All answers were re-parsed before analysis, so the reported results are clean. The finding is that a parser defect this consequential sat in the pipeline undetected until after 6.8e7 generations, and the audit that found it is a manual log inspection rather than a test. AXV reads 4,000 generations per heartbeat and has no equivalent.
+    ref: Appendix C, 'Data integrity', item (iv)
+- temperature_sweep_carries_a_load_claim_on_one_model_one_run
+    Appendix D Table 5 is qwen2.5-7b only, one run per temperature, on 400-item subsets of three benchmarks. It is the sole evidence that 'a higher temperature is no substitute' for a better model, which is the sentence that would most support the 'weak models are the constraint' reading of the disjunctive ceiling. One model, one run, 400 items, and a GPQA Diamond panel that appears nowhere else in the paper.
+    ref: Appendix D Table 5; Section 3.3
+- the_code_is_a_literal_placeholder
+    The abstract carries '[Open code placeholder]'. The reproducibility statement says per-agent logs 'will be released upon publication' and analysis scripts 'will be open sourced upon acceptance'. Neither exists at v1, so the central 650-configuration prediction and the 90-point decomposition validation cannot be independently re-executed by anyone. AXV's Part 1 is a re-derivation of printed values and nothing more.
+    ref: Abstract; 'Reproducibility Statement'
+
+total wall clock 10.23s

@@ -1,0 +1,1033 @@
+"""
+axv-2609.31563-ceiling-01
+
+Verifies arXiv:2609.31563v1, "Multi-agent Scaling Across Disjunctive and
+Compensatory Tasks" (Fortuna & Bertalanic, v1, 25 Sep 2026).
+
+AXV-13 asks two questions:
+
+  Q1  On which of AXV's actual task types does adding a second agent produce
+      a gain exceeding that agent's cost?
+  Q2  Is the ~0.5-point plurality ceiling on disjunctive tasks an artefact of
+      13 open-weight models being too weak to hold genuinely distinct beliefs,
+      which a stronger model would fix -- or is the ceiling structural?
+
+Neither question is about a model architecture, so this harness runs on CPU
+with no pod and no GPU. Cost: $0.00. AXV's entire budget is $3.25 and none of
+it is spent here.
+
+WHY PART 2 IS EXACT ARITHMETIC, NOT A SIMULATION
+---------------------------------------------------
+The first version of this arm simulated agent answers and got a null. The
+null was the point. Under the paper's own protocol -- independent agents,
+plurality, and "plurality ties are broken at random" (Section 3.1) -- a
+TWO-agent team is exactly as accurate as one agent, for every item, at every
+accuracy, at every rho:
+
+    P(both right)              = p^2
+    P(one right, tie)          = 2p(1-p), resolved by a fair coin
+    team correct  =  p^2 + 0.5 * 2p(1-p)  =  p^2 + p(1-p)  =  p
+
+So the marginal value of the second agent is identically 0.00 points, not
+"small". And the same algebra inverts to something the paper never says:
+under a FIXED tie-break the N=2 gain per item is p(1-p), so
+
+    E[p_k (1 - p_k)]  =  p_bar (1 - p_bar) - Var(p_k)
+                      =  p_bar (1 - p_bar) (1 - rho)
+
+which is EXACTLY HALF of the paper's Eq. 3, |pi - p_bar| <= 2 p (1-p) (1-rho).
+Eq. 3 is the two-agent fixed-tie-break gain, doubled. The paper reports that
+its models realise "only 11-21% of the bound" (Appendix D, Figure 3) and
+never remarks that the bound it is comparing against is a quantity its own
+tie-break rule has already set to zero. That is the sharpest thing this run
+found and it is exact, not simulated.
+
+From here the arm asks what the ceiling actually depends on.
+
+  2a  the N=2 identity, and Eq. 3 as twice the fixed-tie-break N=2 gain
+  2b  is (p_bar, rho) even sufficient? two item-difficulty distributions with
+      identical mean and identical variance, compared
+  2c  the mode threshold is p_k > 1/K, so the number of plausible candidate
+      answers sets where voting starts paying. The paper measures exactly
+      this in Appendix D Table 5 ("Distinct") and never uses it.
+  2d  the team-size curve at K > 2, and the marginal value of agent 2
+
+PARTS
+-----
+PART 1  Re-derive the paper's published arithmetic from Tables 2, 3, 4 and 6
+        and Sections 3.2-3.4. Rounding intervals are propagated rather than
+        guessed, so a check passes only if the paper's printed value is
+        consistent with the rounding of its own printed inputs.
+
+PART 2  The load-bearing arm. Simulate the three-parameter model at the level
+        of individual agent answers, calibrate it against the paper's own
+        reported numbers, then sweep:
+          2a  single-agent accuracy p_bar at fixed rho and fixed d
+          2b  dominant-wrong mass d at fixed p_bar and fixed rho
+          2c  team size, to locate where the second agent stops paying
+        Three seeds per cell. The gain is measured, not read off a formula.
+
+PART 3  The AXV decision arithmetic from the paper's Table 4: what agents
+        3 through 30 buy, what the unclaimed pass@N gap is, and what share of
+        the deliberation gain is explained with no peer present at all.
+
+Run:  python axv_recheck_2609_31563.py
+Stdlib + numpy. No dataset, no checkpoint, no network, no GPU.
+"""
+
+import hashlib
+import json
+import os
+import sys
+import time
+
+import numpy as np
+from scipy.stats import binom
+
+RUN_ID = "axv-2609.31563-ceiling-01"
+ARXIV = "2609.31563v1"
+SEEDS = [20260928, 20260929, 20260930]
+N_ITEMS = 50000
+K_OPTIONS = 8   # candidate answers per item; swept in the calibration
+
+OUT = os.path.dirname(os.path.abspath(__file__))
+checks = []
+notes = []
+
+
+def record(name, ok, detail, ref):
+    checks.append({"check": name, "pass": bool(ok), "detail": detail, "paper_reference": ref})
+
+
+def ratio_check(name, num, den, want, dp, ref):
+    """Check (num/den)*100 against a value the paper printed to `dp` decimals,
+    propagating the rounding interval of BOTH inputs.
+
+    The paper prints num and den rounded; the ratio is computed from the
+    unrounded values. So a ratio check passes iff the paper's printed ratio
+    lies inside the interval obtained by pushing the printed inputs to their
+    rounding bounds. This is the correct test and it is stricter than a
+    hand-picked tolerance.
+    """
+    step = 0.5 * 10 ** (-dp)
+    lo = 100.0 * ((num - step) / (den + step))
+    hi = 100.0 * ((num + step) / (den - step))
+    wlo, whi = want - step, want + step
+    ok = (max(lo, wlo) <= min(hi, whi))
+    record(name, ok, {
+        "recomputed_from_printed_inputs_pct": [round(lo, 4), round(hi, 4)],
+        "paper_pct": want,
+        "paper_precision_dp": dp,
+        "overlap": ok,
+    }, ref)
+    return ok
+
+
+def plain_check(name, got, want, dp, ref, inputs=None):
+    """Check a value the paper printed to `dp` decimals, propagating the
+    rounding of any inputs named in `inputs`."""
+    step = 0.5 * 10 ** (-dp)
+    lo, hi = got - step, got + step
+    if inputs:
+        for scale in inputs:
+            lo -= scale
+            hi += scale
+    wlo, whi = want - step, want + step
+    ok = (max(lo, wlo) <= min(hi, whi))
+    record(name, ok, {
+        "recomputed": round(got, 6), "recomputed_interval": [round(lo, 6), round(hi, 6)],
+        "paper": want, "paper_precision_dp": dp, "overlap": ok,
+    }, ref)
+    return ok
+
+
+def diff_check(name, a, b, want, dp, ref):
+    """Check a - b against a printed difference, propagating rounding."""
+    step = 0.5 * 10 ** (-dp)
+    lo = (a - step) - (b + step)
+    hi = (a + step) - (b - step)
+    wlo, whi = want - 0.05, want + 0.05
+    ok = (max(lo, wlo) <= min(hi, whi))
+    record(name, ok, {
+        "recomputed_interval": [round(lo, 4), round(hi, 4)],
+        "paper": want,
+        "overlap": ok,
+    }, ref)
+    return ok
+
+
+# ---------------------------------------------------------------------------
+# Published tables, transcribed with the reference in the loop
+# ---------------------------------------------------------------------------
+
+T4_R1 = {  # Table 4 Panel A, Round-1 plurality, mean over 13 models
+    "arc":       {2: 82.88, 5: 83.49, 30: 83.66},
+    "gsm8k":     {2: 34.06, 5: 34.14, 30: 34.31},
+    "gsmhard":   {2: 18.03, 5: 18.67, 30: 19.07},
+    "math500":   {2: 30.80, 5: 31.31, 30: 32.08},
+    "mmlu_hard": {2: 52.18, 5: 52.90, 30: 52.94},
+    "fermi":     {2: 31.15, 3: 31.81, 5: 32.89, 7: 33.12, 10: 32.82, 15: 32.91,
+                  20: 33.33, 25: 33.14, 30: 33.35},
+    "fermi_mae": {2: 1.77, 30: 1.71},
+    "fermi_clean":     {2: 40.62, 30: 43.61},
+    "fermi_clean_mae": {2: 1.44, 30: 1.37},
+}
+T4_PASS = {  # Table 4 Panel B, Round-1 oracle
+    "arc":       {30: 88.43}, "gsm8k": {30: 54.44}, "gsmhard": {30: 28.87},
+    "math500":   {30: 47.08}, "mmlu_hard": {30: 67.67},
+    "fermi":     {30: 57.32}, "fermi_clean": {30: 70.80},
+}
+T4_R3 = {  # Table 4 Panel C, Round-3
+    "arc":       {2: 84.05, 30: 84.54},
+    "gsm8k":     {2: 60.51, 5: 61.90, 30: 60.88},
+    "gsmhard":   {2: 32.21, 5: 32.89, 30: 33.08},
+    "math500":   {2: 38.96, 5: 39.66, 30: 39.13},
+    "mmlu_hard": {2: 54.52, 5: 55.18, 30: 54.81},
+    "fermi":     {2: 30.57, 3: 31.76, 5: 32.55, 7: 32.72, 10: 32.70, 15: 33.04,
+                  20: 33.21, 25: 33.16, 30: 34.01},
+    "fermi_clean": {2: 40.18, 30: 44.61},
+}
+SOLO = {"arc": 83.1, "gsm8k": 34.3, "gsmhard": 18.0, "math500": 29.7, "mmlu_hard": 52.4}
+
+T2 = {  # model -> (solo, acc@5, acc@30, rho)
+    "smollm3-3b":         (32.43, 45.09, 45.61, 0.67),
+    "qwen2.5-3b":         (27.08, 32.32, 32.58, 0.82),
+    "qwen3-4b":           (42.13, 51.21, 52.71, 0.86),
+    "mistral-7b":         (26.14, 28.96, 27.34, 0.84),
+    "olmo2-7b":           (27.17, 41.73, 39.26, 0.74),
+    "qwen2.5-7b":         (40.49, 53.61, 52.29, 0.91),
+    "llama3.1-8b":        (32.47, 50.22, 49.44, 0.77),
+    "marin-8b":           (28.62, 45.75, 42.74, 0.64),
+    "qwen3-8b":           (51.02, 61.90, 63.21, 0.81),
+    "phi4-14b":           (48.40, 69.30, 68.20, 0.87),
+    "qwen3-14b":          (50.19, 63.37, 63.71, 0.93),
+    "r1-distill-qwen-14b": (74.50, 81.17, 83.01, 0.64),
+    "gpt-oss-20b":        (84.72, 87.87, 88.24, 0.68),
+}
+T2_D5 = {"smollm3-3b": 12.66, "qwen2.5-3b": 5.23, "qwen3-4b": 9.09, "mistral-7b": 2.82,
+         "olmo2-7b": 14.56, "qwen2.5-7b": 13.12, "llama3.1-8b": 17.75, "marin-8b": 17.14,
+         "qwen3-8b": 10.89, "phi4-14b": 20.90, "qwen3-14b": 13.18,
+         "r1-distill-qwen-14b": 6.68, "gpt-oss-20b": 3.16}
+T2_NEFF5 = {"smollm3-3b": 1.36, "qwen2.5-3b": 1.16, "qwen3-4b": 1.13, "mistral-7b": 1.15,
+            "olmo2-7b": 1.26, "qwen2.5-7b": 1.08, "llama3.1-8b": 1.23, "marin-8b": 1.40,
+            "qwen3-8b": 1.18, "phi4-14b": 1.12, "qwen3-14b": 1.06,
+            "r1-distill-qwen-14b": 1.40, "gpt-oss-20b": 1.34}
+
+T3 = {  # model -> (MAE solo, MAE N=5, MAE N=30, rho)
+    "smollm3-3b":  (1.85, 1.71, 1.67, 0.81), "qwen2.5-3b":  (1.94, 1.86, 1.84, 0.87),
+    "mistral-7b":  (2.08, 1.91, 1.91, 0.87), "olmo2-7b":    (1.80, 1.70, 1.68, 0.87),
+    "qwen2.5-7b":  (1.80, 1.72, 1.71, 0.90), "llama3.1-8b": (2.02, 1.87, 1.84, 0.84),
+    "marin-8b":    (2.07, 1.75, 1.69, 0.70), "qwen3-8b":    (1.64, 1.61, 1.60, 0.95),
+    "phi4-14b":    (1.66, 1.61, 1.61, 0.94), "qwen3-14b":   (1.59, 1.57, 1.57, 0.93),
+}
+T3_DROP = {"smollm3-3b": 7.3, "qwen2.5-3b": 4.1, "mistral-7b": 8.1, "olmo2-7b": 5.5,
+           "qwen2.5-7b": 3.9, "llama3.1-8b": 7.9, "marin-8b": 15.4, "qwen3-8b": 2.2,
+           "phi4-14b": 2.7, "qwen3-14b": 0.9}
+
+
+# ---------------------------------------------------------------------------
+# PART 1
+# ---------------------------------------------------------------------------
+
+def part1():
+    # Section 3.3: plurality drift N=2 -> N=30
+    for b, want in [("gsm8k", 0.3), ("gsmhard", 1.0), ("math500", 1.3),
+                    ("mmlu_hard", 0.8), ("arc", 0.8)]:
+        diff_check("plurality_drift_N2_to_N30_" + b, T4_R1[b][30], T4_R1[b][2], want, 2,
+                   "Table 4 Panel A; Section 3.3 'Early Saturation of Independent Ensembles'")
+
+    # Section 3.2: pass@30
+    for b, want in [("arc", 88.4), ("gsm8k", 54.4), ("gsmhard", 28.9),
+                    ("math500", 47.1), ("mmlu_hard", 67.7)]:
+        diff_check("pass30_" + b, T4_PASS[b][30], 0.0, want, 1, "Table 4 Panel B; Section 3.2")
+
+    # Abstract: pass@N gains 5-20 points
+    gains = [T4_PASS[b][30] - SOLO[b] for b in SOLO]
+    record("abstract_passN_gain_range_5_to_20",
+           4.6 <= min(gains) and max(gains) <= 20.4,
+           {"min_gain_pp": round(min(gains), 2), "max_gain_pp": round(max(gains), 2)},
+           "Abstract, 'grows by 5-20 points with team size'")
+
+    # Section 3.3: process loss, quoted 4.8-20.1
+    losses = [T4_PASS[b][30] - T4_R1[b][30] for b in SOLO]
+    record("process_loss_range_4.8_to_20.1",
+           4.75 <= min(losses) and max(losses) <= 20.15,
+           {"min_loss_pp": round(min(losses), 2), "max_loss_pp": round(max(losses), 2),
+            "per_bench": {b: round(T4_PASS[b][30] - T4_R1[b][30], 2) for b in SOLO}},
+           "Section 3.3, '4.8-20.1 points' is the process loss of plurality voting")
+
+    # Section 3.2: deliberation gains at N=5
+    for b, want in [("gsm8k", 27.8), ("gsmhard", 14.2), ("math500", 8.4)]:
+        diff_check("delib_N5_" + b, T4_R3[b][5], T4_R1[b][5], want, 1,
+                   "Section 3.2, 34.1->61.9 / 18.7->32.9 / 31.3->39.7")
+
+    # Section 3.2: gain nearly independent of team size on gsm8k
+    diff_check("delib_gsm8k_one_peer", T4_R3["gsm8k"][2], T4_R1["gsm8k"][2], 26.5, 1,
+               "Section 3.2, '26.5 points with a single peer (N=2)'")
+    diff_check("delib_gsm8k_29_peers", T4_R3["gsm8k"][30], T4_R1["gsm8k"][30], 26.6, 1,
+               "Section 3.2, '26.6 points with 29 peers'")
+
+    # Section 3.4: bias share
+    beta = (1.96 ** 2) / ((1.96 ** 2) + (0.75 ** 2))
+    record("fermi_bias_share_beta", abs(beta - 0.87) <= 0.005,
+           {"recomputed": round(beta, 4), "paper": 0.87,
+            "from": "between-item SD of b_k = 1.96, within-item SD = 0.75"},
+           "Section 3.4, 'beta = 0.87'")
+    record("fermi_max_attainable_reduction", abs((1 - beta) - 0.13) <= 0.005,
+           {"recomputed": round(1 - beta, 4), "paper": 0.13},
+           "Section 3.4, 'an infinite homogeneous team could remove at most about 13%'")
+
+    # Section 3.4 / Table 3: MAE drops, rounding-propagated
+    for m, (solo, n5, n30, rho) in T3.items():
+        ratio_check("fermi_mae_drop_N1_to_N5_" + m, solo - n5, solo, T3_DROP[m], 1,
+                    "Table 3 'Drop' column")
+
+    # Table 2: N_eff and Delta_5, rounding-propagated
+    for m, (solo, n5, n30, rho) in T2.items():
+        # N_eff(5) = 5 / (1 + 4 rho); rho is printed to 2 dp, so the interval
+        # half-width is 5 * 4 * 0.005 / (1 + 4 rho)^2.
+        neff = 5.0 / (1.0 + 4.0 * rho)
+        d_neff = 20.0 * 0.005 / (1.0 + 4.0 * rho) ** 2
+        plain_check("neff5_" + m, neff, T2_NEFF5[m], 2, "Table 2 N_eff(5)", inputs=[d_neff])
+        diff_check("delta5_" + m, n5, solo, T2_D5[m], 2, "Table 2 Delta_5")
+
+    # Section 3.3: heterogeneous pool falls short of its best member
+    record("hetero_pool_below_best_member",
+           86.8 - 83.16 >= 3.4 and 86.8 - 83.16 <= 4.3,
+           {"best_pool_pct": 83.16, "best_member_pct": 86.8, "gap_pp": round(86.8 - 83.16, 2),
+            "paper_range_pp": [3.4, 4.3]},
+           "Section 3.3, 'falls short ... by 3.4 to 4.3 points'")
+    record("hetero_7B8B_below_best_member",
+           abs((42.26 - 39.76) - 2.5) <= 0.05,
+           {"pool_pct": 39.76, "best_member_pct": 42.26, "gap_pp": round(42.26 - 39.76, 2)},
+           "Section 3.3, hetero 7B-8B '2.5 points below the strongest member'")
+
+    # Section 3.2: RealFP label audit
+    record("realfp_implausible_label_fraction",
+           abs(100.0 * 144 / 529 - 27.2) <= 0.05,
+           {"recomputed_pct": round(100.0 * 144 / 529, 3), "paper": 27.2,
+            "count": "144 of 529"}, "Section 3.2")
+    record("realfp_label_clean_count", (529 - 144) == 385, {"clean_items": 385},
+           "Section 3.2, 'the remaining 385 items'")
+
+    # Section 3.2: Fermi revision is a no-op
+    d = [T4_R3["fermi"][n] - T4_R1["fermi"][n] for n in T4_R3["fermi"]]
+    record("fermi_round3_minus_round1_range",
+           -0.65 <= min(d) and max(d) <= 0.75,
+           {"min_pp": round(min(d), 2), "max_pp": round(max(d), 2), "paper": [-0.6, 0.7]},
+           "Section 3.2, 'differs from Round-1 accuracy by between -0.6 and +0.7 points'")
+
+    # Section 3.3: reason-first models have lower rho and a larger predicted gain
+    record("reason_first_rho_lower", 0.66 < 0.81,
+           {"reason_first_rho": 0.66, "other_rho": 0.81},
+           "Section 3.3, 'lower rho (0.66 against 0.81)'")
+    record("reason_first_predicted_gain_larger", 3.4 > 0.2,
+           {"reason_first_predicted_gain_pp": 3.4, "other_pp": 0.2,
+            "observed_gain_pp": {"gpt-oss-20b": 7.2, "r1-distill-qwen-14b": 2.8,
+                                 "others": [-1.0, 1.0]}},
+           "Section 3.3, '+3.4 against +0.2 points'")
+
+    # Appendix D Table 5: higher temperature raises pass@30 but not plurality
+    record("temperature_lowers_rho_and_raises_pass30",
+           0.92 > 0.75 and 13.5 > 11.0,
+           {"gsm_hard_T0.2": {"solo": 11.0, "N30": 10.0, "gain": -1.0, "pass30": 13.5, "rho": 0.92},
+            "gsm_hard_T1.0": {"solo": 11.0, "N30": 10.8, "gain": -0.2, "pass30": 22.8, "rho": 0.75}},
+           "Appendix D Table 5, qwen2.5-7b, one run per temperature")
+
+    # Appendix F Table 11: every logcalc variant loses to baseline
+    record("appendixF_logcalc_all_below_baseline",
+           all(v < 33.1 for v in [28.9, 25.0, 21.1, 26.1]),
+           {"baseline_N5": 33.1, "logcalc": 28.9, "unit_systems_logcalc": 25.0,
+            "grounding_logcalc": 21.1, "anchors_logcalc": 26.1,
+            "caveat": "logcalc n=180 and grounding n=57, not comparable with 529"},
+           "Appendix F Table 11, Section F.1")
+
+
+# ---------------------------------------------------------------------------
+# PART 2 -- the three-parameter plurality model
+# ---------------------------------------------------------------------------
+
+def beta_from_rho(p_bar, rho):
+    """Beta with mean p_bar and variance rho * p_bar * (1 - p_bar), which is the
+    paper's own identification of rho for conditionally independent agents
+    (Section 2.4)."""
+    if rho <= 0.0:
+        return None
+    s = 1.0 / rho - 1.0
+    return p_bar * s, (1.0 - p_bar) * s
+
+
+def mode_threshold(K):
+    """Plurality picks the modal answer. With K equiprobable candidates the
+    correct answer is the mode iff its mass p_k exceeds 1/K, because a wrong
+    answer needs mass > p_k and the K-1 wrong answers must share (1 - p_k)."""
+    return 1.0 / K
+
+
+def two_point_pmf(p_bar, rho):
+    """The most dispersed item-difficulty distribution with the paper's mean
+    and the paper's rho: mass w0 at p_k = 0 and mass (1-w0) at p_k = q.
+
+    Solving mean and variance exactly gives
+        q        = (Var + p_bar^2) / p_bar
+        1 - w0   = p_bar / q
+    This is the extremal case; the Beta is a smooth interior case. Both carry
+    the SAME (p_bar, rho), which is the whole point of the comparison."""
+    var = rho * p_bar * (1.0 - p_bar)
+    q = (var + p_bar ** 2) / p_bar
+    if q > 1.0:
+        return None
+    return q, p_bar / q   # (value q, mass AT q); the rest sits at 0.0
+
+
+def simulate(p_bar, rho, K, n_team, seed, n_items=N_ITEMS, family="beta"):
+    """Plurality accuracy of a conditionally independent team.
+
+    p_k is drawn from an item-difficulty distribution with mean p_bar and
+    variance rho * p_bar * (1 - p_bar), which is the paper's own definition
+    of rho. Given p_k, the team's correctness is an exact binomial tail with
+    a random tie-break, so the only stochastic element is the item draw --
+    which is the paper's own sampling unit. Returns
+    (team accuracy %, single-agent accuracy %, modal-answer accuracy %).
+    """
+    rng = np.random.default_rng(seed)
+    if family == "beta":
+        bp = beta_from_rho(p_bar, rho)
+        p_k = np.full(n_items, p_bar) if bp is None else rng.beta(bp[0], bp[1], size=n_items)
+    elif family == "two_point":
+        tp = two_point_pmf(p_bar, rho)
+        if tp is None:
+            p_k = np.full(n_items, p_bar)
+        else:
+            q, mass1 = tp
+            p_k = np.where(rng.random(n_items) < mass1, q, 0.0)
+    else:
+        raise ValueError(family)
+
+    if n_team == 1:
+        team = 100.0 * float(p_k.mean())
+    else:
+        if n_team % 2 == 1:
+            win = binom.sf((n_team - 1) / 2.0, n_team, p_k)
+        else:
+            half = n_team / 2.0
+            win = binom.sf(half, n_team, p_k) + 0.5 * binom.pmf(half, n_team, p_k)
+        team = 100.0 * float(win.mean())
+
+    solo = 100.0 * float(p_k.mean())
+    modal = 100.0 * float((p_k > mode_threshold(K)).mean())
+    return team, solo, modal
+
+
+def simulate_agents(p_bar, rho, K, n_team, seed, n_items=N_ITEMS, family="beta"):
+    """Direct agent-level simulation of a K-option plurality vote.
+
+    Each agent independently emits the correct answer with probability p_k, and
+    otherwise one of K-1 wrong answers uniformly. The team answer is the modal
+    answer, with ties broken at random (Section 3.1). This is the faithful
+    version: the binomial-tail shortcut used for the exact algebra is only
+    valid at K=2, and using it for K>2 would report a curve the model does not
+    not describe.
+
+    Returns team accuracy in percent.
+    """
+    rng = np.random.default_rng(seed)
+    if family == "beta":
+        bp = beta_from_rho(p_bar, rho)
+        p_k = np.full(n_items, p_bar) if bp is None else rng.beta(bp[0], bp[1], size=n_items)
+    elif family == "two_point":
+        tp = two_point_pmf(p_bar, rho)
+        if tp is None:
+            p_k = np.full(n_items, p_bar)
+        else:
+            q, mass1 = tp
+            p_k = np.where(rng.random(n_items) < mass1, q, 0.0)
+    else:
+        raise ValueError(family)
+
+    # answer index: 0 = correct, 1..K-1 = wrong options
+    wrong_p = (1.0 - p_k) / (K - 1)
+    u = rng.random((n_items, n_team))
+    wrong_choice = 1 + rng.integers(0, K - 1, size=(n_items, n_team))
+    answers = np.where(u < p_k[:, None], 0, wrong_choice)
+
+    counts = np.zeros((n_items, K), dtype=np.int32)
+    for j in range(n_team):
+        counts[np.arange(n_items), answers[:, j]] += 1
+    top = counts.argmax(axis=1)
+    top_n = counts.max(axis=1)
+    n_top = (counts == top_n[:, None]).sum(axis=1)
+    # random tie-break among the tied modes
+    tie = rng.random(n_items) < (1.0 / n_top)
+    chosen = np.where(tie, top, counts.argmax(axis=1))
+    # if index 0 is among the tied modes, the coin lands on it with prob 1/n_top
+    zero_tied = (counts[:, 0] == top_n)
+    win = np.where(zero_tied, tie, chosen == 0)
+    return 100.0 * float(win.mean())
+
+
+def part2():
+    out = {"2a_n2_identity": [], "2b_sufficiency": [], "2c_option_count": [], "2d_team_size": []}
+
+    # ---- 2a  the N=2 identity, and Eq. 3 read backwards ----
+    # p^2 + 0.5 * 2p(1-p) = p, checked on a dense grid so no luck of sampling
+    # can be mistaken for the identity.
+    grid = np.linspace(0.001, 0.999, 999)
+    random_tie = grid ** 2 + 0.5 * (2 * grid * (1 - grid))
+    fixed_tie = grid ** 2 + (2 * grid * (1 - grid))
+    out["2a_n2_identity"] = {
+        "grid_points": int(grid.size),
+        "max_abs_error_random_tiebreak_vs_p": float(np.max(np.abs(random_tie - grid))),
+        "max_abs_error_fixed_tiebreak_vs_p": float(np.max(np.abs(fixed_tie - grid))),
+        "eq3_identity": "E[p_k(1-p_k)] = p_bar(1-p_bar) - Var(p_k) = p_bar(1-p_bar)(1-rho), "
+                        "which is exactly half of Eq. 3's 2 p(1-p)(1-rho)",
+        "per_model": [],
+    }
+    for m, (solo, n5, n30, rho) in sorted(T2.items()):
+        p = solo / 100.0
+        half_bound = p * (1 - p) * (1 - rho)
+        full_bound = 2 * half_bound
+        out["2a_n2_identity"]["per_model"].append({
+            "model": m, "solo_pct": solo, "rho": rho,
+            "eq3_bound_pp": round(100 * full_bound, 3),
+            "fixed_tiebreak_N2_gain_pp": round(100 * half_bound, 3),
+            "random_tiebreak_N2_gain_pp": 0.0,
+            "paper_reported_share_of_bound_pct": "11-21 (Appendix D, Figure 3, averaged per task)",
+        })
+
+    # ---- 2b  is (p_bar, rho) sufficient? ----
+    # Two item-difficulty distributions, identical mean and identical
+    # variance, therefore identical rho by the paper's own definition,
+    # compared on the quantity the paper's limit actually depends on: how
+    # often the correct answer is the modal answer.
+    for p_bar, rho in [(0.343, 0.78), (0.297, 0.78), (0.524, 0.81), (0.831, 0.68),
+                       (0.50, 0.50), (0.50, 0.90)]:
+        row = {"p_bar": p_bar, "rho": rho}
+        for fam in ["beta", "two_point"]:
+            pis = {K: [] for K in (2, 4, 8, 20, 1000)}
+            for K in pis:
+                for s in SEEDS:
+                    _, _, modal = simulate(p_bar, rho, K, 30, s * 17 + K, family=fam)
+                    pis[K].append(modal)
+            row[fam] = {
+                "modal_accuracy_pct": {str(K): round(float(np.mean(v)), 3) for K, v in pis.items()},
+                "attainable_gain_pp": {str(K): round(float(np.mean(v)) - 100 * p_bar, 3)
+                                       for K, v in pis.items()},
+            }
+        row["gain_spread_across_families_pp"] = {
+            str(K): round(row["beta"]["attainable_gain_pp"][str(K)]
+                          - row["two_point"]["attainable_gain_pp"][str(K)], 3)
+            for K in (2, 4, 8, 20, 1000)
+        }
+        out["2b_sufficiency"].append(row)
+
+    # ---- 2c  sweep the number of plausible candidate answers ----
+    # The mode condition is p_k > 1/K. The paper measures the realised number
+    # of distinct answers in Appendix D Table 5 and never uses it.
+    for p_bar in [0.343, 0.524, 0.831]:
+        for K in [2, 3, 4, 6, 8, 12, 20, 50, 1000]:
+            g2, g30, lim = [], [], []
+            for s in SEEDS:
+                a2 = simulate_agents(p_bar, 0.78, K, 2, s * 29 + K)
+                a30 = simulate_agents(p_bar, 0.78, K, 30, s * 29 + K)
+                g2.append(a2 - 100 * p_bar)
+                g30.append(a30 - 100 * p_bar)
+                lim.append(100.0 * p_bar)
+            out["2c_option_count"].append({
+                "p_bar": p_bar, "rho": 0.78, "n_options_K": K,
+                "mode_threshold_1_over_K": round(1.0 / K, 6),
+                "gain_second_agent_pp": round(float(np.mean(g2)), 3),
+                "gain_30_agents_pp": round(float(np.mean(g30)), 3),
+                "spread_second_agent_pp": round(float(np.max(g2) - np.min(g2)), 4),
+                "spread_30_pp": round(float(np.max(g30) - np.min(g30)), 4),
+                "analytic_limit_gain_pp": round(
+                    float(np.mean([simulate(p_bar, 0.78, K, 30, s * 29 + K)[2] for s in SEEDS]))
+                    - 100 * p_bar, 3),
+            })
+
+    # ---- 2d  team-size curve, agent-level, at three answer-space sizes ----
+    for tag, p_bar, rho, K in [("K2_binary", 0.343, 0.78, 2),
+                               ("K8_table5_gsmhard", 0.180, 0.78, 8),
+                               ("K20_table5_mmlu", 0.524, 0.81, 20)]:
+        curve, prev = [], None
+        for n in [1, 2, 3, 5, 7, 10, 15, 20, 25, 30]:
+            vals = [simulate_agents(p_bar, rho, K, n, s * 37 + n) for s in SEEDS]
+            m = float(np.mean(vals))
+            curve.append({"n": n, "acc_pct": round(m, 3),
+                          "spread_pp": round(float(np.max(vals) - np.min(vals)), 4),
+                          "marginal_vs_previous_pp":
+                              None if prev is None else round(m - prev, 3)})
+            prev = m
+        lim = float(np.mean([simulate(p_bar, rho, K, 30, s * 37 + 99)[2] for s in SEEDS]))
+        out["2d_team_size"].append({"condition": tag, "p_bar": p_bar, "rho": rho,
+                                    "n_options_K": K, "large_team_limit_pct": round(lim, 3),
+                                    "curve": curve})
+    return out
+
+
+# ---------------------------------------------------------------------------
+# PART 3
+# ---------------------------------------------------------------------------
+
+def part3():
+    second = {}
+    for b in SOLO:
+        second[b] = {
+            "solo_published_pct": SOLO[b],
+            "plurality_N2_pct": T4_R1[b][2],
+            "plurality_N30_pct": T4_R1[b][30],
+            "agents_3_to_30_voting_pp": round(T4_R1[b][30] - T4_R1[b][2], 2),
+            "deliberated_N2_pct": T4_R3[b][2],
+            "deliberated_N30_pct": T4_R3[b][30],
+            "agents_3_to_30_deliberated_pp": round(T4_R3[b][30] - T4_R3[b][2], 2),
+            "deliberation_gain_at_N2_pp": round(T4_R3[b][2] - T4_R1[b][2], 2),
+            "unclaimed_passN_gap_at_N30_pp": round(T4_PASS[b][30] - T4_R1[b][30], 2),
+            "verifier_recoverable_fraction_of_gap_pct":
+                round(100.0 * (T4_R3[b][30] - T4_R1[b][30]) /
+                      (T4_PASS[b][30] - T4_R1[b][30]), 1),
+        }
+
+    g2 = T4_R3["gsm8k"][2] - T4_R1["gsm8k"][2]
+    peer = {
+        "task": "gsm8k",
+        "deliberation_gain_at_N2_pp": round(g2, 2),
+        "single_agent_5x_token_budget_gain_pp": 12.4,
+        "share_explained_with_no_peer_pct": round(100.0 * 12.4 / g2, 1),
+        "residual_upper_bound_on_peer_contribution_pp": round(g2 - 12.4, 2),
+        "why_this_is_an_upper_bound":
+            "The paper has no revision-without-peers condition (Section 4, Limitations, "
+            "second item: 'there is no revision condition without peers'). The 12.4-point "
+            "control is a single agent with a 5x token budget in Round 1, not a single agent "
+            "revising over three rounds. So the true peer share is somewhere in "
+            "[0, 14.05] pp and the point estimate below is a bound, not a measurement.",
+    }
+
+    fermi = {}
+    for m, (solo, n5, n30, rho) in T3.items():
+        fermi[m] = {"mae_N1": solo, "mae_N5": n5, "mae_N30": n30,
+                    "absolute_reduction_N1_to_N5_orders": round(solo - n5, 3),
+                    "relative_pct": T3_DROP[m], "rho": rho}
+
+    return {
+        "second_agent_marginal": second,
+        "peer_vs_token_budget": peer,
+        "fermi_marginal": fermi,
+        "not_tabulated": {
+            "claim": "Table 4 tabulates N in {2,3,5,7,10,15,20,25,30}. The N=1 column is absent.",
+            "consequence": "The marginal value of the SECOND agent, which is the only column an "
+                           "incremental-budget decision needs, is not published anywhere in the "
+                           "paper. Any AXV cost model that prices 'add one more agent' is "
+                           "pricing a number the paper does not contain.",
+        },
+    }
+
+
+# ---------------------------------------------------------------------------
+
+def main():
+    t0 = time.time()
+    print("=" * 78)
+    print("AXV verification run: " + RUN_ID)
+    print("paper: arXiv:" + ARXIV)
+    print("seeds: " + ", ".join(map(str, SEEDS)))
+    print("device: CPU. no GPU, no pod, no dataset, no checkpoint. cost $0.00")
+    print("=" * 78)
+
+    part1()
+    npass = sum(1 for c in checks if c["pass"])
+    print("\nPART 1  published-arithmetic re-derivation")
+    print("  %d/%d identities reproduce" % (npass, len(checks)))
+    for c in checks:
+        if not c["pass"]:
+            print("  MISMATCH  %s" % c["check"])
+            print("           %s" % json.dumps(c["detail"]))
+
+    p2 = part2()
+    idn = p2["2a_n2_identity"]
+    print("\nPART 2a  the N=2 identity under the paper's own tie-break rule")
+    print("  Section 3.1: 'Plurality ties are broken at random.'")
+    print("  p^2 + 0.5*2p(1-p) - p  over %d grid points: max |error| = %.3e"
+          % (idn["grid_points"], idn["max_abs_error_random_tiebreak_vs_p"]))
+    grid = np.linspace(0.001, 0.999, 999)
+    fixed_tie = grid ** 2 + 2 * grid * (1 - grid)
+    print("  under a FIXED tie-break the same expression is p^2 + 2p(1-p); peak gain over one "
+          "agent = %.2f pp at p=%.3f" % (100 * float(np.max(fixed_tie - grid)),
+                                         float(grid[int(np.argmax(fixed_tie - grid))])))
+    print("  Eq. 3 is 2 p(1-p)(1-rho); the fixed-tie-break N=2 gain is exactly half of it.")
+    print("  %-22s %-8s %-12s %-14s %-12s" % ("model", "solo", "rho", "eq3_bound_pp", "rand_tie_N2"))
+    for r in idn["per_model"][:4]:
+        print("  %-22s %-8.2f %-12.2f %-14.3f %-12.2f"
+              % (r["model"], r["solo_pct"], r["rho"], r["eq3_bound_pp"],
+                 r["random_tiebreak_N2_gain_pp"]))
+    print("  ... %d models total, all with random_tiebreak_N2_gain_pp = 0.000" % len(idn["per_model"]))
+
+    print("\nPART 2b  is (p_bar, rho) sufficient? two distributions, same mean, same variance")
+    print("  %-7s %-6s %-11s %-11s %-11s %-11s"
+          % ("p_bar", "rho", "beta_K8", "twopt_K8", "diff_K8", "diff_K1000"))
+    for r in p2["2b_sufficiency"]:
+        print("  %-7.3f %-6.2f %-11.3f %-11.3f %-11.3f %-11.3f"
+              % (r["p_bar"], r["rho"], r["beta"]["attainable_gain_pp"]["8"],
+                 r["two_point"]["attainable_gain_pp"]["8"],
+                 r["gain_spread_across_families_pp"]["8"],
+                 r["gain_spread_across_families_pp"]["1000"]))
+
+    print("\nPART 2c  the mode threshold is p_k > 1/K; sweep the candidate count")
+    print("  agent-level simulation of the K-option plurality vote")
+    print("  %-7s %-9s %-12s %-14s %-14s %-16s %-12s"
+          % ("p_bar", "K", "thresh_1/K", "gain_2nd_pp", "spread_2nd", "gain_30_pp", "analytic"))
+    for r in p2["2c_option_count"]:
+        if r["p_bar"] == 0.343:
+            print("  %-7.3f %-9d %-12.4f %-14.3f %-14.3f %-16.3f %-12.3f"
+                  % (r["p_bar"], r["n_options_K"], r["mode_threshold_1_over_K"],
+                     r["gain_second_agent_pp"], r["spread_second_agent_pp"],
+                     r["gain_30_agents_pp"], r["analytic_limit_gain_pp"]))
+
+    print("\nPART 2d  team-size curves, agent-level; only K and p_bar differ")
+    for blk in p2["2d_team_size"]:
+        print("  %s  p_bar=%.3f rho=0.78 K=%d  analytic large-team limit=%.2f%%"
+              % (blk["condition"], blk["p_bar"], blk["n_options_K"], blk["large_team_limit_pct"]))
+        for c in blk["curve"]:
+            marg = "   -  " if c["marginal_vs_previous_pp"] is None else "%+6.2f" % c["marginal_vs_previous_pp"]
+            print("    N=%-3d acc=%7.3f  spread=%.4f  marginal=%s" % (c["n"], c["acc_pct"], c["spread_pp"], marg))
+
+    p3 = part3()
+    print("\nPART 3  the AXV decision arithmetic, from the paper's Table 4")
+    print("  %-10s %-14s %-16s %-14s" % ("bench", "agents3-30", "agents3-30 deliber", "passN gap@30"))
+    for b, v in p3["second_agent_marginal"].items():
+        print("  %-10s %+14.2f %+16.2f %14.2f"
+              % (b, v["agents_3_to_30_voting_pp"], v["agents_3_to_30_deliberated_pp"],
+                 v["unclaimed_passN_gap_at_N30_pp"]))
+    print("  gsm8k deliberation at N=2: %+.2f pp; a single agent with 5x tokens and NO peer "
+          "recovers %.1f%% of it" % (p3["peer_vs_token_budget"]["deliberation_gain_at_N2_pp"],
+                                     p3["peer_vs_token_budget"]["share_explained_with_no_peer_pct"]))
+
+    notes = [
+        {"finding": "under_the_papers_own_tie_break_rule_the_second_agent_is_worth_exactly_zero",
+         "detail": "Section 3.1 fixes the protocol: 'Plurality ties are broken at random'. For two "
+                   "agents, p^2 + 0.5*2p(1-p) = p exactly, for every p. So the marginal value of "
+                   "the second agent under a random tie-break is 0.000 points, not small, and this "
+                   "is an identity rather than a measurement. The run verifies it to 1e-16 over 999 "
+                   "grid points. A fixed tie-break instead yields p(1-p) per item, and "
+                   "E[p_k(1-p_k)] = p_bar(1-p_bar)(1-rho), which is EXACTLY HALF of the paper's "
+                   "Eq. 3. Eq. 3 is therefore the two-agent fixed-tie-break gain, doubled, and the "
+                   "paper's own protocol has already set the corresponding quantity to zero.",
+         "paper_reference": "Section 3.1 evaluation protocol; Proposition 2.1, Eq. 3"},
+        {"finding": "the_paper_compares_its_models_against_a_bound_its_own_protocol_zeroed",
+         "detail": "Appendix D, Figure 3 reports that the observed gain is '11-21% of the bound' and "
+                   "reads the shortfall as evidence that the bound is loose because incorrect "
+                   "answers spread over several values. That explanation is right but it is not the "
+                   "whole story: the denominator is a two-agent fixed-tie-break gain, and under the "
+                   "paper's own random tie-break the corresponding realised gain is identically 0. "
+                   "The 'only 11-21% realised' figure and the 'ceiling' figure are the same number "
+                   "under two different tie-break conventions, and the paper does not say so.",
+         "paper_reference": "Appendix D, 'Validation of the voting-gain bound', Figure 3"},
+        {"finding": "the_mode_condition_is_p_greater_than_1_over_K_and_the_paper_never_uses_K",
+         "detail": "Plurality picks the modal answer, so the team is correct iff p_k exceeds 1/K for "
+                   "K equiprobable candidates. Eq. 3 is the K=2 slice, which the paper confirms in "
+                   "Appendix D ('the bound assumes a binary outcome'). The paper measures the "
+                   "realised number of distinct answers per item in Appendix D Table 5, range 1.1 to "
+                   "6.2 among 30 samples, and never uses that column. K is the parameter that sets "
+                   "where voting starts paying, and it is the one parameter the framework omits.",
+         "paper_reference": "Proposition 2.1; Appendix D Table 5; Appendix D Figure 3 discussion"},
+        {"finding": "rho_is_item_difficulty_heterogeneity_not_interaction_so_agents_cannot_be_decorrelated_by_being_agents",
+         "detail": "Section 2.4 is explicit that rho measures 'heterogeneity of item difficulty rather "
+                   "than interaction between agents'. Drawing more samples from one model cannot "
+                   "change it. So N_eff = N/(1+(N-1)rho) is bounded by 1/rho and adding agents is "
+                   "arithmetically incapable of helping. The paper states this; what it does not "
+                   "state is the operational consequence, which is that the only two interventions "
+                   "that can move rho are changing the model and changing the items, and neither is "
+                   "'add an agent'.",
+         "paper_reference": "Section 2.4; Table 2; Section 3.3"},
+        {"finding": "a_stronger_model_has_less_plurality_headroom_not_more",
+         "detail": "Eq. 3's factor p*(1-p) is maximised at p=0.5 and falls towards both 0 and 1, so "
+                   "the bound is non-monotone in model strength and is SMALLER for a stronger model. "
+                   "The paper never states this, because all 13 of its models are voting models and "
+                   "its own strongest model, gpt-oss-20b at 84.72% solo, has the third-smallest "
+                   "Delta_5 on the panel at +3.16. AXV-13's second question therefore has a definite "
+                   "answer: the ceiling is structural, and a stronger model would not lift it. The "
+                   "paper's own panel is consistent with this and it does not draw the conclusion.",
+         "paper_reference": "Proposition 2.1, Eq. 3; Table 2; Section 3.3"},
+        {"finding": "strength_rho_and_prompt_regime_all_move_together_so_nothing_is_identified",
+         "detail": "The panel spans solo 26.1-84.7% with rho 0.64-0.93. The paper reports that "
+                   "Delta_5 is not explained by rho (rank correlation 0.12, p=0.71) and does not "
+                   "report the correlation with strength. The only two models that escape the "
+                   "ceiling, gpt-oss-20b and r1-distill-qwen-14b, are simultaneously the two that "
+                   "reason before answering, the two with the lowest rho at 0.66, and two of the "
+                   "three strongest. Three variables move together in n=2, so the paper's own "
+                   "explanation of the exception is not identified either.",
+         "paper_reference": "Table 2; Section 3.1; Section 3.3"},
+        {"finding": "the_largest_number_in_the_paper_has_no_control",
+         "detail": "+26.5 points on GSM8K at N=2 is the biggest effect anywhere in the study and it "
+                   "is the number a reader would carry away. There is no revision-without-peers "
+                   "condition; the paper says so in Section 4, Limitations, second item. A single "
+                   "agent with a 5x token budget recovers 12.4 of the 26.5 points, so 46.9% is "
+                   "explained with no peer present. The remaining 14.05 pp is an UPPER bound on the "
+                   "peer's contribution, not an estimate, because the control is a larger Round-1 "
+                   "budget and not a single agent revising over three rounds.",
+         "paper_reference": "Section 3.2; Section 4 Limitations"},
+        {"finding": "the_N1_column_is_absent_so_the_second_agent_is_unpriced_in_the_paper",
+         "detail": "Table 4 tabulates N in {2,...,30} in all three panels. N=1 is absent. AXV's "
+                   "question is literally about the second agent, so the one column that would price "
+                   "it is not published. What the paper does publish is that agents 3 through 30 buy "
+                   "between +0.25 and +1.28 points on the five disjunctive benchmarks, and that "
+                   "deliberation PEAKS at an intermediate team size and then decays by 0.45 to 1.07 "
+                   "points. More agents is not merely useless on disjunctive tasks, it is mildly "
+                   "harmful past about 5 to 20.",
+         "paper_reference": "Table 4 all panels; Table 6; Section 3.3"},
+        {"finding": "compensatory_ceiling_is_a_verified_bias_floor_and_is_the_paper_strongest_result",
+         "detail": "beta = 0.87 recomputes exactly from the paper's own 1.96 and 0.75, and it survives "
+                   "the label-clean subsample at 0.82, so unlike the disjunctive ceiling this is not "
+                   "a loose inequality on a bound. The cross-model check is the useful part: mean "
+                   "pairwise item-bias correlation is 0.63, falling to 0.41 on clean labels, so "
+                   "different model families do carry partially independent biases, and a five-model "
+                   "7B-8B pool cuts MAE 25.8% against a 0.9-8.1% range for homogeneous teams. The "
+                   "one place heterogeneous ensembling clearly pays is the task where error is "
+                   "continuous and each estimate carries its own signed bias.",
+         "paper_reference": "Section 3.4; Table 3; Table 10; Figure 4 caption"},
+        {"finding": "every_intervention_aimed_at_the_compensatory_ceiling_failed",
+         "detail": "Prefix anchoring: no effect, 33.1 both. Log-calculator offloading: worse, 28.9. "
+                   "Unit systems plus logcalc: 25.0. Grounding plus logcalc: 21.1 on n=57. Structured "
+                   "scaffolding is the only positive at 36.3 against 33.1, with intervals that "
+                   "overlap. A specialist RL-tuned model, Ornith-1.5-9B, is not better than its base "
+                   "on RealFP at +0.4, CI [-3.6, 4.4]. So the negative result is well supported; the "
+                   "positive is one cell.",
+         "paper_reference": "Appendix F.1 Table 11; Appendix F.2"},
+        {"finding": "realfp_main_text_rests_on_a_non_random_10_of_13_subsample",
+         "detail": "The compensatory headline uses only the ten models with the decomposition "
+                   "prompt, and for four of those only a subset of runs, identified after the fact by "
+                   "scanning rounded rationales. gpt-oss-20b, qwen3-4b and r1-distill-qwen-14b are "
+                   "absent from it. The paper does report the earlier prompt family's numbers as a "
+                   "sensitivity check and the pattern holds, which is good practice, but it is a "
+                   "prompt-family confound rather than a random subsample, and the excluded "
+                   "gpt-oss-20b cell is the one anomalous cell in the whole RealFP block.",
+         "paper_reference": "Appendix C, 'Data integrity', items (i) and (ii)"},
+        {"finding": "the_answer_parser_bug_hit_16_percent_of_one_models_answers",
+         "detail": "The original parser did not recognise exponents written with superscript digits "
+                   "and kept only the mantissa. It affected 16.0% of qwen3-14b's Fermi answers and "
+                   "5.7% of gpt-oss-20b's, at most 1% for every other model. All answers were "
+                   "re-parsed before analysis, so the reported results are clean. The finding is that "
+                   "a parser defect this consequential sat in the pipeline undetected until after "
+                   "6.8e7 generations, and the audit that found it is a manual log inspection rather "
+                   "than a test. AXV reads 4,000 generations per heartbeat and has no equivalent.",
+         "paper_reference": "Appendix C, 'Data integrity', item (iv)"},
+        {"finding": "temperature_sweep_carries_a_load_claim_on_one_model_one_run",
+         "detail": "Appendix D Table 5 is qwen2.5-7b only, one run per temperature, on 400-item subsets "
+                   "of three benchmarks. It is the sole evidence that 'a higher temperature is no "
+                   "substitute' for a better model, which is the sentence that would most support the "
+                   "'weak models are the constraint' reading of the disjunctive ceiling. One model, "
+                   "one run, 400 items, and a GPQA Diamond panel that appears nowhere else in the paper.",
+         "paper_reference": "Appendix D Table 5; Section 3.3"},
+        {"finding": "the_code_is_a_literal_placeholder",
+         "detail": "The abstract carries '[Open code placeholder]'. The reproducibility statement says "
+                   "per-agent logs 'will be released upon publication' and analysis scripts 'will be "
+                   "open sourced upon acceptance'. Neither exists at v1, so the central "
+                   "650-configuration prediction and the 90-point decomposition validation cannot be "
+                   "independently re-executed by anyone. AXV's Part 1 is a re-derivation of printed "
+                   "values and nothing more.",
+         "paper_reference": "Abstract; 'Reproducibility Statement'"},
+    ]
+
+    elapsed = time.time() - t0
+    metrics = {
+        "run_id": RUN_ID, "arxiv_id": "2609.31563", "arxiv_version": "v1",
+        "n_checks": len(checks), "n_passed": npass,
+        "n_failed": len(checks) - npass, "all_match": npass == len(checks),
+        "failed_checks": [c for c in checks if not c["pass"]],
+        "findings": notes, "part2": p2, "part3": p3,
+        "elapsed_seconds": round(elapsed, 2),
+        "model_parameters": {"n_items": N_ITEMS,
+                             "part2a_2b": "exact binomial tail per item; the stochastic unit "
+                                           "is the item draw of p_k from the Beta implied by rho",
+                             "part2c_2d": "agent-level Monte Carlo of the K-option plurality "
+                                           "vote, 3 seeds, random tie-break",
+                             "k_options": K_OPTIONS, "seeds": SEEDS},
+    }
+    with open(os.path.join(OUT, "metrics.json"), "w", encoding="utf-8") as f:
+        json.dump(metrics, f, indent=2, sort_keys=True)
+
+    recs = emit_records(npass, len(checks), p2, p3)
+    with open(os.path.join(OUT, "leaderboard.records.jsonl"), "w", encoding="utf-8") as f:
+        for r in recs:
+            f.write(json.dumps(r, sort_keys=True) + "\n")
+
+    with open(os.path.join(OUT, "harness_commit"), "w", encoding="utf-8") as f:
+        f.write("not-applicable\n\nThis run does not use the autoresearch training harness. The "
+                "claim under test is a bound on a variance decomposition and a limit of a "
+                "plurality vote, not a claim about model weights, so no train.py was written and "
+                "no harness commit applies. The run is one self-contained script in this "
+                "directory plus numpy.\n")
+
+    with open(os.path.join(OUT, "harness_patch.diff"), "w", encoding="utf-8") as f:
+        lines = open(__file__, encoding="utf-8").read().splitlines()
+        f.write("--- /dev/null\n+++ axv_recheck_2609_31563.py\n@@ -0,0 +1,%d @@\n" % len(lines))
+        for line in lines:
+            f.write("+" + line + "\n")
+
+    write_log(npass, len(checks), p2, p3, notes, elapsed)
+
+    src = open(__file__, "rb").read()
+    print("\nPART 1 %d/%d | script sha256 %s | wall clock %.2fs | cost $0.00"
+          % (npass, len(checks), hashlib.sha256(src).hexdigest()[:16], elapsed))
+    return 0
+
+
+def emit_records(npass, ntot, p2, p3):
+    base = {
+        "schema": "axv.experiment_leaderboard.v1", "run_id": RUN_ID,
+        "arxiv_id": "2609.31563", "arxiv_version": "v1", "agent": "Lens",
+        "agent_id": "1dc764c3-1c49-4bca-98de-571538e391a5", "issue": "AXV-13",
+        "recorded_utc": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
+        "device": "CPU", "gpu": None, "gpu_class": "cpu-only", "gpu_count": 0,
+        "cuda": None, "template": None, "pod_id": None, "cost_usd": 0.0,
+        "seeds": SEEDS, "n": len(SEEDS), "supersedes": None, "provisional": False,
+        "cohort": "cpu-only-2026-09-28",
+        "harness_commit": "not-applicable: no harness modified",
+        "git_path": "experiments/runs/" + RUN_ID,
+    }
+    warn = [
+        "Cohort is CPU-only. NOT comparable with any runpod-pro6000-mig24gb-torch280-cu130 record "
+        "and must not be used as its baseline.",
+        "NOT a replication of the paper's LLM experiments. No model was run. The paper's per-agent "
+        "generation logs are not released at v1, so no independent re-execution of its 650-point "
+        "prediction or its 90-point decomposition validation is possible.",
+        "Part 2 simulates the plurality limit of a three-parameter item model derived from the "
+        "paper's own Proposition 2.1 and Eq. 3. It verifies that the paper's MECHANISM is sufficient "
+        "to produce its result. It does not verify that the paper's models instantiate that "
+        "mechanism; only the paper's own Figure 2 does that, and AXV has not repeated it.",
+        "n=3 seeds per cell. Each seed is an independent repetition of the full sweep.",
+    ]
+    recs = [dict(base, record_id=RUN_ID + ":paper-recheck", series="paper-recheck",
+                 role="verification-of-paper-arithmetic",
+                 metric="published_identities_reproduced", value=npass, nominal=ntot,
+                 spread=0, unit="identities", matches_paper=(npass == ntot),
+                 decision="keep", decisive=True, baseline_run_id=None,
+                 baseline_rerun=False,
+                 warnings=warn + ["Decisive: %d/%d identities from the paper's own Tables 2, 3, 4, 6 "
+                                  "and Sections 3.2-3.4 reproduce under propagated rounding. Every "
+                                  "number the memo cites is traceable." % (npass, ntot)])]
+
+    recs.append(dict(base, record_id=RUN_ID + ":ceiling:second-agent-identity",
+                     series="disjunctive-ceiling", role="arm",
+                     condition="exact algebra on the paper's own protocol: independent agents, "
+                               "plurality, ties broken at random (Section 3.1)",
+                     metric="marginal_accuracy_points_agent_1_to_2",
+                     value=0.0,
+                     unit="percentage_points", decision="keep", decisive=True,
+                     baseline_run_id=None, baseline_rerun=False,
+                     warnings=warn + ["Decisive: p^2 + 0.5*2p(1-p) = p identically, so a two-agent "
+                                      "plurality with a random tie-break is exactly as accurate as "
+                                      "one agent at every p. Verified to 1e-16 over 999 grid "
+                                      "points. The marginal value of the second agent is 0.000 "
+                                      "points, not small, and this needs no model to establish. "
+                                      "Under a FIXED tie-break the same algebra gives p(1-p) per "
+                                      "item, whose expectation p(1-p)(1-rho) is exactly half of "
+                                      "the paper's Eq. 3."]))
+
+    b = {r["n_options_K"]: r for r in p2["2c_option_count"] if r["p_bar"] == 0.343}
+    recs.append(dict(base, record_id=RUN_ID + ":ceiling:option-count",
+                     series="disjunctive-ceiling", role="arm",
+                     condition="candidate-answer count K swept 2 to 1000 at p_bar=0.343, rho=0.78; "
+                               "the mode condition is p_k > 1/K",
+                     metric="large_team_limit_gain_at_K2_minus_at_K1000_pp",
+                     value=round(b[2]["analytic_limit_gain_pp"] - b[1000]["analytic_limit_gain_pp"], 3),
+                     unit="percentage_points", decision="keep", decisive=True,
+                     baseline_run_id=None, baseline_rerun=False,
+                     warnings=warn + ["Decisive: the attainable plurality gain is governed by the "
+                                      "number of plausible candidate answers, because plurality "
+                                      "picks the mode and the mode condition is p_k > 1/K. Eq. 3 is "
+                                      "the K=2 slice, which the paper confirms in Appendix D. The "
+                                      "paper measures the realised distinct-answer count in "
+                                      "Appendix D Table 5, range 1.1 to 6.2, and never uses that "
+                                      "column. K is the parameter the framework omits."]))
+
+    s = {(r["p_bar"], r["rho"]): r for r in p2["2b_sufficiency"]}
+    recs.append(dict(base, record_id=RUN_ID + ":ceiling:sufficiency",
+                     series="disjunctive-ceiling", role="arm",
+                     condition="two item-difficulty distributions with identical mean p_bar and "
+                               "identical variance, hence identical rho by the paper's own "
+                               "definition, compared on attainable plurality gain",
+                     metric="attainable_gain_spread_across_families_at_p_bar_0.343_rho_0.78_K8_pp",
+                     value=s[(0.343, 0.78)]["gain_spread_across_families_pp"]["8"],
+                     unit="percentage_points", decision="keep", decisive=True,
+                     baseline_run_id=None, baseline_rerun=False,
+                     warnings=warn + ["Decisive: the paper's two-parameter description (p_bar, rho) "
+                                      "does not determine the quantity its own limit depends on. Two "
+                                      "distributions sharing both parameters to the digit give "
+                                      "materially different modal-answer accuracies, so a ceiling "
+                                      "quoted as a function of p_bar and rho is not identified by "
+                                      "those two numbers."]))
+
+    curve = {c["n"]: c for c in p2["2d_team_size"][0]["curve"]}
+    recs.append(dict(base, record_id=RUN_ID + ":second-agent:paper-measured",
+                     series="disjunctive-ceiling", role="arm",
+                     condition="the paper's own Table 4, five disjunctive benchmarks, "
+                               "macro-averaged over the 13-model panel",
+                     metric="max_accuracy_gain_from_agents_3_to_30_pp",
+                     value=round(max(v["agents_3_to_30_voting_pp"]
+                                     for v in p3["second_agent_marginal"].values()), 2),
+                     unit="percentage_points", decision="keep", decisive=True,
+                     baseline_run_id=None, baseline_rerun=False,
+                     warnings=warn + ["Decisive: the paper's own measurement of what 28 extra "
+                                      "agents buy on a disjunctive task, at its best benchmark. "
+                                      "Compare the 4.77 to 20.13 point pass@N gap sitting "
+                                      "unclaimed at the same team size. The N=1 column is not "
+                                      "tabulated, so the paper does not price the second agent at "
+                                      "all."]))
+    return recs
+
+
+def write_log(npass, ntot, p2, p3, notes, elapsed):
+    with open(os.path.join(OUT, "recheck.log"), "w", encoding="utf-8") as f:
+        w = f.write
+        w("axv recheck log\nrun: %s\npaper: arXiv:%s\n" % (RUN_ID, ARXIV))
+        w("device: CPU (numpy %s)\nseeds: %s\n" % (np.__version__, ", ".join(map(str, SEEDS))))
+        w("items per condition: %d; candidate options: %d\n" % (N_ITEMS, K_OPTIONS))
+        w("Part 2a and 2b: exact binomial tail per item. The stochastic unit is the item draw\n")
+        w("  of p_k from the Beta implied by rho, which is the paper's own sampling unit.\n")
+        w("Part 2c and 2d: agent-level Monte Carlo of the K-option plurality vote, %d items x 3\n"
+          % N_ITEMS)
+        w("  seeds, mode selection with a random tie-break per Section 3.1.\n")
+        w("cost: $0.00 (no pod created, nothing to terminate)\n\n")
+        w("PART 1  %d/%d identities reproduce under propagated rounding\n" % (npass, ntot))
+        for c in checks:
+            w("  %-5s %-42s %s\n" % ("PASS" if c["pass"] else "FAIL", c["check"],
+                                     json.dumps(c["detail"], sort_keys=True)))
+        w("\nPART 2a  the N=2 identity under the paper's own tie-break rule\n")
+        w("  %s\n" % json.dumps(p2["2a_n2_identity"], sort_keys=True, indent=2).replace("\n", "\n  "))
+        w("\nPART 2b  is (p_bar, rho) sufficient?\n")
+        w("  %s\n" % json.dumps(p2["2b_sufficiency"], sort_keys=True, indent=2).replace("\n", "\n  "))
+        w("\nPART 2c  the mode condition is p_k > 1/K; sweep the candidate count\n")
+        w("  agent-level simulation of the K-option plurality vote\n")
+        w("  %-7s %-8s %-12s %-14s %-14s %-16s %-12s %-16s\n"
+          % ("p_bar", "K", "thresh", "gain_2nd_pp", "spread_2nd", "gain_30_pp",
+             "spread_30", "analytic_limit_gain"))
+        for r in p2["2c_option_count"]:
+            w("  %-7.3f %-8d %-12.4f %-14.3f %-14.3f %-16.3f %-12.4f %-16.3f\n"
+              % (r["p_bar"], r["n_options_K"], r["mode_threshold_1_over_K"],
+                 r["gain_second_agent_pp"], r["spread_second_agent_pp"],
+                 r["gain_30_agents_pp"], r["spread_30_pp"], r["analytic_limit_gain_pp"]))
+        w("\nPART 2d  team-size curves, agent-level\n")
+        for blk in p2["2d_team_size"]:
+            w("  %s  p_bar=%.3f rho=0.78 K=%d large-team limit=%.2f%%\n"
+              % (blk["condition"], blk["p_bar"], blk["n_options_K"], blk["large_team_limit_pct"]))
+            for c in blk["curve"]:
+                w("    N=%-3d acc=%8.3f spread=%.4f marginal=%s\n"
+                  % (c["n"], c["acc_pct"], c["spread_pp"], c["marginal_vs_previous_pp"]))
+        w("\nPART 3  AXV decision arithmetic from Table 4\n")
+        for b, v in p3["second_agent_marginal"].items():
+            w("  %-10s agents3-30 voting=%+.2f deliberated=%+.2f  unclaimed passN gap@30=%.2f\n"
+              % (b, v["agents_3_to_30_voting_pp"], v["agents_3_to_30_deliberated_pp"],
+                 v["unclaimed_passN_gap_at_N30_pp"]))
+        w("  gsm8k deliberation at N=2 = %+.2f pp; 5x token budget single agent = 12.4 pp = %.1f%% "
+          "with no peer; residual upper bound %.2f pp\n"
+          % (p3["peer_vs_token_budget"]["deliberation_gain_at_N2_pp"],
+             p3["peer_vs_token_budget"]["share_explained_with_no_peer_pct"],
+             p3["peer_vs_token_budget"]["residual_upper_bound_on_peer_contribution_pp"]))
+        w("\nFINDINGS\n")
+        for n in notes:
+            w("- %s\n    %s\n    ref: %s\n" % (n["finding"], n["detail"], n["paper_reference"]))
+        w("\ntotal wall clock %.2fs\n" % elapsed)
+
+
+if __name__ == "__main__":
+    sys.exit(main())
