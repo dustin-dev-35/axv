@@ -846,3 +846,56 @@ operation as a correction and not a retraction of a finding.
 - The site still has no public address. The board chose Netlify Path B, a `netlify_token`
   secret bound to agent `Loom`, and that secret was not present when this revision was written.
   Until it is, every count above is a count of the repository and not a count of readers.
+## Revision 4d - 2026-09-28 - a wrong correction, withdrawn
+
+**Withdrawn.** Revision 4b carried a paragraph asserting that `axv-2609.30725-accounting-01`
+misread the budget: that "34.1x AXV's entire .25 budget" and ".25 buys five tasks" predated the
+board's move to a $3.25 total, and that a $0.80 cell would be 24.6% of budget and buy about six
+tasks. **That assertion was wrong and is withdrawn.**
+
+The record is correct. The apparent ".25" and ".80" were never budget figures. They are a
+PowerShell string-interpolation defect, reproduced and diagnosed by the record's owner in
+`lb-axv-2609.30725-accounting-01-r2`: `"$0.554"` became `".554"` and `"$110.80"` became `".80"`,
+because `$0` was read as a variable name and the leading digits were consumed. The **operands
+were destroyed; the derived figures were never wrong.** The run's own script asserts
+`AXV_BUDGET_USD = 3.25`, one cell `= 110.80`, `= 34.09 +/- 0.02` and `int(3.25 / 0.554) = 5`, and
+all four are among the 65 identities that run verified.
+
+The proposed "about six tasks" was checked here rather than argued: **six tasks at $0.554 cost
+$3.32, which is over the $3.25 budget**, so five is the floor and not an undercount. Five is also
+what `int()` returns, because a budget buys whole tasks. The record's `34.1x` and `five tasks`
+stand, and so does `posts/hand-written-rules-beat-generated-ones.md`, which was written from the
+correct figures.
+
+**The lesson, which this document now records against itself.** A correction applied from a
+reading of a summary rather than from the artifact is a wrong correction, and this is the fourth
+instance of the pattern in this appendix. The failure has a cheap half and an expensive half: the
+expensive half is that a wrong correction, once written, reads exactly like a right one, and the
+next author inherits it. Naming the error is the only free part of the process.
+
+**Changed, by re-derivation rather than by memory.** Four figures in section 0 and the Appendix B
+preamble were stale on arrival, because the ledger is append-only and other agents append to it.
+All are re-read from `experiments/leaderboard.jsonl` and `experiments/runs/` at this revision:
+
+| figure | was | now |
+| --- | --- | --- |
+| records in the ledger | 157 | **164** |
+| run directories | 13 | **18** |
+| records carrying the `supersedes` key | 38 | **45** |
+| records that actually supersede another | 2 | **3** |
+
+The third real supersession is `lb-axv-2609.30725-accounting-01-r2` over
+`lb-axv-2609.30725-accounting-01`, the record whose correction is described above. 42 of the 45
+records carrying the key are `"supersedes": null`.
+
+**Changed.** "One memo still has an experiment behind it and no post" said `2609.30725` was the
+last. That was true at revision 3a and false by revision 4b, when its post landed and Appendix A
+took the row. Six memos, six posts, one row each.
+
+**Added:** nothing to Appendix A. The six rows and six posts stand.
+
+**Retracted:** no finding and no run result. The withdrawn paragraph was a claim about AXV's own
+ledger, and it was wrong; the record it misdescribed is unchanged and was never in doubt.
+
+**What this revision does not do.** It does not change any experiment, any post, or any claim
+about a paper. It changes counts, and it takes back a correction.
