@@ -201,3 +201,70 @@ Provision one pod on the board-set instance, `1x PRO 6000 MIG 24GB`, run
 `...-a02-s1337/` plus the merged `leaderboard.jsonl` in the same commit, then
 terminate the pod and verify `list-pods` is empty. Call `list-pods` **before**
 provisioning in case the retry left something behind.
+
+## 8. Addendum, second heartbeat: blocker audit and the operational risks
+
+The batch did not run. The Runpod surface was still unbound, and this section records
+what was verified about that, so the next run does not repeat the checks and so the
+excluded alternatives are not relitigated.
+
+### 8.1 The blocker, verified two ways
+
+`PAPERCLIP_RUNTIME_TOOLS_AVAILABLE` is `connections_search,connection_request`. A live
+`tools/list` POST to `/mcp/runtime-tools` returns those same two tools. `connection_request`
+for `runpod` returns `state: ready` with the same "a native continuation will refresh tools
+if needed" instruction it returned last run. Ready is not bound; the distinction is the
+whole problem.
+
+### 8.2 No pod leaked, and this is now an audit
+
+The earlier claim rested on zeroed counters. The prior run's full transcript
+(`a444fabf-3cf4-4d86-9763-4839fa393e52.ndjson`, 650 KB, 179 records) was read and every tool
+call enumerated: `read`, `bash`, `write`, and no Runpod tool. The one `PodRequest` match is
+inside the prior run's own quoted schema prose, not an outbound call. Neither heartbeat
+provisioned a pod. `list-pods` is still not callable, so the pod list itself stays unread;
+the gain is that the only two heartbeats that could have leaked are now known not to have.
+
+### 8.3 Alternatives excluded, so nobody re-derives them
+
+- **Runpod REST directly.** No `RUNPOD_API_KEY` in the environment, in
+  `.paperclip/instances/default/secrets/`, or in any runpod config path. No route exists.
+- **The local GPU.** This box has an RTX 4060 Ti, 16 GB. Wrong GPU class, below the 24 GB
+  VRAM ceiling, and a substitution section 10.1 forbids without board approval. It is also
+  useless *here*: these arms exist to give a same-cohort between-architecture comparison
+  against `2609.31098-a00-s1337` in cohort `gpu-pro6000mig24gb-torch280-deff-seedvar-20260928`,
+  and rule 4.7 forbids comparing across cohorts. A 4060 Ti number would be a worse answer
+  than no answer, not a cheaper one.
+
+### 8.4 Correction to section 3's threshold
+
+Section 3 states 46 minutes as the minimum envelope for all three arms. The true threshold
+is **46 to 47 minutes**, and it moves with the `d16` estimate: `d16=933` gives 2759 s and 46
+minutes, `d16=937` gives 2763 s and 47 minutes. The conclusion is unchanged because 50 covers
+both, but the earlier figure was stated more precisely than the evidence supports. The
+simulated table in section 3 reproduces exactly: `need_sec=943`, a02 trimmed at 44 and 45,
+all three surviving at 46 and above.
+
+### 8.5 Run it at 50, not 45
+
+The issue text says `AXV_BUDGET_MINUTES=45`; the committed script defaults to **50**. At 45
+the `gamma=0.5` arm is trimmed by the guard, and that is the arm which tests whether the
+estimator responds to a known effect. At 45 the batch spends the money and loses the
+control. Run at 50 or do not run.
+
+### 8.6 Billing has no idle timeout, so terminate is the only stop
+
+The RunPod v2 `CreatePodRequest` schema has no `stopIdle`, no `timeout` and no
+auto-terminate field, and `update-pod` has none either. **An explicit `pod-action terminate`
+is the only mechanism that stops billing.** The pod cannot defend itself, because
+self-termination would require the API key on the pod, which the issue correctly forbids.
+This is therefore a procedure duty and not a code fix: provision last, terminate first on
+the next run, and treat a heartbeat that dies between the two as the worst case in the
+budget, because it spends all of it.
+
+### 8.7 Toolchain note for the next run
+
+The system `bash` on this box is broken (WSL VHD missing) and the Paperclip `git` is a node
+shim with no shell tooling. Use `F:\ProgramData\Git\bin\bash.exe` for `bash -n`. Both
+`run_batch_2609_31098_axv60.sh` and `run_batch_2609_31098_seedvar.sh` were re-checked
+against a fresh clone at `e674e81` and both pass.
