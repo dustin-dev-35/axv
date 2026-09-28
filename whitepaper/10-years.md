@@ -1,7 +1,7 @@
 ---
 title: "10 Years in 1 Paper"
 description: "The AXV decade compression: what the field believed, what turned on it, what it cost, and what did not work."
-revision: 4
+revision: 4a
 date: 2026-09-28
 corpus_posts: 5
 corpus_memos: 6
@@ -11,6 +11,24 @@ date_range: 2026-09-25 to 2026-09-28
 ---
 
 # 10 Years in 1 Paper
+
+*Revision 4a. Five published posts, six papers read, thirteen experiment series in the ledger
+across 157 records. This revision finishes the correction revision 1 began, in the sections
+revision 1 started it in. Revision 1 retracted the claim that the 2609.30721v1 headline was
+conditional on an unreleased data-generating process; the retraction was correct, and what it
+left behind was worse, because it presented **7.27%** as a settled figure. The fourth
+verification arm shows the paper's *diagnosis* is robust across four independent generators —
+plain i.i.d. at 75% overlap anywhere in **16.8%–21.9%** — while its *remedy* is not, with
+session-centred Bartlett-HAC anywhere in **7.25%–11.6%**, a 4.4-point spread that is **1.6× the
+entire width** of the interval-widening effect the paper draws from that same number. Sections
+2, 4, 5 and 6 carried the constant where they should have carried the band. A units correction
+travels with it and is arithmetic rather than empirical: `G_info` is a **variance** ratio, so
+the published 1.75×–1.94× is **1.27×–1.68× in standard-error terms, never 2×**. **The four
+generators are matched at the paper's operating point, not at matched dependence or matched
+window geometry**, so the claim this document carries is the narrowed one: at the paper's own
+operating point the i.i.d. figure is robust and the corrected figure is not, and outside that
+operating point neither number holds, in either direction. Section 2 keeps its single entry,
+because narrowing an entry is not a second one.*
 
 *Revision 4. Five published posts, six papers read, thirteen experiment runs in the ledger
 across 157 records. This revision writes the Appendix A row that revision 3a named as a gap and
@@ -55,7 +73,7 @@ every line how little is behind that line.*
 | --- | --- | --- |
 | papers triaged | 6 | AXV first reading batch, 2026-09-28 |
 | papers read | 6 | memos filed in `corpus/`: `2609.30721`, `2609.30725`, `2609.30768`, `2609.31098`, `2609.31381`, `2609.31563` |
-| memo files in `corpus/` | 13 | 6 papers, several carrying more than one file; `corpus/2609.30721.reconciliation.md` and the three `*.landing.md` files say which answers which |
+| memo files in `corpus/` | **15** | 6 papers, several carrying more than one file; `corpus/2609.30721.reconciliation.md` and the three `*.landing.md` files say which answers which. Revision 4 and revision 4a both said **13**, and it was already wrong at the commit revision 4 named: `git ls-tree 48ac942 corpus/` returns **14**. The fifteenth is `corpus/2609.31381.axv-46-addendum.md`, added in `33113d1` after revision 4 was written |
 | memos filed in Notion | **0** | Notion connector not exposed to agent runs, [AXV-19](/AXV/issues/AXV-19) |
 | memos filed in Supabase `corpus_index` | **0** | Supabase connector not exposed to agent runs |
 | posts published | 5 | `overlapping-eval-windows-are-not-independent-tests` (**corrected 2026-09-28**), `completed-pairs-hide-capped-failures`, `low-effective-depth-is-residual-arithmetic`, `thinking-5x-asymmetry-is-your-baseline`, `a-second-plurality-voter-is-worth-zero` |
@@ -512,7 +530,7 @@ un.json, on a seed namespace disjoint from the paper's. 16.80% i.i.d. against 7.
 | `axv-2609.30725-accounting-01` | 2609.30725v1 | `cpu-only-arithmetic-rederivation-20260928` | Published identities matched | 1 record, 65 identities, 0 seeds | 0 s | $0.00 | **provisional** — 65/65 arithmetic identities hold; the paper's causal claims are not verified and are not verifiable at this budget |
 | `axv-2609.30768-asymmetry-01` | 2609.30768v1 | `cpu-only-arithmetic-rederivation-20260928` | Published cell counts matched, and the created/resolved ratio `c/b` decomposed into a nothink baseline factor F and a thinking transition factor G | 1 record, 9 identities, 0 seeds | 660 s | $0.00 | **keep** — 9/9 identities hold, and the result is that `c/b` is **not** a property of thinking: 80% of its log-variance comes from F, a property of the non-thinking arm on three tabular datasets, and the per-cell ratios span **2.41× to 48.3×** (median 4.92) against a pooled 5.66. The surviving nine-of-nine finding is G < 1 — thinking returns an already-flipping pair to agreement 6× to 45× more often than it flips an agreeing one. A GPU run was declined on the record: a 32B AWQ model does not fit the 24 GB board-set instance with the KV cache these traces need |
 | `axv-2609.31563-ceiling-01` | 2609.31563v1 | `cpu-only-2026-09-28` | Attainable plurality gain in percentage points | 5 records, 3 seeds (20260928/29/30) | 10.2 s | $0.00 | **keep** — a second plurality voter is worth exactly **0.000** points. It was itemised here before its paper had a post, which revisions 2 and 3 both named as a gap and revision 3a named again; the gap is closed in revision 4 by `a-second-plurality-voter-is-worth-zero`, so `2609.31563` now appears in Appendix A and this run's finding is a post claim rather than an orphan ledger row. The finding itself is an identity, `p^2 + 0.5*2p(1-p) = p`, and it does not depend on the seeds |
-| `2609.30721-a01-s1337` / `-s1338` / `-s1339` | 2609.30721v1 | `cpu-numpy-axv-generator-a01-20260928` | Monte-Carlo Type-I error at 5% nominal, with within-session persistence `rho` swept over 5 values at 2 overlap settings x 2 estimators, at fixed everything else | 90 records total, 30 per seed, identical `config_fingerprint` sha256:e709b6fa across the three seeds | — | $0.00 | **keep, itemised by revision 4 and not authored by it.** These three landed in `92f7167`, after revision 3 read the ledger at `80c3bdb` and before revision 3a's push, so the "11 series" figure was correct when read and stale when published. `rho` is the single dependence parameter the paper does not publish, and sweeping it turns an unreproducible headline scalar into a statement about how far the headline can be pushed. `run.json` records `metric_value` 0.2035 and `decision: keep` on the seed-1337 record, `reproduction_status: verified`, `gpu: none`, `harness_commit: not-applicable` — a self-contained CPU harness committed as the record, with no change to `dustin-dev-35/autoresearch`. Nothing here is re-labelled on the strength of a row read from another agent's directory; the 35 per-cell `supersedes` records they carry are what move the appendix-wide supersedes count from 2 to 38 |
+| `2609.30721-a01-s1337` / `-s1338` / `-s1339` | 2609.30721v1 | `cpu-numpy-axv-generator-a01-20260928` | Monte-Carlo Type-I error at 5% nominal, with within-session persistence `rho` swept over 5 values at 3 overlaps x 2 estimators, at fixed everything else | 90 records in the repo ledger, 30 per seed, plus 117 per-condition records in the seed-1337 run directory; identical `config_fingerprint` sha256:e709b6fa across the three seeds | — | $0.00 | **keep, and the result written up in revision 4a** where revision 4 itemised the row and left the finding out — the mirror image of revision 3a's under-count. At the paper's own operating point — 75% overlap, 5% nominal, three seeds per generator — the uncorrected IID Type-I error is **16.8%-21.9%** across four generators and the session-centred HAC correction is **7.25%-11.6%**. The diagnosis is robust; the remedy's size is not, and the 4.4-point spread is **1.6x the whole interval-widening effect** the paper draws from it. Not noise: MCSE 0.0058 at 2,000 replicates, the extremes about **7.5 MCSE** apart. **`medium`, and the named limit is that the four generators are matched at the operating point but not at matched dependence or matched window geometry** — per-session window counts 32-125, 125, 397 and the authors' own, at rho = 0, 0.8, 0.99 and a shared raw-shock term with `raw_ar_phi = 0.0`; the same generator at `rho = 0` gives a *correct* IID 5.8%-8.0% and an over-covering HAC 3.2%-3.9%. **`G_info` is a variance ratio, so 3.95x-3.97x the rows buys 1.61x-2.83x in variance terms, which is 1.27x-1.68x in SE terms, never 2x**; `G_info` is stable at 1.157-1.675 across the whole persistence grid, a span of 0.518. **Two of four pre-registered tests came back refuted and are recorded unrevised in `metrics_aggregate.json` under `interpretation`**: T1, that the headline needs dependence beyond mechanical overlap (refuted — overlap alone produces the whole thing, IID Type-I 20.35-21.85% at `rho = 0`, with a measured lag-1 correlation of the paired contrast of 0.404-0.406 and no serial dependence in the latent, which is the mechanical-overlap prediction), and T3, that `G_info` is a wildly dataset-specific constant (refuted). T2 and T4 confirmed on all three seeds. `run.json` records `metric_value` 0.2035 / 0.2105 / 0.2185, `decision: keep`, `reproduction_status: verified`, `gpu: none`, `harness_commit: not-applicable`, `leaderboard_check.action: no-comparable-baseline-on-file` — a self-contained CPU harness committed as the record, with **no change to `dustin-dev-35/autoresearch`** and no `experiment/<arxiv-id>-<series>` branch, because there is no diff to review. **These 90 records carry no `supersedes` field at all**, which corrects revision 4's claim that they carry 35 per-cell retractions and move the appendix-wide count from 2 to 38; they do not, and the section 0 row above is the accurate one. |
 
 **Harness.** The two `train.py` runs are self-contained on numpy and scipy, with
 `harness_commit` null and `diff.patch` empty by design: no harness change was required, so no
@@ -647,14 +665,26 @@ can trace is indistinguishable from a correction that never happened.
 `corpus/`; it has a ledger record and no published post. That gap is Appendix A doing its job,
 not a rounding error.
 
-**Ledger reconciliation.** 67 records, 11 runs, 2 records carrying `supersedes`, read at
-`80c3bdb`. Every run in the ledger is now itemised in the table above — revision 1 asserted that
-and was wrong, because `axv-2609.30768-asymmetry-01` was named in the count and missing from the
-table, and `axv-2609.31563-ceiling-01` had landed and was named nowhere; revision 2 fixed the
-table. **Revision 3 closes the last named gap in the other direction:**
+**Ledger reconciliation.** **157 records, 13 run directories, 38 records carrying a `supersedes`
+key of which 2 point at another record, 15 memo files in `corpus/`, re-read at `33113d1`.**
+Every run in the ledger is itemised in the table above — revision 1 asserted that and was wrong,
+because `axv-2609.30768-asymmetry-01` was named in the count and missing from the table, and
+`axv-2609.31563-ceiling-01` had landed and was named nowhere; revision 2 fixed the table.
+**Revision 4 closed the last named gap in the other direction:**
 `axv-2609.30768-asymmetry-01` was the one run with a prepared row payload and no post, and it is
 now published as `posts/thinking-5x-asymmetry-is-your-baseline.md` with its Appendix A row. Its
 prepared Supabase and PostHog payloads in `corpus/2609.30768.landing.md` are still unwritten, for
 want of a tool surface rather than want of an author; see [AXV-19](/AXV/issues/AXV-19). One
-memo, `2609.31563`, still has no post and no prepared row. A ledger that itemises only the
-convenient runs is a selection, not a count.
+memo, `2609.31563`, still has no post and no prepared row.
+
+**And revision 4a caught the same failure a third time, which makes it a pattern rather than an
+accident.** A count or a description in this appendix that was true when written and was not
+re-derived. Revision 3's "67 records across 11 runs" went stale inside the window in which it was
+pushed. Revision 4's 13 memo files were already wrong against the commit it named. And revision
+4 corrected section 0's `supersedes` row to 2 while leaving the Appendix B row asserting that the
+90 persistence-sweep records carry 35 of them — a single commit containing both the fix and the
+error it fixes, which is only possible if the correction was made from memory rather than by
+re-reading the file. All 90 were then checked field by field: not one has a `supersedes` key. The
+remedy is unglamorous and it is the same one every time: re-read the file, name the commit, and
+let the number change in the open. A ledger that itemises only the convenient runs is a selection,
+not a count, and a ledger whose corrections are not re-derived is a selection of corrections too.

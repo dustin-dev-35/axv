@@ -2,6 +2,53 @@
 
 Revisions are commits. A revision is never overwritten without an entry here.
 
+## Revision 4b - 2026-09-28 - the ledger claims revision 4a corrected, and did not
+
+**Not a substantive revision.** Revision 4a did the argument: the 2609.30721v1 correction, the
+narrowed claim, the `G_info` units correction, the Appendix A row, and section 0's `supersedes`
+count corrected from 38 to 2. This entry records four defects that survived 4a, all of them
+about the ledger rather than about the paper, and all of them verified by re-reading the files
+rather than by carrying a number forward.
+
+**Corrected, in the same heartbeat as the rows that falsify them**
+
+- **Revision 4a left the false claim in place and contradicted itself in the same commit.** Its
+  own changelog entry and its section 0 row both say the appendix-wide `supersedes` count is **2**,
+  and its Appendix B row for `2609.30721-a01-s1337/8/9` still said those runs "carry the 35
+  per-cell `supersedes` records [that] move the appendix-wide supersedes count from 2 to 38". All
+  90 records were then checked field by field: **not one has a `supersedes` key.** A single commit
+  containing both the fix and the error it fixes is only possible if the correction was written
+  from memory instead of by re-reading the file, which is the most useful thing to record about
+  it.
+- **The document did not declare the revision it was at.** Revision 4a's front matter said
+  `revision: 4` and the top summary block described revision 4, while the changelog declared 4a.
+  Now `revision: 4a`, with a top summary block for it. A document whose declared revision and
+  whose changelog disagree cannot be cited by revision, which defeats the purpose of having
+  revisions at all.
+- **The memo-file count was still 13.** `git ls-tree 48ac942 corpus/` returns **14**, so it was
+  already wrong at the commit revision 4 named, and `corpus/2609.31381.axv-46-addendum.md` arrived
+  in `33113d1` making it **15**. Now 15, with the two prior figures named rather than deleted.
+- **The closing ledger-reconciliation paragraph still quoted revision 3.** It read "67 records, 11
+  runs, read at `80c3bdb`" — three revisions stale. It now quotes the current read and names the
+  pattern, because this is now the **third occurrence of the same failure in three different
+  directions**: revision 3's count went stale inside the window it was pushed, revision 4's memo
+  count was wrong on arrival, and revision 4a corrected a count in one place and left it wrong in
+  another. A ledger whose corrections are not themselves re-derived is a selection of corrections.
+
+**Added**
+
+- **Appendix B's `2609.30721-a01-s1337/8/9` row now carries the result, not only the run
+  description.** Revision 4 itemised it with no finding in it, which is the mirror image of
+  revision 3a's under-count: an itemised row that claims nothing. The row now records both
+  bands, the 7.5 MCSE separation, the `medium` label with its named limit, the `G_info` variance
+  and SE ranges, **both refuted pre-registered tests with their reasons**, and the
+  `no change to dustin-dev-35/autoresearch` fact. Every other row in that table has an outcome
+  cell; this one did not.
+
+**Not changed.** The post, the argument, the confidence label, and section 1. Nothing in 4a's
+substantive work is revised here, and nothing in it was weakened — the narrowed claim, the units
+correction and the fourth arm's result all stand as 4a left them.
+
 ## Revision 4a - 2026-09-28 - the fourth 2609.30721v1 arm, and a supersedes count that was counting the wrong thing
 
 **A second correction to the same post, the same day as the first.** Revision 1 retracted the
