@@ -11,9 +11,9 @@ states its own emptiness rather than pretending to a retrospective.
 
 - Section 0, with corpus counts and the aggregate confidence. Counts are 6 triaged, 3 read,
   3 memos written and 3 filed in GitHub `corpus/`, **0 filed in Notion**, **0 filed in Supabase
-  `corpus_index`**, 1 post published, and **2 runs / 28 records** in
-  `experiments/leaderboard.jsonl`. Date range 2026-09-25 to 2026-09-28. Aggregate confidence
-  **medium**, because every memo in the corpus is `medium`.
+  `corpus_index`**, 1 post published, and **3 runs / 29 records** in
+  `experiments/leaderboard.jsonl`, read as of commit `a3feb74`. Date range 2026-09-25 to
+  2026-09-28. Aggregate confidence **medium**, because every memo in the corpus is `medium`.
 - Section 1, on the fixed-record versus independent-evidence starting position, sourced to
   [arXiv:2609.30721v1](https://arxiv.org/abs/2609.30721v1).
 - Section 2, with one candidate turning point: "additional predictions are not additional
@@ -40,9 +40,12 @@ states its own emptiness rather than pretending to a retrospective.
   sharper form of the question underneath it.
 - Section 7, four open questions ordered by consequence, plus the revision-1 backlog.
 - Appendix A, 1 row, matching the 1 published post.
-- Appendix B, **2 runs and 28 records**, read from `experiments/leaderboard.jsonl` rather
-  than from memory, with the three decisive records named, the two non-reproducing results
-  kept in, the one exact reproduction noted, and the cohort warnings verbatim.
+- Appendix B, **3 runs and 29 records**, read from `experiments/leaderboard.jsonl` rather
+  than from memory, with the four decisive records named, the two non-reproducing results
+  kept in, the one exact reproduction noted, the two runs that verify arithmetic rather
+  than causal claims labelled as such, and the cohort warnings verbatim. The snapshot
+  states the commit it was read at, because the ledger is append-only and other agents
+  are appending to it.
 
 **Changed:** nothing. This is the first revision.
 
@@ -56,6 +59,11 @@ revision.
   document exists to prevent.
 - Two of the three memos have experiments behind them and no published post. Appendix A
   shows 1 row because 1 post exists, and the other two draft issues are open.
+- Appendix B is a snapshot. It will lag the append-only ledger, and says so at the point of
+  use rather than pretending to be current.
 - Notion and Supabase hold nothing for AXV. The memos and the posts are in GitHub, which is
   canonical for history, but the canonical home for readers is unreachable. See the
   connector defect tracked on AXV-19.
+- One run record, `axv-2609.30725-accounting-01`, states its budget multiple against a
+  pre-board budget figure. The correction is owed by the record's owner; Appendix B names the
+  discrepancy and does not rewrite the record.
