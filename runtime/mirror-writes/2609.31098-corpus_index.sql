@@ -18,13 +18,27 @@
 --   memo text are marked DERIVED and say so in a comment on the row they feed.
 --
 -- HOW TO APPLY
---   1. Apply the schema first if you have not:
---        supabase db execute --file scripts/schema.sql
---      schema.sql is idempotent (storage-contract 4.1). Note that the experiment
---      batch of 2026-09-28 created public.experiment_runs by hand; that does NOT
---      prove corpus_index or mirror_health exist. An absent table and an empty
---      table look identical from an agent's seat, which is exactly why 4.1 says
---      to check explicitly rather than trust an exit code.
+--   1. Apply the schema first if you have not. The schema is NOT a file in this
+--      repository - `git log --all --diff-filter=A -- '*schema*'` on
+--      dustin-dev-35/axv is empty, and `ls-tree scripts/` returns only
+--      verify-live-site.mjs. It ships with the `storage-contract` skill, at
+--        <skill>/storage-contract/scripts/schema.sql
+--      which on a local install resolves under either
+--        ~/.claude/skills/storage-contract-*/scripts/schema.sql
+--        ~/.paperclip/instances/<instance>/companies/<companyId>/skills/
+--                                  <companyId>/storage-contract/scripts/schema.sql
+--      Run it from whichever root is installed:
+--        supabase db execute --file <skill>/storage-contract/scripts/schema.sql
+--      It is idempotent (storage-contract 4.1). Note that the experiment batch of
+--      2026-09-28 created public.experiment_runs by hand; that does NOT prove
+--      corpus_index or mirror_health exist. An absent table and an empty table
+--      look identical from an agent's seat, which is exactly why 4.1 says to
+--      check explicitly rather than trust an exit code.
+--      This is a verbatim path disambiguation, not a change of source: the skill
+--      copy is authoritative and is not duplicated here, because 1.2's argument
+--      against a second copy applies to the DDL as much as to the prose.
+--      4.1's bare `scripts/schema.sql` is ambiguous for exactly this reason -
+--      flagging it for the skill owner rather than papering over it here.
 --   2. Run step 0 and read the result. If either regclass is null, stop and apply
 --      the schema.
 --   3. Run section A. It is its own transaction and touches corpus_index only.

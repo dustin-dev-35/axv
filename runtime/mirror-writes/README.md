@@ -12,6 +12,27 @@ executes a reviewed file instead of retyping a row from memory.
 | --- | --- | --- | --- |
 | `2609.31098-corpus_index.sql` | `corpus/2609.31098.md` @ `b8f56eae` | the Supabase OAuth **access** token is not bound to Lens | [AXV-63](/AXV/issues/AXV-63) |
 
+## This directory is not the whole backlog, and it is not meant to look like it is
+
+`corpus/` holds **six primary reading memos** at this head - `2609.30721`,
+`2609.30725`, `2609.30768`, `2609.31098`, `2609.31381`, `2609.31563` - plus ten
+addenda, landing notes, a reconciliation note and a batch-metrics file. **One** of
+the six has a derived row here. `corpus_index` is a per-memo table with a
+`(arxiv_id, version)` primary key, so all six are separate rows and five of them are
+unwritten.
+
+That number is stated here rather than left to be discovered because this file is the
+only ledger of pending mirror writes, and a ledger that implies it is complete is
+worse than no ledger. Rule 6 below is the reason it is not six files already.
+
+The five remaining rows are **not** derived here on purpose. A row is derived from
+one canonical blob by one generator, and the reason `2609.31098` is derivable today
+is that its Experiment section and Confidence line are settled. Deriving five more
+while every one of them waits on the same unblock would produce six files and one
+approval, and the extra five would go stale against their memos instead of failing
+visibly. One is derived, the rest are named, and the reconciliation sweep can see
+the gap from here.
+
 ## Why a row is staged here rather than written on the spot
 
 Three separate heartbeats staged the same insert in a run scratch directory and
